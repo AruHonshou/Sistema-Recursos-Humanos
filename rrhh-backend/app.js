@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');  // Importar cors
 const app = express();
 const bodyParser = require('body-parser');
 
@@ -22,8 +23,14 @@ const rolesRoutes = require('./routes/rolesRoutes');
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Configuración de CORS para permitir peticiones desde el frontend
+app.use(cors({
+    origin: 'http://localhost:3000',  // Aquí va la URL del frontend, si está en el puerto 3000
+    credentials: true  // Permite el envío de cookies y headers de autenticación (si es necesario)
+}));
+
 // Rutas para las diferentes entidades
-app.use('/catalogoPersona', catalogoPersonaRoutes);
+app.use('/api/catalogoPersona', catalogoPersonaRoutes);
 app.use('/catalogoTelefono', catalogoTelefonoRoutes);
 app.use('/catalogoCorreo', catalogoCorreoRoutes);
 app.use('/api/provincias', provinciaRoutes);

@@ -2,10 +2,10 @@ const db = require('../config/db');
 
 // Crear un nuevo cantón
 exports.crearCanton = async (req, res) => {
-    const { nombreCanton, provinciaId } = req.body;
+    const { nombre_canton, id_provincia } = req.body;
 
     try {
-        await db.query('CALL CrearCanton(?, ?, @nuevo_id);', [nombreCanton, provinciaId]);
+        await db.query('CALL CrearCanton(?, ?, @nuevo_id);', [nombre_canton, id_provincia]);
         const [result] = await db.query('SELECT @nuevo_id AS idNuevo;');
         res.status(201).json({ message: 'Cantón creado exitosamente', idCanton: result[0].idNuevo });
     } catch (error) {
@@ -41,7 +41,7 @@ exports.obtenerTodosCantones = async (req, res) => {
 // Actualizar un cantón
 exports.actualizarCanton = async (req, res) => {
     const { idCanton, provinciaId } = req.params;
-    const { nombreCanton } = req.body;
+    const { nombreCanton } = req.body;  // Asegúrate de que estás usando el nombre correcto aquí
 
     try {
         await db.query('CALL ActualizarCanton(?, ?, ?, @resultado);', [idCanton, provinciaId, nombreCanton]);
@@ -51,6 +51,7 @@ exports.actualizarCanton = async (req, res) => {
         res.status(500).json({ message: 'Error al actualizar el cantón', error });
     }
 };
+
 
 // Eliminar un cantón
 exports.eliminarCanton = async (req, res) => {

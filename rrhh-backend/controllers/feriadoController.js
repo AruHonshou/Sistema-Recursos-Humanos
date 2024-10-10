@@ -12,7 +12,7 @@ exports.crearFeriado = async (req, res) => {
     }
 };
 
-// Obtener un feriado por fecha
+// Leer un feriado por fecha
 exports.obtenerFeriadoPorFecha = async (req, res) => {
     const { fechaFeriado } = req.params;
 
