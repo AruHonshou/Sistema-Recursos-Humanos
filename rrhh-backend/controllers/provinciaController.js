@@ -1,23 +1,22 @@
 const db = require('../config/db');
 
-// provinciasController.js
+// Crear una nueva provincia
 exports.crearProvincia = async (req, res) => {
-    const { id_provincia, nombre_provincia } = req.body;
+    const { nombre_provincia } = req.body;
 
-    // Verifica que los valores no sean nulos
+    // Verifica que el valor no sea nulo o vacío
     if (!nombre_provincia) {
         return res.status(400).json({ message: "El campo 'nombre_provincia' es requerido." });
     }
 
     try {
-        await db.query('CALL CrearProvincia(?, @nuevo_id);', [id_provincia, nombre_provincia]);
+        await db.query('CALL CrearProvincia(?, @nuevo_id);', [nombre_provincia]);
         const [result] = await db.query('SELECT @nuevo_id AS idNuevo;');
         res.status(201).json({ message: 'Provincia creada exitosamente', idProvincia: result[0].idNuevo });
     } catch (error) {
         res.status(500).json({ message: 'Error al crear la provincia', error });
     }
 };
-
 
 // Obtener una provincia por ID
 exports.obtenerProvinciaPorId = async (req, res) => {
@@ -44,12 +43,12 @@ exports.obtenerTodasProvincias = async (req, res) => {
     }
 };
 
-// provinciasController.js
+// Actualizar una provincia
 exports.actualizarProvincia = async (req, res) => {
-    const { idProvincia } = req.params; // ID pasado en la URL
-    const { nombre_provincia } = req.body; // El nuevo nombre de la provincia
+    const { idProvincia } = req.params;
+    const { nombre_provincia } = req.body;
 
-    // Verifica que el nombre de la provincia no sea nulo
+    // Verifica que el nombre de la provincia no sea nulo o vacío
     if (!nombre_provincia) {
         return res.status(400).json({ message: "El campo 'nombre_provincia' es requerido." });
     }
@@ -62,7 +61,6 @@ exports.actualizarProvincia = async (req, res) => {
         res.status(500).json({ message: 'Error al actualizar la provincia', error });
     }
 };
-
 
 // Eliminar una provincia
 exports.eliminarProvincia = async (req, res) => {
