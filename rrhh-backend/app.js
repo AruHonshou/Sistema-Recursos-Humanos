@@ -18,6 +18,7 @@ const tipoHorarioRoutes = require('./routes/tipoHorarioRoutes');
 const catalogoTipoLiquidacionRoutes = require('./routes/catalogoTipoLiquidacionRoutes');
 const puestoLaboralRoutes = require('./routes/puestoLaboralRoutes');
 const rolesRoutes = require('./routes/rolesRoutes');
+const personaRoutes = require('./routes/personaRoutes');
 
 // Configuración de bodyParser para manejar datos JSON
 app.use(bodyParser.json());
@@ -30,20 +31,21 @@ app.use(cors({
 }));
 
 // Rutas para las diferentes entidades
-app.use('/catalogoPersona', catalogoPersonaRoutes);
-app.use('/catalogoTelefono', catalogoTelefonoRoutes);
-app.use('/catalogoCorreo', catalogoCorreoRoutes);
-app.use('/api/provincias', provinciaRoutes);
-app.use('/api/cantones', cantonRoutes);
-app.use('/api/distritos', distritoRoutes);
+app.use('/catalogoPersona', catalogoPersonaRoutes);//Ya
+app.use('/catalogoTelefono', catalogoTelefonoRoutes);//ya
+app.use('/catalogoCorreo', catalogoCorreoRoutes);//ya
+app.use('/api/provincias', provinciaRoutes);//ya
+app.use('/api/cantones', cantonRoutes);//ya
+app.use('/api/distritos', distritoRoutes);//ya
 app.use('/catalogoHorasExtras', catalogoHorasExtrasRoutes);
 app.use('/catalogoIncapacidades', catalogoIncapacidadesRoutes);
-app.use('/api/dias', diasRoutes);
-app.use('/api/feriados', feriadoRoutes);
-app.use('/api/tipos-horario', tipoHorarioRoutes);
+app.use('/api/dias', diasRoutes);//ya
+app.use('/api/feriados', feriadoRoutes);//ya
+app.use('/api/tipos-horario', tipoHorarioRoutes);//ya
 app.use('/api/tipo-liquidacion', catalogoTipoLiquidacionRoutes);
-app.use('/api/puesto-laboral', puestoLaboralRoutes);
-app.use('/api/roles', rolesRoutes);
+app.use('/api/puesto-laboral', puestoLaboralRoutes);//ya
+app.use('/api/roles', rolesRoutes);//ya
+app.use('/api/personas', personaRoutes);
 
 // Configuración del puerto
 const PORT = process.env.PORT || 3000;
