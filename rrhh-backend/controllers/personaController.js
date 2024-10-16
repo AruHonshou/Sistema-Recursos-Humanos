@@ -2,6 +2,7 @@ const db = require('../config/db');
 
 // Crear una nueva persona (usando el procedimiento almacenado CrearPersonaCompleta)
 exports.crearPersona = async (req, res) => {
+    console.log(req.body); // Para verificar qué datos se están recibiendo
     const {
         idPersona, Nombre, Primer_Apellido, Segundo_Apellido, Fecha_Nacimiento, catalogo_persona_idCatalogo_Persona,
         Numero_Telefono, Detalle_Telefono, catalogo_telefono_idCatalogo_Telefono,
@@ -27,6 +28,7 @@ exports.crearPersona = async (req, res) => {
         const [result] = await db.query('SELECT @resultado AS mensaje;');
         res.status(201).json({ message: result[0].mensaje });
     } catch (error) {
+        console.error(error); // Añadir esto para registrar el error
         res.status(500).json({ message: 'Error al crear la persona', error });
     }
 };
@@ -36,7 +38,7 @@ exports.obtenerPersonaPorId = async (req, res) => {
     const { idPersona } = req.params;
 
     try {
-        const [rows] = await db.query('CALL LeerPersona(?);', [idPersona]); // Ajusta el nombre aquí
+        const [rows] = await db.query('CALL LeerPersona(?);', [idPersona]);
         if (rows.length === 0) {
             return res.status(404).json({ message: 'Persona no encontrada' });
         }
@@ -49,7 +51,7 @@ exports.obtenerPersonaPorId = async (req, res) => {
 // Obtener todas las personas
 exports.obtenerTodasPersonas = async (req, res) => {
     try {
-        const [rows] = await db.query('CALL LeerTodasLasPersonas();'); // Cambiado aquí
+        const [rows] = await db.query('CALL LeerTodasLasPersonas();');
         res.status(200).json(rows);
     } catch (error) {
         res.status(500).json({ message: 'Error al obtener las personas', error });
