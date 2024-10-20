@@ -4,8 +4,8 @@ const pool = require('../config/db');
 // Crear Incapacidad
 exports.crearIncapacidad = async (req, res) => {
     try {
-        const { Descripcion_Catalogo_Incapacidad } = req.body;
-        const [result] = await pool.query('CALL CrearCatalogoIncapacidad(?, @idCatalogo_Incapacidad)', [Descripcion_Catalogo_Incapacidad]);
+        const { Descripcion_Catalogo_Incapacidad, Porcentaje_Deduccion } = req.body; // Incluir el nuevo parámetro
+        const [result] = await pool.query('CALL CrearCatalogoIncapacidad(?, ?, @idCatalogo_Incapacidad)', [Descripcion_Catalogo_Incapacidad, Porcentaje_Deduccion]);
         const [[{ idCatalogo_Incapacidad }]] = await pool.query('SELECT @idCatalogo_Incapacidad AS idCatalogo_Incapacidad');
         res.status(201).json({ idCatalogo_Incapacidad });
     } catch (error) {
@@ -40,8 +40,8 @@ exports.leerIncapacidadPorID = async (req, res) => {
 // Actualizar Incapacidad
 exports.actualizarIncapacidad = async (req, res) => {
     try {
-        const { idCatalogo_Incapacidad, Descripcion_Catalogo_Incapacidad } = req.body;
-        const [result] = await pool.query('CALL ActualizarCatalogoIncapacidad(?, ?, @resultado)', [idCatalogo_Incapacidad, Descripcion_Catalogo_Incapacidad]);
+        const { idCatalogo_Incapacidad, Descripcion_Catalogo_Incapacidad, Porcentaje_Deduccion } = req.body; // Incluir el nuevo parámetro
+        const [result] = await pool.query('CALL ActualizarCatalogoIncapacidad(?, ?, ?, @resultado)', [idCatalogo_Incapacidad, Descripcion_Catalogo_Incapacidad, Porcentaje_Deduccion]);
         const [[{ resultado }]] = await pool.query('SELECT @resultado AS resultado');
         res.status(200).send(resultado);
     } catch (error) {

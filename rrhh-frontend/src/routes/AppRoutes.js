@@ -12,10 +12,12 @@ import Planilla from '../pages/Planilla';
 import Incapacidades from '../pages/Incapacidades';
 import EvaluacionRendimiento from '../pages/EvaluacionRendimiento';
 import PagosLiquidacion from '../pages/PagosLiquidacion';
-import Consultas from '../pages/Consultas';
-import Reportes from '../pages/Reportes';
+import PuestoLaboral from '../pages/PuestoLaboral';
+import Roles from '../pages/Roles';
+import Feriados from '../pages/Feriados';
 import CambioContrasena from '../pages/CambioContrasena';
 import GestionUsuarios from '../pages/GestionUsuarios'; // Nueva página para la gestión de usuarios
+import ReportesGestionUsuarios from '../pages/ReportesGestionUsuarios'; // Nueva página para la gestión de usuarios
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 
@@ -38,12 +40,14 @@ const AppRoutes = () => {
           <Route path="/evaluacion-rendimiento" element={<EvaluacionRendimiento />} />
           <Route path="/pagos-liquidacion" element={<PagosLiquidacion />} />
 
-          {/* Consultas y Reportes */}
-          <Route path="/consultas" element={<Consultas />} />
-          <Route path="/reportes" element={<Reportes />} />
-
-          {/* Seguridad */}
+          {/* Mantenimientos*/}
+          <Route path="/PuestoLaboral" element={<PuestoLaboral />} />
+          <Route path="/Roles" element={<Roles />} />
+          <Route path="/Feriados" element={<Feriados />} />
           <Route path="/gestion-usuarios" element={<GestionUsuarios />} />
+
+          {/* Reportes */}
+          <Route path="/reporte-gestion-usuarios" element={<ReportesGestionUsuarios />} />
           <Route path="/cambio-contrasena" element={<CambioContrasena />} />
         </Route>
       </Routes>
@@ -73,12 +77,14 @@ const LayoutWithSidebarNavbar = () => {
             <Route path="/evaluacion-rendimiento" element={<EvaluacionRendimiento />} />
             <Route path="/pagos-liquidacion" element={<PagosLiquidacion />} />
 
-            {/* Consultas y Reportes */}
-            <Route path="/consultas" element={<Consultas />} />
-            <Route path="/reportes" element={<Reportes />} />
-
-            {/* Seguridad */}
+            {/* Mantenimientos*/}
+            <Route path="/PuestoLaboral" element={<PuestoLaboral />} />
+            <Route path="/Roles" element={<Roles />} />
+            <Route path="/Feriados" element={<Feriados />} />
             <Route path="/gestion-usuarios" element={<GestionUsuarios />} />
+
+            {/* Reportes */}
+            <Route path="/reporte-gestion-usuarios" element={<ReportesGestionUsuarios />} />
             <Route path="/cambio-contrasena" element={<CambioContrasena />} />
           </Routes>
         </main>

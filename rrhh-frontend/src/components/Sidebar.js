@@ -10,7 +10,7 @@ const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [showRHSubmenu, setShowRHSubmenu] = useState(false);
   const [showCRSubmenu, setShowCRSubmenu] = useState(false);
-  const [showSeguridadSubmenu, setShowSeguridadSubmenu] = useState(false);
+  const [showReporteSubmenu, setShowReporteSubmenu] = useState(false);
   const navigate = useNavigate();
 
   const toggleSidebar = () => {
@@ -100,47 +100,59 @@ const Sidebar = () => {
         </ul>
       )}
 
-      {/* Consultas y Reportes */}
+      {/* Mantenimientos */}
       <button
         onClick={() => setShowCRSubmenu(!showCRSubmenu)}
         className="text-[#00ADB5] font-bold mb-2 mt-4 w-full text-left flex items-center"
       >
         <FaRegListAlt className="mr-2" size={24} />
-        {isOpen && <span>Consultas y Reportes</span>}
+        {isOpen && <span>Mantenimientos</span>}
       </button>
 
       {showCRSubmenu && (
         <ul className="space-y-2">
           <li>
-            <NavLink to="/consultas" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+            <NavLink to="/PuestoLaboral" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
               <AiOutlineUser className="mr-2" size={24} />
-              {isOpen && <span>Consultas</span>}
+              {isOpen && <span>PuestoLaboral</span>}
             </NavLink>
           </li>
           <li>
-            <NavLink to="/reportes" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+            <NavLink to="/Roles" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
               <FaRegListAlt className="mr-2" size={24} />
-              {isOpen && <span>Reportes</span>}
+              {isOpen && <span>Roles</span>}
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/Feriados" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+              <FaRegListAlt className="mr-2" size={24} />
+              {isOpen && <span>Feriados</span>}
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/gestion-usuarios" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+              <AiOutlineUser className="mr-2" size={24} />
+              {isOpen && <span>Gestión de Usuarios</span>}
             </NavLink>
           </li>
         </ul>
       )}
 
-      {/* Seguridad */}
+      {/* Reportes */}
       <button
-        onClick={() => setShowSeguridadSubmenu(!showSeguridadSubmenu)}
+        onClick={() => setShowReporteSubmenu(!showReporteSubmenu)}
         className="text-[#00ADB5] font-bold mb-2 mt-4 w-full text-left flex items-center"
       >
         <AiOutlineUser className="mr-2" size={24} />
-        {isOpen && <span>Seguridad</span>}
+        {isOpen && <span>Reportes</span>}
       </button>
 
-      {showSeguridadSubmenu && (
+      {showReporteSubmenu && (
         <ul className="space-y-2">
           <li>
-            <NavLink to="/gestion-usuarios" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+            <NavLink to="/reporte-gestion-usuarios" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
               <AiOutlineUser className="mr-2" size={24} />
-              {isOpen && <span>Gestión de Usuarios</span>}
+              {isOpen && <span>Reportes de Usuarios</span>}
             </NavLink>
           </li>
           <li>

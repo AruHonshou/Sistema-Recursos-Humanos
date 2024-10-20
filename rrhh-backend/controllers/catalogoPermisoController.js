@@ -1,10 +1,10 @@
-// controllers/catalogoPersonaController.js
+// controllers/catalogoPermisoController.js
 
 const db = require('../config/db'); // Asegúrate de que el archivo de configuración de la DB está correcto
 
-// Función para insertar una persona en el catálogo
-async function insertarCatalogoPersona(req, res) {
-    const { Descripcion_Catalogo_Persona } = req.body; 
+// Función para insertar un permiso en el catálogo
+async function insertarCatalogoPermiso(req, res) {
+    const { Descripcion_Permiso } = req.body; 
     let resultado;
 
     let connection;
@@ -14,8 +14,8 @@ async function insertarCatalogoPersona(req, res) {
 
         // Llama al procedimiento almacenado
         await connection.query(
-            'CALL InsertarCatalogoPersona(?, @resultado)',
-            [Descripcion_Catalogo_Persona]
+            'CALL InsertarCatalogoPermiso(?, @resultado)',
+            [Descripcion_Permiso]
         );
 
         const [rows] = await connection.query('SELECT @resultado AS resultado');
@@ -26,51 +26,51 @@ async function insertarCatalogoPersona(req, res) {
     } catch (error) {
         if (connection) await connection.rollback();
         console.error(error);
-        res.status(500).json({ error: 'Error al insertar en el catálogo' });
+        res.status(500).json({ error: 'Error al insertar en el catálogo de permisos' });
     } finally {
         if (connection) connection.release();
     }
 }
 
-// Función para obtener todas las personas del catálogo
-async function obtenerCatalogoPersonas(req, res) {
+// Función para obtener todos los permisos del catálogo
+async function obtenerCatalogoPermisos(req, res) {
     let connection;
     try {
         connection = await db.getConnection();
-        const [rows] = await connection.query('CALL ObtenerCatalogoPersonas()');
+        const [rows] = await connection.query('CALL ObtenerCatalogoPermisos()');
         res.status(200).json(rows);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Error al obtener el catálogo de personas' });
+        res.status(500).json({ error: 'Error al obtener el catálogo de permisos' });
     } finally {
         if (connection) connection.release();
     }
 }
 
-// Función para obtener una persona por ID
-async function obtenerCatalogoPersonaPorID(req, res) {
-    const { idCatalogo_Persona } = req.params; 
+// Función para obtener un permiso por ID
+async function obtenerCatalogoPermisoPorID(req, res) {
+    const { idCatalogo_Permiso } = req.params; 
     let connection;
     try {
         connection = await db.getConnection();
-        const [rows] = await connection.query('CALL ObtenerCatalogoPersonaPorID(?)', [idCatalogo_Persona]);
+        const [rows] = await connection.query('CALL ObtenerCatalogoPermisoPorID(?)', [idCatalogo_Permiso]);
         
         if (rows.length > 0) {
             res.status(200).json(rows[0]);
         } else {
-            res.status(404).json({ error: 'Persona no encontrada' });
+            res.status(404).json({ error: 'Permiso no encontrado' });
         }
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Error al obtener la persona' });
+        res.status(500).json({ error: 'Error al obtener el permiso' });
     } finally {
         if (connection) connection.release();
     }
 }
 
-// Función para actualizar una persona
-async function actualizarCatalogoPersona(req, res) {
-    const { idCatalogo_Persona, Descripcion_Catalogo_Persona } = req.body; 
+// Función para actualizar un permiso
+async function actualizarCatalogoPermiso(req, res) {
+    const { idCatalogo_Permiso, Descripcion_Permiso } = req.body; 
     let resultado;
 
     let connection;
@@ -79,8 +79,8 @@ async function actualizarCatalogoPersona(req, res) {
         await connection.beginTransaction();
 
         await connection.query(
-            'CALL ActualizarCatalogoPersona(?, ?, @resultado)',
-            [idCatalogo_Persona, Descripcion_Catalogo_Persona]
+            'CALL ActualizarCatalogoPermiso(?, ?, @resultado)',
+            [idCatalogo_Permiso, Descripcion_Permiso]
         );
 
         const [rows] = await connection.query('SELECT @resultado AS resultado');
@@ -91,15 +91,15 @@ async function actualizarCatalogoPersona(req, res) {
     } catch (error) {
         if (connection) await connection.rollback();
         console.error(error);
-        res.status(500).json({ error: 'Error al actualizar en el catálogo' });
+        res.status(500).json({ error: 'Error al actualizar el permiso en el catálogo' });
     } finally {
         if (connection) connection.release();
     }
 }
 
-// Función para eliminar una persona
-async function eliminarCatalogoPersona(req, res) {
-    const { idCatalogo_Persona } = req.params; 
+// Función para eliminar un permiso
+async function eliminarCatalogoPermiso(req, res) {
+    const { idCatalogo_Permiso } = req.params; 
     let resultado;
 
     let connection;
@@ -108,8 +108,8 @@ async function eliminarCatalogoPersona(req, res) {
         await connection.beginTransaction();
 
         await connection.query(
-            'CALL EliminarCatalogoPersona(?, @resultado)',
-            [idCatalogo_Persona]
+            'CALL EliminarCatalogoPermiso(?, @resultado)',
+            [idCatalogo_Permiso]
         );
 
         const [rows] = await connection.query('SELECT @resultado AS resultado');
@@ -120,16 +120,16 @@ async function eliminarCatalogoPersona(req, res) {
     } catch (error) {
         if (connection) await connection.rollback();
         console.error(error);
-        res.status(500).json({ error: 'Error al eliminar en el catálogo' });
+        res.status(500).json({ error: 'Error al eliminar el permiso del catálogo' });
     } finally {
         if (connection) connection.release();
     }
 }
 
 module.exports = {
-    insertarCatalogoPersona,
-    obtenerCatalogoPersonas,
-    obtenerCatalogoPersonaPorID,
-    actualizarCatalogoPersona,
-    eliminarCatalogoPersona
+    insertarCatalogoPermiso,
+    obtenerCatalogoPermisos,
+    obtenerCatalogoPermisoPorID,
+    actualizarCatalogoPermiso,
+    eliminarCatalogoPermiso
 };

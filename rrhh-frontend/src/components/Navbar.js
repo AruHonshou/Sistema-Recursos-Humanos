@@ -20,9 +20,11 @@ const Navbar = () => {
     '/incapacidades': 'Gestionar Incapacidades',
     '/evaluacion-rendimiento': 'Gestión de la Evaluación del Rendimiento',
     '/pagos-liquidacion': 'Gestión de Pagos de Liquidación',
-    '/consultas': 'Consultas',
-    '/reportes': 'Reportes',
+    '/PuestoLaboral': 'PuestoLaboral',
+    '/Roles': 'Roles',
+    '/Feriados': 'Feriados',
     '/gestion-usuarios': 'Gestión de Usuarios',
+    '/reporte-gestion-usuarios': 'Reportes de Usuarios',
     '/cambio-contrasena': 'Cambio de Contraseña',
     '/perfil': 'Perfil'
   };

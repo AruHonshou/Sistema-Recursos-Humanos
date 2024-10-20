@@ -7,7 +7,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 
-const Reportes = () => {
+const Roles = () => {
     const [roles, setRoles] = useState([]); 
     const [modalCrear, setModalCrear] = useState(false); 
     const [modalActualizar, setModalActualizar] = useState(false); 
@@ -222,4 +222,4 @@ const Reportes = () => {
     );
 };
 
-export default Reportes;
+export default Roles;

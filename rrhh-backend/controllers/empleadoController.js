@@ -1,11 +1,11 @@
-// controllers/catalogoPersonaController.js
+// controllers/empleadoController.js
 
 const db = require('../config/db'); // Asegúrate de que el archivo de configuración de la DB está correcto
 
-// Función para insertar una persona en el catálogo
-async function insertarCatalogoPersona(req, res) {
-    const { Descripcion_Catalogo_Persona } = req.body; 
-    let resultado;
+// Función para crear un nuevo empleado
+async function crearEmpleado(req, res) {
+    const { Fecha_Ingreso, puesto_laboral_idpuesto_laboral, persona_idPersona } = req.body; 
+    let resultado, idEmpleado;
 
     let connection;
     try {
@@ -14,63 +14,64 @@ async function insertarCatalogoPersona(req, res) {
 
         // Llama al procedimiento almacenado
         await connection.query(
-            'CALL InsertarCatalogoPersona(?, @resultado)',
-            [Descripcion_Catalogo_Persona]
+            'CALL CrearEmpleado(?, ?, ?, @idEmpleado, @resultado)',
+            [Fecha_Ingreso, puesto_laboral_idpuesto_laboral, persona_idPersona]
         );
 
-        const [rows] = await connection.query('SELECT @resultado AS resultado');
+        const [rows] = await connection.query('SELECT @idEmpleado AS idEmpleado, @resultado AS resultado');
         resultado = rows[0].resultado;
+        idEmpleado = rows[0].idEmpleado;
 
         await connection.commit();
-        res.status(200).json({ mensaje: resultado });
+        res.status(200).json({ mensaje: resultado, idEmpleado });
     } catch (error) {
         if (connection) await connection.rollback();
         console.error(error);
-        res.status(500).json({ error: 'Error al insertar en el catálogo' });
+        res.status(500).json({ error: 'Error al crear el empleado' });
     } finally {
         if (connection) connection.release();
     }
 }
 
-// Función para obtener todas las personas del catálogo
-async function obtenerCatalogoPersonas(req, res) {
+// Función para obtener todos los empleados
+async function leerTodosEmpleados(req, res) {
     let connection;
     try {
         connection = await db.getConnection();
-        const [rows] = await connection.query('CALL ObtenerCatalogoPersonas()');
+        const [rows] = await connection.query('CALL LeerTodosEmpleados()');
         res.status(200).json(rows);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Error al obtener el catálogo de personas' });
+        res.status(500).json({ error: 'Error al obtener la lista de empleados' });
     } finally {
         if (connection) connection.release();
     }
 }
 
-// Función para obtener una persona por ID
-async function obtenerCatalogoPersonaPorID(req, res) {
-    const { idCatalogo_Persona } = req.params; 
+// Función para obtener un empleado por ID
+async function leerEmpleadoPorID(req, res) {
+    const { idEmpleado, persona_idPersona } = req.params; 
     let connection;
     try {
         connection = await db.getConnection();
-        const [rows] = await connection.query('CALL ObtenerCatalogoPersonaPorID(?)', [idCatalogo_Persona]);
+        const [rows] = await connection.query('CALL LeerEmpleadoPorID(?, ?)', [idEmpleado, persona_idPersona]);
         
         if (rows.length > 0) {
             res.status(200).json(rows[0]);
         } else {
-            res.status(404).json({ error: 'Persona no encontrada' });
+            res.status(404).json({ error: 'Empleado no encontrado' });
         }
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Error al obtener la persona' });
+        res.status(500).json({ error: 'Error al obtener el empleado' });
     } finally {
         if (connection) connection.release();
     }
 }
 
-// Función para actualizar una persona
-async function actualizarCatalogoPersona(req, res) {
-    const { idCatalogo_Persona, Descripcion_Catalogo_Persona } = req.body; 
+// Función para actualizar un empleado
+async function actualizarEmpleado(req, res) {
+    const { idEmpleado, persona_idPersona, Fecha_Ingreso, puesto_laboral_idpuesto_laboral } = req.body; 
     let resultado;
 
     let connection;
@@ -79,8 +80,8 @@ async function actualizarCatalogoPersona(req, res) {
         await connection.beginTransaction();
 
         await connection.query(
-            'CALL ActualizarCatalogoPersona(?, ?, @resultado)',
-            [idCatalogo_Persona, Descripcion_Catalogo_Persona]
+            'CALL ActualizarEmpleado(?, ?, ?, ?, @resultado)',
+            [idEmpleado, persona_idPersona, Fecha_Ingreso, puesto_laboral_idpuesto_laboral]
         );
 
         const [rows] = await connection.query('SELECT @resultado AS resultado');
@@ -91,15 +92,15 @@ async function actualizarCatalogoPersona(req, res) {
     } catch (error) {
         if (connection) await connection.rollback();
         console.error(error);
-        res.status(500).json({ error: 'Error al actualizar en el catálogo' });
+        res.status(500).json({ error: 'Error al actualizar el empleado' });
     } finally {
         if (connection) connection.release();
     }
 }
 
-// Función para eliminar una persona
-async function eliminarCatalogoPersona(req, res) {
-    const { idCatalogo_Persona } = req.params; 
+// Función para eliminar un empleado
+async function eliminarEmpleado(req, res) {
+    const { idEmpleado, persona_idPersona } = req.params; 
     let resultado;
 
     let connection;
@@ -108,8 +109,8 @@ async function eliminarCatalogoPersona(req, res) {
         await connection.beginTransaction();
 
         await connection.query(
-            'CALL EliminarCatalogoPersona(?, @resultado)',
-            [idCatalogo_Persona]
+            'CALL EliminarEmpleado(?, ?, @resultado)',
+            [idEmpleado, persona_idPersona]
         );
 
         const [rows] = await connection.query('SELECT @resultado AS resultado');
@@ -120,16 +121,16 @@ async function eliminarCatalogoPersona(req, res) {
     } catch (error) {
         if (connection) await connection.rollback();
         console.error(error);
-        res.status(500).json({ error: 'Error al eliminar en el catálogo' });
+        res.status(500).json({ error: 'Error al eliminar el empleado' });
     } finally {
         if (connection) connection.release();
     }
 }
 
 module.exports = {
-    insertarCatalogoPersona,
-    obtenerCatalogoPersonas,
-    obtenerCatalogoPersonaPorID,
-    actualizarCatalogoPersona,
-    eliminarCatalogoPersona
+    crearEmpleado,
+    leerTodosEmpleados,
+    leerEmpleadoPorID,
+    actualizarEmpleado,
+    eliminarEmpleado
 };
