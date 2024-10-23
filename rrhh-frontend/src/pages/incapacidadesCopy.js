@@ -12,9 +12,6 @@ const Incapacidades = () => {
   const [empleados, setEmpleados] = useState([]);
   const [modalCrear, setModalCrear] = useState(false);
   const [modalActualizar, setModalActualizar] = useState(false);
-  const [porcentajeDeduccionCrear, setPorcentajeDeduccionCrear] = useState(null);
-  // const [porcentajeDeduccionActualizar, setPorcentajeDeduccionActualizar] = useState(null);
-
   const [nuevaIncapacidad, setNuevaIncapacidad] = useState({
     Fecha_Inicio: '',
     Fecha_Fin: '',
@@ -128,16 +125,6 @@ const Incapacidades = () => {
       return diferenciaEnDias >= 0 ? Math.floor(diferenciaEnDias) + 1 : 0; // +1 para contar ambos días
     }
     return 0;
-  };
-
-  const fetchPorcentajeDeduccion = async (idCatalogoIncapacidad, setPorcentajeDeduccion) => {
-    try {
-      const response = await axios.get(`http://localhost:3000/catalogoIncapacidades/${idCatalogoIncapacidad}`);
-      setPorcentajeDeduccion(response.data[0].Porcentaje_Deduccion);
-    } catch (error) {
-      console.error("Error fetching Porcentaje_Deduccion:", error);
-      setPorcentajeDeduccion(null);  // Resetear en caso de error
-    }
   };
 
   // Actualiza la nueva incapacidad con las fechas y el cálculo de días
@@ -350,10 +337,7 @@ const Incapacidades = () => {
                 <label className="block mb-2">Tipo de Incapacidad:</label>
                 <select
                   value={nuevaIncapacidad.catalogo_incapacidad_idCatalogo_Incapacidad}
-                  onChange={(e) => {
-                    setNuevaIncapacidad({ ...nuevaIncapacidad, catalogo_incapacidad_idCatalogo_Incapacidad: e.target.value });
-                    fetchPorcentajeDeduccion(e.target.value, setPorcentajeDeduccionCrear);  // Llamar al fetch cuando se seleccione un tipo
-                  }}
+                  onChange={(e) => setNuevaIncapacidad({ ...nuevaIncapacidad, catalogo_incapacidad_idCatalogo_Incapacidad: e.target.value })}
                   className="border rounded-lg w-full px-3 py-2"
                 >
                   <option value="">Seleccione un tipo de incapacidad</option>
@@ -363,17 +347,6 @@ const Incapacidades = () => {
                     </option>
                   ))}
                 </select>
-              </div>
-
-              {/* Nuevo Campo: Porcentaje de Deducción */}
-              <div>
-                <label className="block mb-2">Porcentaje de Deducción:</label>
-                <input
-                  type="number"
-                  value={porcentajeDeduccionCrear || ''}  // Mostrar el valor de Porcentaje_Deduccion
-                  readOnly
-                  className="border rounded-lg w-full px-3 py-2 bg-gray-200"
-                />
               </div>
 
               {/* Empleado */}
