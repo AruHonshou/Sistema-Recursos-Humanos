@@ -156,6 +156,12 @@ const Sidebar = () => {
             </NavLink>
           </li>
           <li>
+            <NavLink to="/reporte-incapacidades" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+              <AiOutlineUser className="mr-2" size={24} />
+              {isOpen && <span>Reportes de Incapacidades</span>}
+            </NavLink>
+          </li>
+          <li>
             <NavLink to="/cambio-contrasena" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
               <AiOutlineUser className="mr-2" size={24} />
               {isOpen && <span>Cambio de Contraseña</span>}

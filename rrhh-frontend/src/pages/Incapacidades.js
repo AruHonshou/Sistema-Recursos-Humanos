@@ -13,7 +13,9 @@ const Incapacidades = () => {
   const [modalCrear, setModalCrear] = useState(false);
   const [modalActualizar, setModalActualizar] = useState(false);
   const [porcentajeDeduccionCrear, setPorcentajeDeduccionCrear] = useState(null);
-  // const [porcentajeDeduccionActualizar, setPorcentajeDeduccionActualizar] = useState(null);
+  const [porcentajeDeduccionActualizar, setPorcentajeDeduccionActualizar] = useState(null);
+  const [salarioDiarioCrear, setSalarioDiarioCrear] = useState(null);
+  const [salarioDiarioActualizar, setSalarioDiarioActualizar] = useState(null);
 
   const [nuevaIncapacidad, setNuevaIncapacidad] = useState({
     Fecha_Inicio: '',
@@ -140,29 +142,62 @@ const Incapacidades = () => {
     }
   };
 
+  const fetchSalarioDiario = async (idEmpleado, setSalarioDiario) => {
+    try {
+      const response = await axios.get(`http://localhost:3000/calcularSalarioDiario/${idEmpleado}`);
+      const salarioDiario = response.data[0][0].SalarioDiario;
+      setSalarioDiario(salarioDiario);
+
+      // Calculate Monto_Deducción and update state
+      const montoDeduccion = (salarioDiario * porcentajeDeduccionActualizar * incapacidadActualizar.Cantidad_Dias) || 0;
+      setIncapacidadActualizar((prev) => ({ ...prev, Monto_Deduccion: montoDeduccion })); // Update Monto_Deducción
+    } catch (error) {
+      console.error("Error fetching SalarioDiario:", error);
+      setSalarioDiario(null); // Reset in case of error
+    }
+  };
+
   // Actualiza la nueva incapacidad con las fechas y el cálculo de días
   const handleChangeFecha = (campo, valor) => {
     const updatedIncapacidad = { ...nuevaIncapacidad, [campo]: valor };
     if (campo === 'Fecha_Inicio' || campo === 'Fecha_Fin') {
       updatedIncapacidad.Cantidad_Dias = calcularCantidadDias(updatedIncapacidad.Fecha_Inicio, updatedIncapacidad.Fecha_Fin);
     }
+    // Calcular y actualizar el Monto de Deducción
+    const montoDeduccion = (salarioDiarioCrear * porcentajeDeduccionCrear * updatedIncapacidad.Cantidad_Dias) || 0;
+    updatedIncapacidad.Monto_Deduccion = montoDeduccion; // Actualizar el monto de deducción en el estado
     setNuevaIncapacidad(updatedIncapacidad);
   };
 
   // Lo mismo para actualizar incapacidad
   const handleChangeFechaActualizar = (campo, valor) => {
     const updatedIncapacidad = { ...incapacidadActualizar, [campo]: valor };
+
+    // Calculate number of days
     if (campo === 'Fecha_Inicio' || campo === 'Fecha_Fin') {
       updatedIncapacidad.Cantidad_Dias = calcularCantidadDias(updatedIncapacidad.Fecha_Inicio, updatedIncapacidad.Fecha_Fin);
     }
+
+    // Calculate and update Monto_Deducción
+    const montoDeduccion = (salarioDiarioActualizar * porcentajeDeduccionActualizar * updatedIncapacidad.Cantidad_Dias) || 0;
+    updatedIncapacidad.Monto_Deduccion = montoDeduccion; // Update deduction amount in state
     setIncapacidadActualizar(updatedIncapacidad);
   };
 
+
+
   // Modal para actualizar una incapacidad
   const abrirModalActualizar = (incapacidad) => {
-    setIncapacidadActualizar(incapacidad);
+    const formatearFecha = (fecha) => new Date(fecha).toISOString().split('T')[0];
+
+    setIncapacidadActualizar({
+        ...incapacidad,
+        Fecha_Inicio: formatearFecha(incapacidad.Fecha_Inicio),
+        Fecha_Fin: formatearFecha(incapacidad.Fecha_Fin),
+    });
     setModalActualizar(true);
-  };
+};
+
 
   // Generar PDF
   const generarPDF = () => {
@@ -381,7 +416,11 @@ const Incapacidades = () => {
                 <label className="block mb-2">Empleado:</label>
                 <select
                   value={nuevaIncapacidad.empleados_idEmpleado}
-                  onChange={(e) => setNuevaIncapacidad({ ...nuevaIncapacidad, empleados_idEmpleado: e.target.value })}
+                  onChange={(e) => {
+                    const idEmpleado = e.target.value;
+                    setNuevaIncapacidad({ ...nuevaIncapacidad, empleados_idEmpleado: idEmpleado });
+                    fetchSalarioDiario(idEmpleado, setSalarioDiarioCrear);  // Llamar al fetch cuando se seleccione un empleado
+                  }}
                   className="border rounded-lg w-full px-3 py-2"
                 >
                   <option value="">Seleccione un empleado</option>
@@ -391,6 +430,17 @@ const Incapacidades = () => {
                     </option>
                   ))}
                 </select>
+              </div>
+
+              {/* Nuevo Campo: Salario Diario */}
+              <div>
+                <label className="block mb-2">Salario Diario:</label>
+                <input
+                  type="number"
+                  value={salarioDiarioCrear || ''}  // Mostrar el valor de SalarioDiario
+                  readOnly
+                  className="border rounded-lg w-full px-3 py-2 bg-gray-200"
+                />
               </div>
 
               {/* Cantidad de Días */}
@@ -404,14 +454,14 @@ const Incapacidades = () => {
                 />
               </div>
 
-              {/* Monto Deducción */}
+              {/* Monto de Deducción */}
               <div>
-                <label className="block mb-2">Monto Deducción:</label>
+                <label className="block mb-2">Monto de Deducción:</label>
                 <input
                   type="number"
-                  value={nuevaIncapacidad.Monto_Deduccion}
-                  onChange={(e) => setNuevaIncapacidad({ ...nuevaIncapacidad, Monto_Deduccion: e.target.value })}
-                  className="border rounded-lg w-full px-3 py-2"
+                  value={(salarioDiarioCrear * porcentajeDeduccionCrear * nuevaIncapacidad.Cantidad_Dias) || 0}
+                  readOnly
+                  className="border rounded-lg w-full px-3 py-2 bg-gray-200"
                 />
               </div>
 
@@ -448,22 +498,22 @@ const Incapacidades = () => {
               <div>
                 <label className="block mb-2">Fecha de Inicio:</label>
                 <input
-                  type="date"
-                  value={incapacidadActualizar.Fecha_Inicio}
-                  onChange={(e) => handleChangeFechaActualizar('Fecha_Inicio', e.target.value)}
-                  className="border rounded-lg w-full px-3 py-2"
-                />
+    type="date"
+    value={incapacidadActualizar.Fecha_Inicio} // Mostrar la fecha seleccionada
+    onChange={(e) => handleChangeFechaActualizar('Fecha_Inicio', e.target.value)}
+    className="border rounded-lg w-full px-3 py-2"
+/>
               </div>
 
               {/* Fecha de Fin */}
               <div>
                 <label className="block mb-2">Fecha de Fin:</label>
                 <input
-                  type="date"
-                  value={incapacidadActualizar.Fecha_Fin}
-                  onChange={(e) => handleChangeFechaActualizar('Fecha_Fin', e.target.value)}
-                  className="border rounded-lg w-full px-3 py-2"
-                />
+    type="date"
+    value={incapacidadActualizar.Fecha_Fin} // Mostrar la fecha seleccionada
+    onChange={(e) => handleChangeFechaActualizar('Fecha_Fin', e.target.value)}
+    className="border rounded-lg w-full px-3 py-2"
+/>
               </div>
 
               {/* Descripción */}
@@ -482,7 +532,11 @@ const Incapacidades = () => {
                 <label className="block mb-2">Tipo de Incapacidad:</label>
                 <select
                   value={incapacidadActualizar.catalogo_incapacidad_idCatalogo_Incapacidad}
-                  onChange={(e) => setIncapacidadActualizar({ ...incapacidadActualizar, catalogo_incapacidad_idCatalogo_Incapacidad: e.target.value })}
+                  onChange={(e) => {
+                    const tipoIncapacidadId = e.target.value;
+                    setIncapacidadActualizar({ ...incapacidadActualizar, catalogo_incapacidad_idCatalogo_Incapacidad: tipoIncapacidadId });
+                    fetchPorcentajeDeduccion(tipoIncapacidadId, setPorcentajeDeduccionActualizar);  // Llamar al fetch cuando se seleccione un tipo
+                  }}
                   className="border rounded-lg w-full px-3 py-2"
                 >
                   <option value="">Seleccione un tipo de incapacidad</option>
@@ -494,12 +548,27 @@ const Incapacidades = () => {
                 </select>
               </div>
 
+              {/* Nuevo Campo: Porcentaje de Deducción */}
+              <div>
+                <label className="block mb-2">Porcentaje de Deducción:</label>
+                <input
+                  type="number"
+                  value={porcentajeDeduccionActualizar || ''}
+                  readOnly
+                  className="border rounded-lg w-full px-3 py-2 bg-gray-200"
+                />
+              </div>
+
               {/* Empleado */}
               <div>
                 <label className="block mb-2">Empleado:</label>
                 <select
                   value={incapacidadActualizar.empleados_idEmpleado}
-                  onChange={(e) => setIncapacidadActualizar({ ...incapacidadActualizar, empleados_idEmpleado: e.target.value })}
+                  onChange={(e) => {
+                    const idEmpleado = e.target.value;
+                    setIncapacidadActualizar({ ...incapacidadActualizar, empleados_idEmpleado: idEmpleado });
+                    fetchSalarioDiario(idEmpleado, setSalarioDiarioActualizar);  // Llamar al fetch cuando se seleccione un empleado
+                  }}
                   className="border rounded-lg w-full px-3 py-2"
                 >
                   <option value="">Seleccione un empleado</option>
@@ -509,6 +578,17 @@ const Incapacidades = () => {
                     </option>
                   ))}
                 </select>
+              </div>
+
+              {/* Nuevo Campo: Salario Diario */}
+              <div>
+                <label className="block mb-2">Salario Diario:</label>
+                <input
+                  type="number"
+                  value={salarioDiarioActualizar || ''}
+                  readOnly
+                  className="border rounded-lg w-full px-3 py-2 bg-gray-200"
+                />
               </div>
 
               {/* Cantidad de Días */}
@@ -527,9 +607,9 @@ const Incapacidades = () => {
                 <label className="block mb-2">Monto Deducción:</label>
                 <input
                   type="number"
-                  value={incapacidadActualizar.Monto_Deduccion}
-                  onChange={(e) => setIncapacidadActualizar({ ...incapacidadActualizar, Monto_Deduccion: e.target.value })}
-                  className="border rounded-lg w-full px-3 py-2"
+                  value={incapacidadActualizar.Monto_Deduccion} // Use the state value directly
+                  readOnly
+                  className="border rounded-lg w-full px-3 py-2 bg-gray-200"
                 />
               </div>
 
@@ -554,6 +634,7 @@ const Incapacidades = () => {
           </div>
         </div>
       )}
+
 
     </div>
   );

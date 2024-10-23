@@ -15,9 +15,14 @@ import PagosLiquidacion from '../pages/PagosLiquidacion';
 import PuestoLaboral from '../pages/PuestoLaboral';
 import Roles from '../pages/Roles';
 import Feriados from '../pages/Feriados';
-import CambioContrasena from '../pages/CambioContrasena';
 import GestionUsuarios from '../pages/GestionUsuarios'; // Nueva página para la gestión de usuarios
+
+// Reportes
 import ReportesGestionUsuarios from '../pages/ReportesGestionUsuarios'; // Nueva página para la gestión de usuarios
+import IncapacidadesReportes from '../pages/IncapacidadesReportes'; // Nueva página para la gestión de usuarios
+import CambioContrasena from '../pages/CambioContrasena';
+
+
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 
@@ -48,6 +53,7 @@ const AppRoutes = () => {
 
           {/* Reportes */}
           <Route path="/reporte-gestion-usuarios" element={<ReportesGestionUsuarios />} />
+          <Route path="/reporte-incapacidades" element={<IncapacidadesReportes />} />
           <Route path="/cambio-contrasena" element={<CambioContrasena />} />
         </Route>
       </Routes>
@@ -85,6 +91,7 @@ const LayoutWithSidebarNavbar = () => {
 
             {/* Reportes */}
             <Route path="/reporte-gestion-usuarios" element={<ReportesGestionUsuarios />} />
+            <Route path="/reporte-incapacidades" element={<IncapacidadesReportes />} />
             <Route path="/cambio-contrasena" element={<CambioContrasena />} />
           </Routes>
         </main>

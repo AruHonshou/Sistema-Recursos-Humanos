@@ -4,13 +4,13 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 
-const Incapacidades = () => {
+const IncapacidadesReportes = () => {
   const [incapacidades, setIncapacidades] = useState([]);
   const [nombres, setNombres] = useState({});
-  const [fechaInicio, setFechaInicio] = useState(''); // Para el filtro de fecha de inicio
-  const [fechaFin, setFechaFin] = useState(''); // Para el filtro de fecha de fin
+  const [fechaInicio, setFechaInicio] = useState('');
+  const [fechaFin, setFechaFin] = useState('');
+  const [catalogos, setCatalogos] = useState([]);
 
-  // Obtener todas las incapacidades
   const obtenerIncapacidades = async () => {
     try {
       const response = await axios.get('http://localhost:3000/api/incapacidad');
@@ -24,32 +24,58 @@ const Incapacidades = () => {
     }
   };
 
-  // Generar PDF con las incapacidades filtradas
+  const obtenerCatalogos = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/catalogoIncapacidades');
+      setCatalogos(response.data);
+    } catch (error) {
+      console.error('Error al obtener el catálogo de incapacidades:', error);
+    }
+  };
+
   const generarPDF = () => {
     const doc = new jsPDF();
     doc.autoTable({
-      head: [['Fecha Inicio', 'Fecha Fin', 'Descripción', 'Días', 'Monto Deducción']],
+      head: [['ID Empleado', 'Nombre', 'Fecha Inicio', 'Fecha Fin', 'Descripción', 'Días', 'Monto Deducción', 'Tipo Incapacidad']],
       body: incapacidadesFiltradas.map((incapacidad) => [
-        incapacidad.Fecha_Inicio,
-        incapacidad.Fecha_Fin,
+        incapacidad.empleados_idEmpleado,
+        nombres[incapacidad.empleados_idEmpleado] || 'Cargando...', // Mostrar el nombre del empleado
+        new Date(incapacidad.Fecha_Inicio).toISOString().split('T')[0], // Formatear la fecha a YYYY-MM-DD
+        new Date(incapacidad.Fecha_Fin).toISOString().split('T')[0], // Formatear la fecha a YYYY-MM-DD
         incapacidad.Descripcion_Incapacidades,
         incapacidad.Cantidad_Dias,
-        incapacidad.Monto_Deduccion
+        incapacidad.Monto_Deduccion,
+        obtenerDescripcionIncapacidad(incapacidad.catalogo_incapacidad_idCatalogo_Incapacidad) // Mostrar la descripción
       ]),
     });
     doc.save('incapacidades.pdf');
   };
+  
+  
 
-  // Generar Excel con las incapacidades filtradas
   const generarExcel = () => {
-    const ws = XLSX.utils.json_to_sheet(incapacidadesFiltradas);
+    const datosParaExcel = incapacidadesFiltradas.map((incapacidad) => ({
+      'ID Empleado': incapacidad.empleados_idEmpleado,
+      'Nombre': nombres[incapacidad.empleados_idEmpleado] || 'Cargando...', // Mostrar el nombre del empleado
+      'Fecha Inicio': new Date(incapacidad.Fecha_Inicio).toISOString().split('T')[0], // Formatear la fecha a YYYY-MM-DD
+      'Fecha Fin': new Date(incapacidad.Fecha_Fin).toISOString().split('T')[0], // Formatear la fecha a YYYY-MM-DD
+      'Descripción': incapacidad.Descripcion_Incapacidades,
+      'Días': incapacidad.Cantidad_Dias,
+      'Monto Deducción': incapacidad.Monto_Deduccion,
+      'Tipo Incapacidad': obtenerDescripcionIncapacidad(incapacidad.catalogo_incapacidad_idCatalogo_Incapacidad) // Mostrar la descripción
+    }));
+  
+    const ws = XLSX.utils.json_to_sheet(datosParaExcel);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Incapacidades');
     XLSX.writeFile(wb, 'incapacidades.xlsx');
   };
+  
+  
 
   useEffect(() => {
     obtenerIncapacidades();
+    obtenerCatalogos(); // Asegúrate de llamar a la función para obtener los catálogos
   }, []);
 
   const fetchNombreEmpleado = async (id) => {
@@ -61,6 +87,12 @@ const Incapacidades = () => {
       return '';
     }
   };
+
+  const obtenerDescripcionIncapacidad = (idCatalogo) => {
+    const catalogo = catalogos.find((cat) => cat.idCatalogo_Incapacidad === idCatalogo);
+    return catalogo ? catalogo.Descripcion_Catalogo_Incapacidad : 'Desconocido';
+  };
+  
 
   useEffect(() => {
     const fetchNombres = async () => {
@@ -77,7 +109,6 @@ const Incapacidades = () => {
     }
   }, [incapacidades]);
 
-  // Filtrar incapacidades por rango de fechas
   const incapacidadesFiltradas = incapacidades.filter((incapacidad) => {
     const fechaIncapacidad = new Date(incapacidad.Fecha_Inicio).getTime();
     const inicio = fechaInicio ? new Date(fechaInicio).getTime() : null;
@@ -90,15 +121,14 @@ const Incapacidades = () => {
     } else if (fin) {
       return fechaIncapacidad <= fin;
     } else {
-      return true; // Sin filtros, devuelve todos
+      return true;
     }
   });
 
   return (
     <div className="p-6 bg-[#f9f9f9] dark:bg-[#1E1E2F] min-h-screen">
-      <h1 className="text-2xl font-bold mb-4 text-black dark:text-white text-center">Gestión de Incapacidades</h1>
+      <h1 className="text-2xl font-bold mb-4 text-black dark:text-white text-center">Reporte de Incapacidades</h1>
 
-      {/* Filtros por fecha */}
       <div className="flex justify-center mb-4">
         <div className="mr-4">
           <label className="text-black dark:text-white block mb-2">Fecha Inicio:</label>
@@ -123,13 +153,13 @@ const Incapacidades = () => {
       <div className="flex justify-between mb-4">
         <button
           onClick={generarPDF}
-          className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+          className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg shadow-md"
         >
           Exportar a PDF
         </button>
         <button
           onClick={generarExcel}
-          className="bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+          className="bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 rounded-lg shadow-md"
         >
           Exportar a Excel
         </button>
@@ -146,6 +176,7 @@ const Incapacidades = () => {
               <th className="px-4 py-2 text-black dark:text-white text-center">Descripción</th>
               <th className="px-4 py-2 text-black dark:text-white text-center">Días</th>
               <th className="px-4 py-2 text-black dark:text-white text-center">Monto Deducción</th>
+              <th className="px-4 py-2 text-black dark:text-white text-center">Tipo Incapacidad</th>
             </tr>
           </thead>
           <tbody>
@@ -153,15 +184,12 @@ const Incapacidades = () => {
               <tr key={`${incapacidad.Fecha_Inicio}-${incapacidad.empleados_idEmpleado}`} className="border-b dark:border-[#4D4D61]">
                 <td className="px-4 py-2 text-black dark:text-white text-center">{incapacidad.empleados_idEmpleado}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{nombres[incapacidad.empleados_idEmpleado] || 'Cargando...'}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">
-                  {new Date(incapacidad.Fecha_Inicio).toISOString().split('T')[0]}
-                </td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">
-                  {new Date(incapacidad.Fecha_Fin).toISOString().split('T')[0]}
-                </td>
+                <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(incapacidad.Fecha_Inicio).toISOString().split('T')[0]}</td>
+                <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(incapacidad.Fecha_Fin).toISOString().split('T')[0]}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{incapacidad.Descripcion_Incapacidades}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{incapacidad.Cantidad_Dias}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{incapacidad.Monto_Deduccion}</td>
+                <td className="px-4 py-2 text-black dark:text-white text-center">{obtenerDescripcionIncapacidad(incapacidad.catalogo_incapacidad_idCatalogo_Incapacidad)}</td>
               </tr>
             ))}
           </tbody>
@@ -171,4 +199,4 @@ const Incapacidades = () => {
   );
 };
 
-export default Incapacidades;
+export default IncapacidadesReportes;

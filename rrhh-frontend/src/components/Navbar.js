@@ -25,6 +25,7 @@ const Navbar = () => {
     '/Feriados': 'Feriados',
     '/gestion-usuarios': 'Gestión de Usuarios',
     '/reporte-gestion-usuarios': 'Reportes de Usuarios',
+    '/reporte-incapacidades': 'Reportes de Incapacidades',
     '/cambio-contrasena': 'Cambio de Contraseña',
     '/perfil': 'Perfil'
   };
