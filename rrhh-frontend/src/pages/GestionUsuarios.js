@@ -61,12 +61,40 @@ const GestionUsuarios = () => {
         }
     };
 
+    const handleCatalogoPersonaChange = (e) => {
+        const selectedValue = e.target.value;
+        setNuevaPersona({ ...nuevaPersona, catalogo_persona_idCatalogo_Persona: selectedValue });
+
+        // Ajustar la longitud máxima de la cédula según el tipo de persona seleccionado
+        setError(null); // Limpiar error al cambiar el tipo de persona
+    };
+
+
+
     const crearPersona = async () => {
         // Validaciones de campos
         const cedulaRegex = /^[0-9]+$/; // Solo números
-        const nameRegex = /^[A-Z][a-zA-Z\s]+$/; // Primera letra mayúscula, resto solo letras
+        const nameRegex = /^[A-ZÑ][a-zA-ZÑñ\s]+$/; // Permitir la letra Ñ y ñ
         const phoneRegex = /^[0-9]+$/; // Solo números
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Validación básica de email
+
+        const selectedCatalogo = nuevaPersona.catalogo_persona_idCatalogo_Persona;
+        let maxLength = 12;
+
+        // Definir la longitud máxima según el catálogo seleccionado
+        if (selectedCatalogo === '1') {
+            maxLength = 9;
+        } else if (selectedCatalogo === '2') {
+            maxLength = 12;
+        } else if (selectedCatalogo === '3') {
+            maxLength = 5;
+        }
+
+        // Validar que la longitud de la cédula sea la correcta
+        if (nuevaPersona.idPersona.length !== maxLength) {
+            setError(`La cédula para el tipo seleccionado debe tener exactamente ${maxLength} dígitos.`);
+            return;
+        }
 
         // Validar cédula
         if (!nuevaPersona.idPersona || !cedulaRegex.test(nuevaPersona.idPersona)) {
@@ -76,31 +104,36 @@ const GestionUsuarios = () => {
 
         // Validar nombre
         if (!nuevaPersona.Nombre || !nameRegex.test(nuevaPersona.Nombre)) {
-            setError('El nombre debe iniciar con mayúscula y contener solo letras.');
+            setError('El nombre debe iniciar con mayúscula y contener solo letras, incluyendo la letra Ñ.');
             return;
         }
 
         // Validar primer apellido
         if (!nuevaPersona.Primer_Apellido || !nameRegex.test(nuevaPersona.Primer_Apellido)) {
-            setError('El primer apellido debe iniciar con mayúscula y contener solo letras.');
+            setError('El primer apellido debe iniciar con mayúscula y contener solo letras, incluyendo la letra Ñ.');
             return;
         }
 
         // Validar segundo apellido
         if (!nuevaPersona.Segundo_Apellido || !nameRegex.test(nuevaPersona.Segundo_Apellido)) {
-            setError('El segundo apellido debe iniciar con mayúscula y contener solo letras.');
+            setError('El segundo apellido debe iniciar con mayúscula y contener solo letras, incluyendo la letra Ñ.');
             return;
         }
 
         // Validar fecha de nacimiento
-        if (!nuevaPersona.Fecha_Nacimiento) {
-            setError('Debe seleccionar una fecha de nacimiento.');
+        const fechaNacimiento = new Date(nuevaPersona.Fecha_Nacimiento);
+        const hoy = new Date();
+        const edadMinima = 15;
+        const fechaLimite = new Date(hoy.getFullYear() - edadMinima, hoy.getMonth(), hoy.getDate());
+
+        if (!nuevaPersona.Fecha_Nacimiento || fechaNacimiento > fechaLimite) {
+            setError('La fecha de nacimiento debe ser de al menos 15 años atrás.');
             return;
         }
 
         // Validar número de teléfono
-        if (!nuevaPersona.Numero_Telefono || !phoneRegex.test(nuevaPersona.Numero_Telefono)) {
-            setError('El número de teléfono debe contener solo números.');
+        if (!nuevaPersona.Numero_Telefono || !phoneRegex.test(nuevaPersona.Numero_Telefono) || nuevaPersona.Numero_Telefono.length !== 8) {
+            setError('El número de teléfono debe contener exactamente 8 dígitos.');
             return;
         }
 
@@ -109,6 +142,7 @@ const GestionUsuarios = () => {
             setError('El detalle del teléfono debe iniciar con mayúscula y contener solo letras.');
             return;
         }
+
 
         // Validar provincia
         if (!nuevaPersona.distrito_canton_provincia_idprovincia) {
@@ -235,40 +269,67 @@ const GestionUsuarios = () => {
 
     const actualizarPersona = async () => {
         // Validaciones de campos
-        // const cedulaRegex = /^[0-9]+$/; // Solo números
-        const nameRegex = /^[A-Z][a-zA-Z\s]+$/; // Primera letra mayúscula, resto solo letras
+        const cedulaRegex = /^[0-9]+$/; // Solo números
+        const nameRegex = /^[A-ZÑ][a-zA-ZÑñ\s]+$/; // Permitir la letra Ñ y ñ
         const phoneRegex = /^[0-9]+$/; // Solo números
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Validación básica de email
 
-        // Validar cédula (no se permite modificar, por lo que no la validamos aquí)
+        const selectedCatalogo = nuevaPersona.catalogo_persona_idCatalogo_Persona;
+        let maxLength = 12;
+
+        // Definir la longitud máxima según el catálogo seleccionado
+        if (selectedCatalogo === '1') {
+            maxLength = 9;
+        } else if (selectedCatalogo === '2') {
+            maxLength = 12;
+        } else if (selectedCatalogo === '3') {
+            maxLength = 5;
+        }
+
+        // Validar que la longitud de la cédula sea la correcta
+        if (nuevaPersona.idPersona.length !== maxLength) {
+            setError(`La cédula para el tipo seleccionado debe tener exactamente ${maxLength} dígitos.`);
+            return;
+        }
+
+        // Validar cédula
+        if (!nuevaPersona.idPersona || !cedulaRegex.test(nuevaPersona.idPersona)) {
+            setError('La cédula debe contener solo números.');
+            return;
+        }
 
         // Validar nombre
         if (!nuevaPersona.Nombre || !nameRegex.test(nuevaPersona.Nombre)) {
-            setError('El nombre debe iniciar con mayúscula y contener solo letras.');
+            setError('El nombre debe iniciar con mayúscula y contener solo letras, incluyendo la letra Ñ.');
             return;
         }
 
         // Validar primer apellido
         if (!nuevaPersona.Primer_Apellido || !nameRegex.test(nuevaPersona.Primer_Apellido)) {
-            setError('El primer apellido debe iniciar con mayúscula y contener solo letras.');
+            setError('El primer apellido debe iniciar con mayúscula y contener solo letras, incluyendo la letra Ñ.');
             return;
         }
 
         // Validar segundo apellido
         if (!nuevaPersona.Segundo_Apellido || !nameRegex.test(nuevaPersona.Segundo_Apellido)) {
-            setError('El segundo apellido debe iniciar con mayúscula y contener solo letras.');
+            setError('El segundo apellido debe iniciar con mayúscula y contener solo letras, incluyendo la letra Ñ.');
             return;
         }
 
         // Validar fecha de nacimiento
-        if (!nuevaPersona.Fecha_Nacimiento) {
-            setError('Debe seleccionar una fecha de nacimiento.');
+        const fechaNacimiento = new Date(nuevaPersona.Fecha_Nacimiento);
+        const hoy = new Date();
+        const edadMinima = 15;
+        const fechaLimite = new Date(hoy.getFullYear() - edadMinima, hoy.getMonth(), hoy.getDate());
+
+        if (!nuevaPersona.Fecha_Nacimiento || fechaNacimiento > fechaLimite) {
+            setError('La fecha de nacimiento debe ser de al menos 15 años atrás.');
             return;
         }
 
         // Validar número de teléfono
-        if (!nuevaPersona.Numero_Telefono || !phoneRegex.test(nuevaPersona.Numero_Telefono)) {
-            setError('El número de teléfono debe contener solo números.');
+        if (!nuevaPersona.Numero_Telefono || !phoneRegex.test(nuevaPersona.Numero_Telefono) || nuevaPersona.Numero_Telefono.length !== 8) {
+            setError('El número de teléfono debe contener exactamente 8 dígitos.');
             return;
         }
 
@@ -359,6 +420,7 @@ const GestionUsuarios = () => {
             setError(`Error al actualizar el registro: ${error.message}`);
         }
     };
+
 
 
 
@@ -462,7 +524,7 @@ const GestionUsuarios = () => {
         if (nuevaPersona.distrito_canton_provincia_idprovincia) {
             const fetchCantones = async () => {
                 try {
-                    const response = await axios.get(`http://localhost:3000/api/cantones?provinciaId=${nuevaPersona.distrito_canton_provincia_idprovincia}`);
+                    const response = await axios.get(`http://localhost:3000/api/direcciones/cantones/${nuevaPersona.distrito_canton_provincia_idprovincia}`);
                     setCantones(response.data[0]);
                 } catch (error) {
                     console.error('Error al obtener cantones:', error);
@@ -473,10 +535,10 @@ const GestionUsuarios = () => {
     }, [nuevaPersona.distrito_canton_provincia_idprovincia]);
 
     useEffect(() => {
-        if (nuevaPersona.distrito_canton_idCanton) {
+        if (nuevaPersona.distrito_canton_provincia_idprovincia && nuevaPersona.distrito_canton_idCanton) {
             const fetchDistritos = async () => {
                 try {
-                    const response = await axios.get(`http://localhost:3000/api/distritos?cantonId=${nuevaPersona.distrito_canton_idCanton}`);
+                    const response = await axios.get(`http://localhost:3000/api/direcciones/distritos/${nuevaPersona.distrito_canton_provincia_idprovincia}/${nuevaPersona.distrito_canton_idCanton}`);
                     setDistritos(response.data[0]);
                 } catch (error) {
                     console.error('Error al obtener distritos:', error);
@@ -484,7 +546,7 @@ const GestionUsuarios = () => {
             };
             fetchDistritos();
         }
-    }, [nuevaPersona.distrito_canton_idCanton]);
+    }, [nuevaPersona.distrito_canton_provincia_idprovincia, nuevaPersona.distrito_canton_idCanton]);
 
     useEffect(() => {
         const fetchPuestosLaborales = async () => {
@@ -646,14 +708,51 @@ const GestionUsuarios = () => {
                         <h2 className="text-lg font-bold mb-4 text-black dark:text-white">Nueva Persona</h2>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
+                                <label className="text-black dark:text-white mb-2 block">Catálogo de Persona</label>
+                                <select
+                                    value={nuevaPersona.catalogo_persona_idCatalogo_Persona}
+                                    onChange={handleCatalogoPersonaChange}
+                                    className="border rounded-md p-2 mb-2 w-full"
+                                >
+                                    <option value="">Seleccione un catálogo</option>
+                                    {catalogoPersonas.map((persona) => (
+                                        <option key={persona.idCatalogo_Persona} value={persona.idCatalogo_Persona}>
+                                            {persona.Descripcion_Catalogo_Persona || 'Descripción no disponible'}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div>
                                 <label className="text-black dark:text-white mb-2 block">Cédula</label>
                                 <input
                                     type="text"
                                     placeholder="Cédula"
                                     value={nuevaPersona.idPersona}
-                                    onChange={(e) => setNuevaPersona({ ...nuevaPersona, idPersona: e.target.value })}
+                                    onChange={(e) => {
+                                        const selectedCatalogo = nuevaPersona.catalogo_persona_idCatalogo_Persona;
+                                        let maxLength = 12;
+
+                                        if (selectedCatalogo === 'extranjero') {
+                                            maxLength = 12;
+                                        } else if (selectedCatalogo === 'nacional') {
+                                            maxLength = 9;
+                                        } else if (selectedCatalogo === 'pasaporte') {
+                                            maxLength = 5;
+                                        }
+
+                                        const value = e.target.value.replace(/\D/g, '');
+
+                                        if (value.length > maxLength) {
+                                            setError(`La cédula para ${selectedCatalogo} debe tener exactamente ${maxLength} dígitos.`);
+                                        } else {
+                                            setError(null);
+                                        }
+
+                                        setNuevaPersona({ ...nuevaPersona, idPersona: value.slice(0, maxLength) });
+                                    }}
                                     className="border rounded-md p-2 mb-2 w-full"
                                 />
+
                             </div>
                             <div>
                                 <label className="text-black dark:text-white mb-2 block">Nombre</label>
@@ -693,21 +792,6 @@ const GestionUsuarios = () => {
                                     onChange={(e) => setNuevaPersona({ ...nuevaPersona, Fecha_Nacimiento: e.target.value })}
                                     className="border rounded-md p-2 mb-2 w-full"
                                 />
-                            </div>
-                            <div>
-                                <label className="text-black dark:text-white mb-2 block">Catálogo de Persona</label>
-                                <select
-                                    value={nuevaPersona.catalogo_persona_idCatalogo_Persona}
-                                    onChange={(e) => setNuevaPersona({ ...nuevaPersona, catalogo_persona_idCatalogo_Persona: e.target.value })}
-                                    className="border rounded-md p-2 mb-2 w-full"
-                                >
-                                    <option value="">Seleccione un catálogo</option>
-                                    {catalogoPersonas.map(persona => (
-                                        <option key={persona.idCatalogo_Persona} value={persona.idCatalogo_Persona}>
-                                            {persona.Descripcion_Catalogo_Persona || 'Descripción no disponible'}
-                                        </option>
-                                    ))}
-                                </select>
                             </div>
                             <div>
                                 <label className="text-black dark:text-white mb-2 block">Número de Teléfono</label>
@@ -800,6 +884,7 @@ const GestionUsuarios = () => {
                                         </option>
                                     ))}
                                 </select>
+
                             </div>
                             <div>
                                 <label className="text-black dark:text-white mb-2 block">Correo Electrónico</label>

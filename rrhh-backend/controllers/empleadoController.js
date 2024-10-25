@@ -127,10 +127,26 @@ async function eliminarEmpleado(req, res) {
     }
 }
 
+// Función para leer todos los empleados con nombre completo
+async function leerEmpleadosConNombreCompleto(req, res) {
+    let connection;
+    try {
+        connection = await db.getConnection();
+        const [rows] = await connection.query('CALL LeerEmpleadosConNombreCompleto()'); // Llama al procedimiento almacenado
+        res.status(200).json(rows);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener los empleados con nombre completo' });
+    } finally {
+        if (connection) connection.release();
+    }
+}
+
 module.exports = {
     crearEmpleado,
     leerTodosEmpleados,
     leerEmpleadoPorID,
     actualizarEmpleado,
-    eliminarEmpleado
+    eliminarEmpleado,
+    leerEmpleadosConNombreCompleto 
 };

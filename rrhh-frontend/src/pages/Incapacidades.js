@@ -6,8 +6,9 @@ import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 
 const Incapacidades = () => {
+
   const [incapacidades, setIncapacidades] = useState([]);
-  const [nombres, setNombres] = useState({}); // Para almacenar los nombres de los empleados
+  const [nombres, setNombres] = useState({});
   const [catalogos, setCatalogos] = useState([]);
   const [empleados, setEmpleados] = useState([]);
   const [modalCrear, setModalCrear] = useState(false);
@@ -37,7 +38,6 @@ const Incapacidades = () => {
   });
   const [error, setError] = useState('');
 
-  // Obtener todas las incapacidades
   const obtenerIncapacidades = async () => {
     try {
       const response = await axios.get('http://localhost:3000/api/incapacidad');
@@ -53,7 +53,6 @@ const Incapacidades = () => {
   };
 
 
-  // Obtener catálogo de incapacidades
   const obtenerCatalogos = async () => {
     try {
       const response = await axios.get('http://localhost:3000/catalogoIncapacidades');
@@ -63,25 +62,24 @@ const Incapacidades = () => {
     }
   };
 
-  // Obtener empleados
   const obtenerEmpleados = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/empleados');
-      setEmpleados(response.data[0]); // Asegúrate de que esto esté devolviendo la lista correcta
+      const response = await axios.get('http://localhost:3000/api/empleados/nombre-completo');
+      setEmpleados(response.data[0]); // Asignar directamente la lista de empleados con idEmpleado y NombreCompleto
     } catch (error) {
       console.error('Error al obtener los empleados:', error);
     }
   };
 
-  // Crear nueva incapacidad
   const crearIncapacidad = async () => {
     if (new Date(nuevaIncapacidad.Fecha_Inicio) > new Date()) {
       setError('La fecha de inicio no puede estar en el futuro.');
       return;
     }
-
     try {
-      await axios.post('http://localhost:3000/api/incapacidad', nuevaIncapacidad);
+      const montoDeduccionCalculado = salarioDiarioCrear * porcentajeDeduccionCrear * nuevaIncapacidad.Cantidad_Dias || 0;
+      const incapacidadConMonto = { ...nuevaIncapacidad, Monto_Deduccion: montoDeduccionCalculado };
+      await axios.post('http://localhost:3000/api/incapacidad', incapacidadConMonto);
       setModalCrear(false);
       obtenerIncapacidades();
       setError('');
@@ -90,7 +88,7 @@ const Incapacidades = () => {
     }
   };
 
-  // Actualizar incapacidad
+
   const actualizarIncapacidad = async () => {
     if (new Date(incapacidadActualizar.Fecha_Inicio) > new Date()) {
       setError('La fecha de inicio no puede estar en el futuro.');
@@ -108,7 +106,6 @@ const Incapacidades = () => {
   };
 
 
-  // Eliminar incapacidad
   const eliminarIncapacidad = async (Fecha_Inicio, empleados_idEmpleado) => {
     const fechaFormateada = new Date(Fecha_Inicio).toISOString().split('T')[0];
 
@@ -120,14 +117,13 @@ const Incapacidades = () => {
     }
   };
 
-  // Función para calcular la cantidad de días
   const calcularCantidadDias = (fechaInicio, fechaFin) => {
     if (fechaInicio && fechaFin) {
       const inicio = new Date(fechaInicio);
       const fin = new Date(fechaFin);
       const diferenciaEnMilisegundos = fin - inicio;
       const diferenciaEnDias = diferenciaEnMilisegundos / (1000 * 60 * 60 * 24);
-      return diferenciaEnDias >= 0 ? Math.floor(diferenciaEnDias) + 1 : 0; // +1 para contar ambos días
+      return diferenciaEnDias >= 0 ? Math.floor(diferenciaEnDias) + 1 : 0;
     }
     return 0;
   };
@@ -138,7 +134,7 @@ const Incapacidades = () => {
       setPorcentajeDeduccion(response.data[0].Porcentaje_Deduccion);
     } catch (error) {
       console.error("Error fetching Porcentaje_Deduccion:", error);
-      setPorcentajeDeduccion(null);  // Resetear en caso de error
+      setPorcentajeDeduccion(null);
     }
   };
 
@@ -153,53 +149,73 @@ const Incapacidades = () => {
       setIncapacidadActualizar((prev) => ({ ...prev, Monto_Deduccion: montoDeduccion })); // Update Monto_Deducción
     } catch (error) {
       console.error("Error fetching SalarioDiario:", error);
-      setSalarioDiario(null); // Reset in case of error
+      setSalarioDiario(null);
     }
   };
 
-  // Actualiza la nueva incapacidad con las fechas y el cálculo de días
   const handleChangeFecha = (campo, valor) => {
     const updatedIncapacidad = { ...nuevaIncapacidad, [campo]: valor };
+
+    // Calcular la cantidad de días si cambia Fecha_Inicio o Fecha_Fin
     if (campo === 'Fecha_Inicio' || campo === 'Fecha_Fin') {
       updatedIncapacidad.Cantidad_Dias = calcularCantidadDias(updatedIncapacidad.Fecha_Inicio, updatedIncapacidad.Fecha_Fin);
     }
-    // Calcular y actualizar el Monto de Deducción
-    const montoDeduccion = (salarioDiarioCrear * porcentajeDeduccionCrear * updatedIncapacidad.Cantidad_Dias) || 0;
-    updatedIncapacidad.Monto_Deduccion = montoDeduccion; // Actualizar el monto de deducción en el estado
+
+    // Calcular el Monto de Deducción si el salario y el porcentaje están disponibles
+    if (salarioDiarioCrear && porcentajeDeduccionCrear) {
+      const montoDeduccion = salarioDiarioCrear * porcentajeDeduccionCrear * updatedIncapacidad.Cantidad_Dias;
+      updatedIncapacidad.Monto_Deduccion = montoDeduccion || 0;
+    }
+
+    // Validar si la fecha de inicio es futura y mostrar el error si aplica
+    if (campo === 'Fecha_Inicio' && new Date(valor) > new Date()) {
+      setError('La fecha de inicio no puede ser un día futuro.');
+    } else {
+      setError('');
+    }
+
     setNuevaIncapacidad(updatedIncapacidad);
   };
 
-  // Lo mismo para actualizar incapacidad
+
+
   const handleChangeFechaActualizar = (campo, valor) => {
     const updatedIncapacidad = { ...incapacidadActualizar, [campo]: valor };
 
-    // Calculate number of days
+    // Calcular la cantidad de días si cambia Fecha_Inicio o Fecha_Fin
     if (campo === 'Fecha_Inicio' || campo === 'Fecha_Fin') {
       updatedIncapacidad.Cantidad_Dias = calcularCantidadDias(updatedIncapacidad.Fecha_Inicio, updatedIncapacidad.Fecha_Fin);
     }
 
-    // Calculate and update Monto_Deducción
+    // Calcular el Monto de Deducción si el salario y el porcentaje están disponibles
     const montoDeduccion = (salarioDiarioActualizar * porcentajeDeduccionActualizar * updatedIncapacidad.Cantidad_Dias) || 0;
-    updatedIncapacidad.Monto_Deduccion = montoDeduccion; // Update deduction amount in state
+    updatedIncapacidad.Monto_Deduccion = montoDeduccion;
+
+    // Validar si la fecha de inicio es futura y mostrar el error si aplica
+    if (campo === 'Fecha_Inicio' && new Date(valor) > new Date()) {
+      setError('La fecha de inicio no puede ser un día futuro.');
+    } else {
+      setError('');
+    }
+
     setIncapacidadActualizar(updatedIncapacidad);
   };
 
 
 
-  // Modal para actualizar una incapacidad
+
   const abrirModalActualizar = (incapacidad) => {
     const formatearFecha = (fecha) => new Date(fecha).toISOString().split('T')[0];
 
     setIncapacidadActualizar({
-        ...incapacidad,
-        Fecha_Inicio: formatearFecha(incapacidad.Fecha_Inicio),
-        Fecha_Fin: formatearFecha(incapacidad.Fecha_Fin),
+      ...incapacidad,
+      Fecha_Inicio: formatearFecha(incapacidad.Fecha_Inicio),
+      Fecha_Fin: formatearFecha(incapacidad.Fecha_Fin),
     });
     setModalActualizar(true);
-};
+  };
 
 
-  // Generar PDF
   const generarPDF = () => {
     const doc = new jsPDF();
     doc.autoTable({
@@ -215,7 +231,6 @@ const Incapacidades = () => {
     doc.save('incapacidades.pdf');
   };
 
-  // Generar Excel
   const generarExcel = () => {
     const ws = XLSX.utils.json_to_sheet(incapacidades);
     const wb = XLSX.utils.book_new();
@@ -224,7 +239,6 @@ const Incapacidades = () => {
   };
 
   useEffect(() => {
-    // Fetch incapacidades (Asegúrate de que esta parte ya está en tu código)
     const fetchIncapacidades = async () => {
       const response = await axios.get('http://localhost:3000/api/incapacidad'); // Cambia esta URL según tu API
       setIncapacidades(response.data);
@@ -242,10 +256,10 @@ const Incapacidades = () => {
   const fetchNombreEmpleado = async (id) => {
     try {
       const response = await axios.get(`http://localhost:3000/api/datosPersona/${id}`);
-      return response.data[0][0].Nombre; // Asegúrate de que el campo se llama 'Nombre'
+      return response.data[0][0].Nombre;
     } catch (error) {
       console.error(`Error fetching nombre for ID ${id}:`, error);
-      return ''; // Retorna una cadena vacía si hay un error
+      return '';
     }
   };
 
@@ -426,7 +440,7 @@ const Incapacidades = () => {
                   <option value="">Seleccione un empleado</option>
                   {empleados.map((empleado) => (
                     <option key={empleado.idEmpleado} value={empleado.idEmpleado}>
-                      {empleado.idEmpleado}
+                      {empleado.NombreCompleto}
                     </option>
                   ))}
                 </select>
@@ -498,22 +512,22 @@ const Incapacidades = () => {
               <div>
                 <label className="block mb-2">Fecha de Inicio:</label>
                 <input
-    type="date"
-    value={incapacidadActualizar.Fecha_Inicio} // Mostrar la fecha seleccionada
-    onChange={(e) => handleChangeFechaActualizar('Fecha_Inicio', e.target.value)}
-    className="border rounded-lg w-full px-3 py-2"
-/>
+                  type="date"
+                  value={incapacidadActualizar.Fecha_Inicio} // Mostrar la fecha seleccionada
+                  onChange={(e) => handleChangeFechaActualizar('Fecha_Inicio', e.target.value)}
+                  className="border rounded-lg w-full px-3 py-2"
+                />
               </div>
 
               {/* Fecha de Fin */}
               <div>
                 <label className="block mb-2">Fecha de Fin:</label>
                 <input
-    type="date"
-    value={incapacidadActualizar.Fecha_Fin} // Mostrar la fecha seleccionada
-    onChange={(e) => handleChangeFechaActualizar('Fecha_Fin', e.target.value)}
-    className="border rounded-lg w-full px-3 py-2"
-/>
+                  type="date"
+                  value={incapacidadActualizar.Fecha_Fin} // Mostrar la fecha seleccionada
+                  onChange={(e) => handleChangeFechaActualizar('Fecha_Fin', e.target.value)}
+                  className="border rounded-lg w-full px-3 py-2"
+                />
               </div>
 
               {/* Descripción */}
@@ -574,7 +588,7 @@ const Incapacidades = () => {
                   <option value="">Seleccione un empleado</option>
                   {empleados.map((empleado) => (
                     <option key={empleado.idEmpleado} value={empleado.idEmpleado}>
-                      {empleado.idEmpleado}
+                      {empleado.NombreCompleto}
                     </option>
                   ))}
                 </select>

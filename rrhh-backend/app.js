@@ -27,6 +27,7 @@ const empleadoRoutes = require('./routes/empleadoRoutes'); // Importar las rutas
 const incapacidadRoutes = require('./routes/incapacidadRoutes'); // Importar las rutas de estado de solicitud
 const datosPersonaRoutes = require('./routes/datosPersonaRoutes');
 const calcularSalarioDiarioRoutes = require('./routes/calcularSalarioDiarioRoutes');
+const mapeoDireccionRoutes = require('./routes/mapeoDireccionRoutes');
 
 // Configuración de bodyParser para manejar datos JSON
 app.use(bodyParser.json());
@@ -62,6 +63,8 @@ app.use('/api/empleados', empleadoRoutes); // Usar las rutas de estado de solici
 app.use('/api/incapacidad', incapacidadRoutes); // Usar las rutas de estado de solicitud
 app.use('/api/datosPersona', datosPersonaRoutes);
 app.use('/calcularSalarioDiario', calcularSalarioDiarioRoutes);
+app.use('/api/direcciones', mapeoDireccionRoutes);
+
 
 
 // Configuración del puerto
