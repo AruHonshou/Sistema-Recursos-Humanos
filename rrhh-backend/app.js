@@ -19,7 +19,7 @@ const catalogoTipoLiquidacionRoutes = require('./routes/catalogoTipoLiquidacionR
 const puestoLaboralRoutes = require('./routes/puestoLaboralRoutes');
 const rolesRoutes = require('./routes/rolesRoutes');
 const personaRoutes = require('./routes/personaRoutes');
-// const usuarioRoutes = require('./routes/usuarioRoutes');  // Rutas para usuarios
+const usuariosRoutes = require('./routes/usuariosRoutes'); // Importar las rutas de usuarios
 const permisoRoutes = require('./routes/permisoSolicitadoRoutes');  // Rutas para permisos solicitados
 const estadoSolicitudRoutes = require('./routes/estadoSolicitudRoutes'); // Importar las rutas de estado de solicitud
 const catalogoPermisoRoutes = require('./routes/catalogoPermisoRoutes'); // Importar las rutas de catálogo de permiso
@@ -58,7 +58,7 @@ app.use('/api/tipo-liquidacion', catalogoTipoLiquidacionRoutes);
 app.use('/api/puesto-laboral', puestoLaboralRoutes);//ya
 app.use('/api/roles', rolesRoutes);//ya
 app.use('/api/personas', personaRoutes);
-// app.use('/api/usuarios', usuarioRoutes); 
+app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/permisos', permisoRoutes);  // Ruta para permisos solicitados
 app.use('/api/estado-solicitud', estadoSolicitudRoutes); // Usar las rutas de estado de solicitud
 app.use('/api/empleados', empleadoRoutes); // Usar las rutas de estado de solicitud

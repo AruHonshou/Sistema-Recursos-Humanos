@@ -5,7 +5,7 @@ import Login from '../pages/Login';
 import Dashboard from '../pages/Dashboard';
 import Perfil from '../pages/Perfil';
 import Aguinaldo from '../pages/Aguinaldo';
-import Vacaciones from '../pages/Vacaciones';
+import Vacaciones from '../pages/VacacionesReportes';
 import Permisos from '../pages/Permisos';
 import HorasExtras from '../pages/HorasExtras';
 import Planilla from '../pages/Planilla';
@@ -15,11 +15,11 @@ import PagosLiquidacion from '../pages/PagosLiquidacion';
 import PuestoLaboral from '../pages/PuestoLaboral';
 import Roles from '../pages/Roles';
 import Feriados from '../pages/Feriados';
-import GestionUsuarios from '../pages/GestionUsuarios'; // Nueva página para la gestión de usuarios
+import GestionUsuarios from '../pages/GestionUsuarios'; 
 
 // Reportes
-import ReportesGestionUsuarios from '../pages/ReportesGestionUsuarios'; // Nueva página para la gestión de usuarios
-import IncapacidadesReportes from '../pages/IncapacidadesReportes'; // Nueva página para la gestión de usuarios
+import ReportesGestionUsuarios from '../pages/ReportesGestionUsuarios'; 
+import IncapacidadesReportes from '../pages/IncapacidadesReportes'; 
 import CambioContrasena from '../pages/CambioContrasena';
 
 
