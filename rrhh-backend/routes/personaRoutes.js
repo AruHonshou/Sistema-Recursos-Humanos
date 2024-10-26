@@ -17,4 +17,9 @@ router.put('/:idPersona', personaController.actualizarPersona);
 // Eliminar una persona
 router.delete('/:idPersona', personaController.eliminarPersona);
 
+// Actualizar el estado de Usuario_Activo
+router.put('/:idPersona/estado', personaController.actualizarUsuarioActivo);
+
+
+
 module.exports = router;

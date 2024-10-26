@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaEdit, FaTrashAlt } from 'react-icons/fa';
+import { FaEdit, FaTrashAlt, FaCheck, FaTimes } from 'react-icons/fa';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
@@ -20,26 +20,25 @@ const GestionUsuarios = () => {
     const [personas, setPersonas] = useState([]);
     const [nuevaPersona, setNuevaPersona] = useState({
         idPersona: '',
-        Nombre: '', // Cambiado a 'Nombre'
-        Primer_Apellido: '', // Cambiado a 'Primer_Apellido'
-        Segundo_Apellido: '', // Cambiado a 'Segundo_Apellido'
-        Fecha_Nacimiento: '', // Cambiado a 'Fecha_Nacimiento'
-        catalogo_persona_idCatalogo_Persona: '', // Cambiado a 'catalogo_persona_idCatalogo_Persona'
-        Numero_Telefono: '', // Cambiado a 'Numero_Telefono'
-        Detalle_Telefono: '', // Cambiado a 'Detalle_Telefono'
-        catalogo_telefono_idCatalogo_Telefono: '', // Cambiado a 'catalogo_telefono_idCatalogo_Telefono'
-        Direccion_Especifica: '', // Cambiado a 'Direccion_Especifica'
-        distrito_idDistrito: '', // Cambiado a 'distrito_idDistrito'
-        distrito_canton_idCanton: '', // Cambiado a 'distrito_canton_idCanton'
-        distrito_canton_provincia_idprovincia: '', // Cambiado a 'distrito_canton_provincia_idprovincia'
-        Descripcion_Correo: '', // Cambiado a 'Descripcion_Correo'
-        catalogo_correo_idCatalogo_Correo: '', // Cambiado a 'catalogo_correo_idCatalogo_Correo'
-        Fecha_Ingreso: '', // Cambiado a 'Fecha_Ingreso'
-        puesto_laboral_idpuesto_laboral: '', // Cambiado a 'puesto_laboral_idpuesto_laboral'
-        tipo_horario_idtipo_horario: '', // Cambiado a 'tipo_horario_idtipo_horario'
-        Nombre_Usuario: '', // Cambiado a 'Nombre_Usuario'
-        Contrasena: '', // Cambiado a 'Contrasena'
-        roles_idroles: '', // Cambiado a 'roles_idroles'
+        Nombre: '',
+        Primer_Apellido: '',
+        Segundo_Apellido: '',
+        Fecha_Nacimiento: '',
+        catalogo_persona_idCatalogo_Persona: '',
+        Numero_Telefono: '',
+        catalogo_telefono_idCatalogo_Telefono: '',
+        Direccion_Especifica: '',
+        distrito_idDistrito: '',
+        distrito_canton_idCanton: '',
+        distrito_canton_provincia_idprovincia: '',
+        Descripcion_Correo: '',
+        catalogo_correo_idCatalogo_Correo: '',
+        Fecha_Ingreso: '',
+        puesto_laboral_idpuesto_laboral: '',
+        tipo_horario_idtipo_horario: '',
+        Nombre_Usuario: '',
+        Contrasena: '',
+        roles_idroles: '',
     });
 
     const [modalActualizar, setModalActualizar] = useState(false); // Modal de actualización
@@ -137,13 +136,6 @@ const GestionUsuarios = () => {
             return;
         }
 
-        // Validar detalle del teléfono
-        if (!nuevaPersona.Detalle_Telefono || !nameRegex.test(nuevaPersona.Detalle_Telefono)) {
-            setError('El detalle del teléfono debe iniciar con mayúscula y contener solo letras.');
-            return;
-        }
-
-
         // Validar provincia
         if (!nuevaPersona.distrito_canton_provincia_idprovincia) {
             setError('Debe seleccionar una provincia.');
@@ -212,10 +204,7 @@ const GestionUsuarios = () => {
                 throw new Error('Error al crear la persona.');
             }
 
-            // Mostrar alerta de éxito
             alert('Usuario creado exitosamente!');
-
-            // Si se crea con éxito, cerramos el modal y limpiamos el estado
             setModalCrear(false);
             setNuevaPersona({
                 idPersona: '',
@@ -225,7 +214,6 @@ const GestionUsuarios = () => {
                 Fecha_Nacimiento: '',
                 catalogo_persona_idCatalogo_Persona: '',
                 Numero_Telefono: '',
-                Detalle_Telefono: '',
                 catalogo_telefono_idCatalogo_Telefono: '',
                 Direccion_Especifica: '',
                 distrito_idDistrito: '',
@@ -241,9 +229,7 @@ const GestionUsuarios = () => {
                 roles_idroles: '',
             });
 
-            // Llama a la función que obtiene las personas para actualizar la tabla
-            obtenerPersonas();
-
+            obtenerPersonas(); // Actualizar la lista de personas
         } catch (error) {
             setError(`Error al crear el registro: ${error.message}`);
         }
@@ -253,6 +239,19 @@ const GestionUsuarios = () => {
     const abrirModalActualizar = (persona) => {
         setNuevaPersona(persona); // Carga los datos de la persona seleccionada
         setModalActualizar(true); // Abre el modal de actualización
+    };
+
+    // Nueva función para alternar el estado de usuario
+    const alternarEstadoUsuario = async (idPersona, estadoActual) => {
+        const nuevoEstado = estadoActual === 1 ? 0 : 1;
+        try {
+            await axios.put(`http://localhost:3000/api/personas/${idPersona}/estado`, {
+                Usuario_Activo: nuevoEstado,
+            });
+            obtenerPersonas(); // Actualiza la lista de personas después del cambio de estado
+        } catch (error) {
+            console.error('Error al cambiar el estado del usuario:', error);
+        }
     };
 
 
@@ -269,34 +268,9 @@ const GestionUsuarios = () => {
 
     const actualizarPersona = async () => {
         // Validaciones de campos
-        const cedulaRegex = /^[0-9]+$/; // Solo números
         const nameRegex = /^[A-ZÑ][a-zA-ZÑñ\s]+$/; // Permitir la letra Ñ y ñ
         const phoneRegex = /^[0-9]+$/; // Solo números
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Validación básica de email
-
-        const selectedCatalogo = nuevaPersona.catalogo_persona_idCatalogo_Persona;
-        let maxLength = 12;
-
-        // Definir la longitud máxima según el catálogo seleccionado
-        if (selectedCatalogo === '1') {
-            maxLength = 9;
-        } else if (selectedCatalogo === '2') {
-            maxLength = 12;
-        } else if (selectedCatalogo === '3') {
-            maxLength = 5;
-        }
-
-        // Validar que la longitud de la cédula sea la correcta
-        if (nuevaPersona.idPersona.length !== maxLength) {
-            setError(`La cédula para el tipo seleccionado debe tener exactamente ${maxLength} dígitos.`);
-            return;
-        }
-
-        // Validar cédula
-        if (!nuevaPersona.idPersona || !cedulaRegex.test(nuevaPersona.idPersona)) {
-            setError('La cédula debe contener solo números.');
-            return;
-        }
 
         // Validar nombre
         if (!nuevaPersona.Nombre || !nameRegex.test(nuevaPersona.Nombre)) {
@@ -330,12 +304,6 @@ const GestionUsuarios = () => {
         // Validar número de teléfono
         if (!nuevaPersona.Numero_Telefono || !phoneRegex.test(nuevaPersona.Numero_Telefono) || nuevaPersona.Numero_Telefono.length !== 8) {
             setError('El número de teléfono debe contener exactamente 8 dígitos.');
-            return;
-        }
-
-        // Validar detalle del teléfono
-        if (!nuevaPersona.Detalle_Telefono || !nameRegex.test(nuevaPersona.Detalle_Telefono)) {
-            setError('El detalle del teléfono debe iniciar con mayúscula y contener solo letras.');
             return;
         }
 
@@ -415,7 +383,6 @@ const GestionUsuarios = () => {
             alert('Usuario actualizado exitosamente!');
             setModalActualizar(false); // Cierra el modal de actualización
             obtenerPersonas(); // Actualiza la lista de personas
-
         } catch (error) {
             setError(`Error al actualizar el registro: ${error.message}`);
         }
@@ -621,7 +588,6 @@ const GestionUsuarios = () => {
                         Fecha_Nacimiento: '',
                         catalogo_persona_idCatalogo_Persona: '',
                         Numero_Telefono: '',
-                        Detalle_Telefono: '',
                         catalogo_telefono_idCatalogo_Telefono: '',
                         Direccion_Especifica: '',
                         distrito_idDistrito: '',
@@ -671,6 +637,7 @@ const GestionUsuarios = () => {
                             <th className="px-4 py-2 text-black dark:text-white text-center">Número de Teléfono</th>
                             <th className="px-4 py-2 text-black dark:text-white text-center">Correo Electrónico</th>
                             <th className="px-4 py-2 text-black dark:text-white text-center">Username</th>
+                            <th className="px-4 py-2 text-black dark:text-white text-center">Usuario Activo/Inactivo</th>
                             <th className="px-4 py-2 text-black dark:text-white text-center">Acción</th>
                         </tr>
                     </thead>
@@ -688,11 +655,21 @@ const GestionUsuarios = () => {
                                 <td className="px-4 py-2 text-black dark:text-white text-center">{persona.descripcion_correo}</td>
                                 <td className="px-4 py-2 text-black dark:text-white text-center">{persona.Nombre_Usuario}</td>
                                 <td className="px-4 py-2 text-black dark:text-white text-center">
+                                    {persona.Usuario_Activo.data[0] === 1 ? "Activo" : "Inactivo"}
+                                </td>
+
+                                <td className="px-4 py-2 text-black dark:text-white text-center">
                                     <button onClick={() => abrirModalActualizar(persona)} className="text-yellow-500 hover:text-yellow-700">
                                         <FaEdit />
                                     </button>
                                     <button onClick={() => eliminarPersona(persona.idPersona)} className="text-red-500 hover:text-red-700 ml-2">
                                         <FaTrashAlt />
+                                    </button>
+                                    <button
+                                        onClick={() => alternarEstadoUsuario(persona.idPersona, persona.Usuario_Activo.data[0])}
+                                        className={`ml-2 ${persona.Usuario_Activo.data[0] === 1 ? 'text-green-500' : 'text-gray-500'} hover:text-blue-700`}
+                                    >
+                                        {persona.Usuario_Activo.data[0] === 1 ? <><FaTimes /> </> : <><FaCheck /> </>}
                                     </button>
                                 </td>
                             </tr>
@@ -800,16 +777,6 @@ const GestionUsuarios = () => {
                                     placeholder="Número de Teléfono"
                                     value={nuevaPersona.Numero_Telefono}
                                     onChange={(e) => setNuevaPersona({ ...nuevaPersona, Numero_Telefono: e.target.value })}
-                                    className="border rounded-md p-2 mb-2 w-full"
-                                />
-                            </div>
-                            <div>
-                                <label className="text-black dark:text-white mb-2 block">Detalle de Teléfono</label>
-                                <input
-                                    type="text"
-                                    placeholder="Detalle de Teléfono"
-                                    value={nuevaPersona.Detalle_Telefono}
-                                    onChange={(e) => setNuevaPersona({ ...nuevaPersona, Detalle_Telefono: e.target.value })}
                                     className="border rounded-md p-2 mb-2 w-full"
                                 />
                             </div>
@@ -1086,15 +1053,6 @@ const GestionUsuarios = () => {
                                 />
                             </div>
                             <div>
-                                <label className="text-black dark:text-white mb-2 block">Detalle de Teléfono</label>
-                                <input
-                                    type="text"
-                                    value={nuevaPersona.Detalle_Telefono}
-                                    onChange={(e) => setNuevaPersona({ ...nuevaPersona, Detalle_Telefono: e.target.value })}
-                                    className="border rounded-md p-2 mb-2 w-full"
-                                />
-                            </div>
-                            <div>
                                 <label className="text-black dark:text-white mb-2 block">Catálogo de Teléfono</label>
                                 <select
                                     value={nuevaPersona.catalogo_telefono_idCatalogo_Telefono}
@@ -1280,6 +1238,15 @@ const GestionUsuarios = () => {
                                         <option disabled>No hay roles disponibles</option>
                                     )}
                                 </select>
+                            </div>
+                            <div>
+                                <label className="text-black dark:text-white mb-2 block">Usuario Activo</label>
+                                <input
+                                    type="checkbox"
+                                    checked={nuevaPersona.Usuario_Activo}
+                                    onChange={(e) => setNuevaPersona({ ...nuevaPersona, Usuario_Activo: e.target.checked })}
+                                    className="border rounded-md p-2 mb-2"
+                                />
                             </div>
                         </div>
                         {error && <p className="text-red-500">{error}</p>}
