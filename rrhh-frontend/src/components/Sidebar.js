@@ -97,6 +97,12 @@ const Sidebar = () => {
               {isOpen && <span>Gestión de Pagos de Liquidación</span>}
             </NavLink>
           </li>
+          <li>
+            <NavLink to="/gestion-usuarios" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+              <AiOutlineUser className="mr-2" size={24} />
+              {isOpen && <span>Gestión de Usuarios</span>}
+            </NavLink>
+          </li>
         </ul>
       )}
 
@@ -129,12 +135,6 @@ const Sidebar = () => {
               {isOpen && <span>Feriados</span>}
             </NavLink>
           </li>
-          <li>
-            <NavLink to="/gestion-usuarios" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
-              <AiOutlineUser className="mr-2" size={24} />
-              {isOpen && <span>Gestión de Usuarios</span>}
-            </NavLink>
-          </li>
         </ul>
       )}
 
@@ -159,6 +159,12 @@ const Sidebar = () => {
             <NavLink to="/reporte-incapacidades" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
               <AiOutlineUser className="mr-2" size={24} />
               {isOpen && <span>Reportes de Incapacidades</span>}
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/reporte-vacaciones" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+              <AiOutlineUser className="mr-2" size={24} />
+              {isOpen && <span>Reportes de Vacaciones</span>}
             </NavLink>
           </li>
           <li>

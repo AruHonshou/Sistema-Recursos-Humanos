@@ -5,7 +5,7 @@ import Login from '../pages/Login';
 import Dashboard from '../pages/Dashboard';
 import Perfil from '../pages/Perfil';
 import Aguinaldo from '../pages/Aguinaldo';
-import Vacaciones from '../pages/VacacionesReportes';
+import Vacaciones from '../pages/Vacaciones';
 import Permisos from '../pages/Permisos';
 import HorasExtras from '../pages/HorasExtras';
 import Planilla from '../pages/Planilla';
@@ -20,11 +20,13 @@ import GestionUsuarios from '../pages/GestionUsuarios';
 // Reportes
 import ReportesGestionUsuarios from '../pages/ReportesGestionUsuarios'; 
 import IncapacidadesReportes from '../pages/IncapacidadesReportes'; 
+import VacacionesReportes from '../pages/VacacionesReportes';
 import CambioContrasena from '../pages/CambioContrasena';
 
 
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
+
 
 const AppRoutes = () => {
   return (
@@ -44,16 +46,17 @@ const AppRoutes = () => {
           <Route path="/incapacidades" element={<Incapacidades />} />
           <Route path="/evaluacion-rendimiento" element={<EvaluacionRendimiento />} />
           <Route path="/pagos-liquidacion" element={<PagosLiquidacion />} />
+          <Route path="/gestion-usuarios" element={<GestionUsuarios />} />
 
           {/* Mantenimientos*/}
           <Route path="/PuestoLaboral" element={<PuestoLaboral />} />
           <Route path="/Roles" element={<Roles />} />
           <Route path="/Feriados" element={<Feriados />} />
-          <Route path="/gestion-usuarios" element={<GestionUsuarios />} />
 
           {/* Reportes */}
           <Route path="/reporte-gestion-usuarios" element={<ReportesGestionUsuarios />} />
           <Route path="/reporte-incapacidades" element={<IncapacidadesReportes />} />
+          <Route path="/reporte-vacaciones" element={<VacacionesReportes />} />
           <Route path="/cambio-contrasena" element={<CambioContrasena />} />
         </Route>
       </Routes>
@@ -82,16 +85,17 @@ const LayoutWithSidebarNavbar = () => {
             <Route path="/incapacidades" element={<Incapacidades />} />
             <Route path="/evaluacion-rendimiento" element={<EvaluacionRendimiento />} />
             <Route path="/pagos-liquidacion" element={<PagosLiquidacion />} />
+            <Route path="/gestion-usuarios" element={<GestionUsuarios />} />
 
             {/* Mantenimientos*/}
             <Route path="/PuestoLaboral" element={<PuestoLaboral />} />
             <Route path="/Roles" element={<Roles />} />
             <Route path="/Feriados" element={<Feriados />} />
-            <Route path="/gestion-usuarios" element={<GestionUsuarios />} />
 
             {/* Reportes */}
             <Route path="/reporte-gestion-usuarios" element={<ReportesGestionUsuarios />} />
             <Route path="/reporte-incapacidades" element={<IncapacidadesReportes />} />
+            <Route path="/reporte-vacaciones" element={<VacacionesReportes />} />
             <Route path="/cambio-contrasena" element={<CambioContrasena />} />
           </Routes>
         </main>

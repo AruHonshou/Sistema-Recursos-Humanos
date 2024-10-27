@@ -26,6 +26,7 @@ const Navbar = () => {
     '/gestion-usuarios': 'Gestión de Usuarios',
     '/reporte-gestion-usuarios': 'Reportes de Usuarios',
     '/reporte-incapacidades': 'Reportes de Incapacidades',
+    '/reporte-vacaciones': 'Reportes de Vacaciones',
     '/cambio-contrasena': 'Cambio de Contraseña',
     '/perfil': 'Perfil'
   };
