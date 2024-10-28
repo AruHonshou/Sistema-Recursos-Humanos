@@ -8,6 +8,7 @@ const VacacionesReportes = () => {
   const [vacaciones, setVacaciones] = useState([]);
   const [fechaInicio, setFechaInicio] = useState('');
   const [fechaFin, setFechaFin] = useState('');
+  const [estadoFiltro, setEstadoFiltro] = useState(''); // Nuevo estado para el filtro de estado de solicitud
 
   // Obtener todas las vacaciones
   const obtenerVacaciones = async () => {
@@ -19,20 +20,24 @@ const VacacionesReportes = () => {
     }
   };
 
-  // Filtrar vacaciones por fecha
+  // Filtrar vacaciones por fecha y estado de solicitud
   const vacacionesFiltradas = vacaciones.filter((vacacion) => {
     const fechaInicioVacacion = new Date(vacacion.Fecha_Inicio);
     const fechaFinVacacion = new Date(vacacion.Fecha_Fin);
     const inicioFiltro = fechaInicio ? new Date(fechaInicio) : null;
     const finFiltro = fechaFin ? new Date(fechaFin) : null;
 
-    if (inicioFiltro && finFiltro) {
-      return (
-        fechaInicioVacacion >= inicioFiltro &&
-        fechaFinVacacion <= finFiltro
-      );
-    }
-    return true;
+    const estadoMatch = 
+      (estadoFiltro === 'Aceptado' && vacacion.estado_solicitud_idestado_solicitud === 1) ||
+      (estadoFiltro === 'Rechazado' && vacacion.estado_solicitud_idestado_solicitud === 2) ||
+      (estadoFiltro === 'En Espera' && vacacion.estado_solicitud_idestado_solicitud === 3) ||
+      estadoFiltro === '';
+
+    const fechaMatch = 
+      (!inicioFiltro || fechaInicioVacacion >= inicioFiltro) &&
+      (!finFiltro || fechaFinVacacion <= finFiltro);
+
+    return estadoMatch && fechaMatch;
   });
 
   // Exportar a PDF
@@ -43,10 +48,10 @@ const VacacionesReportes = () => {
       body: vacacionesFiltradas.map((vacacion) => [
         vacacion.idEmpleado,
         vacacion.Empleador || 'Cargando...',
-        new Date(vacacion.Fecha_Inicio).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }),
-        new Date(vacacion.Fecha_Fin).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }),
+        new Date(vacacion.Fecha_Inicio).toLocaleDateString('es-ES'),
+        new Date(vacacion.Fecha_Fin).toLocaleDateString('es-ES'),
         vacacion.Cantidad_Dias_Solicitados,
-        new Date(vacacion.Fecha_Solicitud).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }),
+        new Date(vacacion.Fecha_Solicitud).toLocaleDateString('es-ES'),
         vacacion.DiasDisponibles,
         vacacion.DiasConsumidos,
         vacacion.Motivo_Vacacion,
@@ -56,16 +61,15 @@ const VacacionesReportes = () => {
     doc.save('vacaciones.pdf');
   };
 
-
   // Exportar a Excel
   const generarExcel = () => {
     const ws = XLSX.utils.json_to_sheet(vacacionesFiltradas.map((vacacion) => ({
       'ID Empleado': vacacion.idEmpleado,
       'Nombre': vacacion.Empleador || 'Cargando...',
-      'Fecha Inicio': new Date(vacacion.Fecha_Inicio).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }),
-      'Fecha Fin': new Date(vacacion.Fecha_Fin).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }),
+      'Fecha Inicio': new Date(vacacion.Fecha_Inicio).toLocaleDateString('es-ES'),
+      'Fecha Fin': new Date(vacacion.Fecha_Fin).toLocaleDateString('es-ES'),
       'Días Solicitados': vacacion.Cantidad_Dias_Solicitados,
-      'Fecha Solicitud': new Date(vacacion.Fecha_Solicitud).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }),
+      'Fecha Solicitud': new Date(vacacion.Fecha_Solicitud).toLocaleDateString('es-ES'),
       'Días Disponibles': vacacion.DiasDisponibles,
       'Días Consumidos': vacacion.DiasConsumidos,
       'Motivo': vacacion.Motivo_Vacacion,
@@ -75,7 +79,6 @@ const VacacionesReportes = () => {
     XLSX.utils.book_append_sheet(wb, ws, 'Vacaciones');
     XLSX.writeFile(wb, 'vacaciones.xlsx');
   };
-
 
   useEffect(() => {
     obtenerVacaciones();
@@ -113,8 +116,17 @@ const VacacionesReportes = () => {
           onChange={(e) => setFechaFin(e.target.value)}
           className="border p-2 rounded-lg"
         />
+        <select
+          value={estadoFiltro}
+          onChange={(e) => setEstadoFiltro(e.target.value)}
+          className="border rounded-lg px-4 py-2 bg-white dark:bg-[#2D2D3B] text-black dark:text-white shadow-md"
+        >
+          <option value="">Todos</option>
+          <option value="Aceptado">Aceptado</option>
+          <option value="Rechazado">Rechazado</option>
+          <option value="En Espera">En Espera</option>
+        </select>
       </div>
-
 
       <div className="overflow-hidden rounded-lg shadow-lg">
         <table className="min-w-full bg-white dark:bg-[#2D2D3B] border rounded-md shadow-md">
@@ -137,14 +149,20 @@ const VacacionesReportes = () => {
               <tr key={`${new Date(vacacion.Fecha_Inicio).toISOString()}-${vacacion.idEmpleado}`} className="border-b dark:border-[#4D4D61]">
                 <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.idEmpleado}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.Empleador || 'Cargando...'}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(vacacion.Fecha_Inicio).toISOString().split('T')[0]}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(vacacion.Fecha_Fin).toISOString().split('T')[0]}</td>
+                <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(vacacion.Fecha_Inicio).toLocaleDateString('es-ES')}</td>
+                <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(vacacion.Fecha_Fin).toLocaleDateString('es-ES')}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.Cantidad_Dias_Solicitados}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(vacacion.Fecha_Solicitud).toISOString().split('T')[0]}</td>
+                <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(vacacion.Fecha_Solicitud).toLocaleDateString('es-ES')}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.DiasDisponibles}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.DiasConsumidos}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.Motivo_Vacacion}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.estado_solicitud_idestado_solicitud === 1 ? 'Aceptado' : vacacion.estado_solicitud_idestado_solicitud === 2 ? 'Rechazado' : 'En Espera'}</td>
+                <td className="px-4 py-2 text-black dark:text-white text-center">
+                  {vacacion.estado_solicitud_idestado_solicitud === 1
+                    ? 'Aceptado'
+                    : vacacion.estado_solicitud_idestado_solicitud === 2
+                    ? 'Rechazado'
+                    : 'En Espera'}
+                </td>
               </tr>
             ))}
           </tbody>

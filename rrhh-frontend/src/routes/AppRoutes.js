@@ -21,6 +21,7 @@ import GestionUsuarios from '../pages/GestionUsuarios';
 import ReportesGestionUsuarios from '../pages/ReportesGestionUsuarios'; 
 import IncapacidadesReportes from '../pages/IncapacidadesReportes'; 
 import VacacionesReportes from '../pages/VacacionesReportes';
+import PermisosReportes from '../pages/PermisosReportes';
 import CambioContrasena from '../pages/CambioContrasena';
 
 
@@ -57,6 +58,7 @@ const AppRoutes = () => {
           <Route path="/reporte-gestion-usuarios" element={<ReportesGestionUsuarios />} />
           <Route path="/reporte-incapacidades" element={<IncapacidadesReportes />} />
           <Route path="/reporte-vacaciones" element={<VacacionesReportes />} />
+          <Route path="/reporte-permisos" element={<PermisosReportes />} />
           <Route path="/cambio-contrasena" element={<CambioContrasena />} />
         </Route>
       </Routes>
@@ -96,6 +98,7 @@ const LayoutWithSidebarNavbar = () => {
             <Route path="/reporte-gestion-usuarios" element={<ReportesGestionUsuarios />} />
             <Route path="/reporte-incapacidades" element={<IncapacidadesReportes />} />
             <Route path="/reporte-vacaciones" element={<VacacionesReportes />} />
+            <Route path="/reporte-permisos" element={<PermisosReportes />} />
             <Route path="/cambio-contrasena" element={<CambioContrasena />} />
           </Routes>
         </main>
