@@ -30,6 +30,8 @@ const calcularSalarioDiarioRoutes = require('./routes/calcularSalarioDiarioRoute
 const mapeoDireccionRoutes = require('./routes/mapeoDireccionRoutes');
 const personaTablaRoutes = require('./routes/personaTablaRoutes');
 const vacacionesRoutes = require('./routes/vacacionesRoutes');
+const marcaTiempoRoutes = require('./routes/marcaTiempoRoutes');
+
 
 
 // Configuración de bodyParser para manejar datos JSON
@@ -69,6 +71,7 @@ app.use('/calcularSalarioDiario', calcularSalarioDiarioRoutes);
 app.use('/api/direcciones', mapeoDireccionRoutes);
 app.use('/api/detalles-empleados', personaTablaRoutes);
 app.use('/api/vacaciones', vacacionesRoutes);
+app.use('/api/marcas', marcaTiempoRoutes);
 
 
 

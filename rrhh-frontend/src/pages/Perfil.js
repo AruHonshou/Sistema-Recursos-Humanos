@@ -1,6 +1,25 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 
 const Perfil = () => {
+  const [userId, setUserId] = useState('');
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [role, setRole] = useState('');
+
+  useEffect(() => {
+    // Obtener los datos del usuario desde el localStorage
+    const userData = JSON.parse(localStorage.getItem('user'));
+
+    if (userData) {
+      setUserId(userData.idusuarios);
+      setUsername(userData.Nombre_Usuario || '');
+      setPassword(userData.Contrasena || '');
+      setRole(userData.roles_idroles === '1' ? 'Administrador' : 'Empleador');
+    }
+  }, []);
+
   return (
     <div className="p-6 bg-[#f9f9f9] dark:bg-[#1E1E2F] min-h-screen">
       <h1 className="text-2xl font-bold mb-4 text-black dark:text-white">Editar Perfil</h1>
@@ -11,7 +30,8 @@ const Perfil = () => {
             type="text" 
             id="user-id" 
             className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-100 dark:bg-gray-800 dark:text-white" 
-            placeholder="Introduce tu ID de usuario" 
+            value={userId}
+            readOnly
           />
         </div>
         <div className="mb-4">
@@ -20,17 +40,26 @@ const Perfil = () => {
             type="text" 
             id="username" 
             className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-100 dark:bg-gray-800 dark:text-white" 
-            placeholder="Introduce tu nombre de usuario" 
+            value={username}
+            readOnly
           />
         </div>
-        <div className="mb-4">
+        <div className="mb-4 relative">
           <label className="block text-black dark:text-white mb-2" htmlFor="password">Contraseña</label>
           <input 
-            type="password" 
+            type={showPassword ? 'text' : 'password'} 
             id="password" 
             className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-100 dark:bg-gray-800 dark:text-white" 
-            placeholder="Introduce tu contraseña" 
+            value={password}
+            readOnly
           />
+          <button
+            type="button"
+            className="absolute right-3 top-1/2 transform -translate-y-[2px] text-black dark:text-white"
+            onClick={() => setShowPassword(!showPassword)}
+          >
+            {showPassword ? <AiOutlineEyeInvisible size={24} /> : <AiOutlineEye size={24} />}
+          </button>
         </div>
         <div className="mb-4">
           <label className="block text-black dark:text-white mb-2" htmlFor="role">Rol</label>
@@ -38,20 +67,9 @@ const Perfil = () => {
             type="text" 
             id="role" 
             className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-100 dark:bg-gray-800 dark:text-white" 
-            placeholder="Introduce tu rol" 
+            value={role}
+            readOnly
           />
-        </div>
-        <div className="mb-4">
-          <label className="block text-black dark:text-white mb-2" htmlFor="new-password">Cambiar Contraseña</label>
-          <input 
-            type="password" 
-            id="new-password" 
-            className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-100 dark:bg-gray-800 dark:text-white" 
-            placeholder="Introduce tu nueva contraseña" 
-          />
-          <button className="mt-2 bg-blue-500 dark:bg-blue-700 hover:bg-blue-700 dark:hover:bg-blue-600 text-white py-1 px-4 rounded-md transition duration-300">
-            Cambiar
-          </button>
         </div>
       </form>
     </div>

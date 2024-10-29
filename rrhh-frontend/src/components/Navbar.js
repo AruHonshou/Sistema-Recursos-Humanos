@@ -5,9 +5,10 @@ import { FiSun, FiMoon, FiUser } from 'react-icons/fi';
 
 const Navbar = () => {
   const location = useLocation();
-  const navigate = useNavigate(); // Hook para redireccionar a la página de perfil
+  const navigate = useNavigate();
   const [darkMode, setDarkMode] = useState(false);
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false); // Estado para controlar el menú de perfil
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [role, setRole] = useState('');
 
   // Mapear rutas a títulos actualizados
   const titlesMap = {
@@ -29,7 +30,9 @@ const Navbar = () => {
     '/reporte-vacaciones': 'Reportes de Vacaciones',
     '/reporte-permisos': 'Reportes de Permisos',
     '/cambio-contrasena': 'Cambio de Contraseña',
-    '/perfil': 'Perfil'
+    '/perfil': 'Perfil',
+    '/reporte-marca-tiempo': 'Reportes de Marca de Tiempo',
+    '/marca-tiempo': 'Gestión de Marca de Tiempo'
   };
 
   // Obtener el título basado en la ruta actual
@@ -38,6 +41,14 @@ const Navbar = () => {
   useEffect(() => {
     const isDarkModeEnabled = localStorage.getItem('darkMode') === 'true';
     setDarkMode(isDarkModeEnabled);
+
+    // Obtener rol del usuario desde localStorage
+    const storedRole = localStorage.getItem('role');
+    if (storedRole === '1') {
+      setRole('Administrador');
+    } else if (storedRole === '2') {
+      setRole('Empleador');
+    }
   }, []);
 
   const toggleDarkMode = () => {
@@ -56,12 +67,14 @@ const Navbar = () => {
 
   // Función para manejar la navegación a la página de perfil
   const handleProfileClick = () => {
-    navigate('/perfil'); // Redirige a la página de perfil
+    navigate('/perfil');
   };
 
   // Función para manejar cerrar sesión
   const handleLogout = () => {
-    navigate('/'); // Redirigir al login
+    localStorage.removeItem('user');
+    localStorage.removeItem('role');
+    navigate('/');
   };
 
   // Función para alternar el menú de perfil
@@ -70,13 +83,16 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-[#222831] text-[#EEEEEE] px-4 py-3 shadow-md relative"> {/* Aplicamos los colores solicitados */}
+    <nav className="bg-[#222831] text-[#EEEEEE] px-4 py-3 shadow-md relative">
       <div className="flex items-center justify-between">
         {/* Espacio en blanco para alinear el título en el centro */}
         <div className="flex-1"></div>
 
         {/* Título dinámico del módulo actual */}
         <h1 className="text-xl font-bold text-[#00ADB5] text-center flex-1">{currentTitle}</h1>
+
+        {/* Mostrar rol del usuario autenticado */}
+        <span className="text-[#00ADB5] mr-4">{role}</span>
 
         {/* Opciones de perfil y dark mode */}
         <div className="flex-1 flex justify-end items-center space-x-4">
@@ -88,7 +104,7 @@ const Navbar = () => {
           {/* Botón de perfil con menú desplegable */}
           <div className="relative">
             <button onClick={toggleProfileMenu} className="text-[#EEEEEE] focus:outline-none">
-              <FiUser size={24} /> {/* Icono de usuario */}
+              <FiUser size={24} />
             </button>
 
             {/* Menú desplegable */}
