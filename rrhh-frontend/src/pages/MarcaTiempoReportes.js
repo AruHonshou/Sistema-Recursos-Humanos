@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const MarcaTiempo = () => {
+const MarcaTiempoReportes = () => {
   const [marcas, setMarcas] = useState([]);
   const [empleados, setEmpleados] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -59,14 +59,14 @@ const MarcaTiempo = () => {
 
   return (
     <div className="p-6 bg-[#f9f9f9] dark:bg-[#1E1E2F] min-h-screen">
-      <h1 className="text-2xl font-bold mb-4 text-black dark:text-white text-center">Control de Asistencia</h1>
+      <h1 className="text-2xl font-bold mb-4 text-black dark:text-white text-center">Reportes de Asistencia</h1>
 
       <div className="flex justify-center space-x-4 mb-6">
         {/* Persona Selector */}
         <select
           value={selectedPersona}
           onChange={(e) => setSelectedPersona(e.target.value)}
-          className="border rounded-lg px-3 py-2"
+          className="border rounded-lg px-4 py-2 bg-white dark:bg-[#2D2D3B] text-black dark:text-white shadow-md transition duration-200 ease-in-out transform hover:scale-105 hover:border-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600"
         >
           <option value="">Seleccionar Persona</option>
           {empleados.map((empleado) => (
@@ -80,7 +80,7 @@ const MarcaTiempo = () => {
         <select
           value={selectedMes}
           onChange={(e) => setSelectedMes(e.target.value)}
-          className="border rounded-lg px-3 py-2"
+          className="border rounded-lg px-4 py-2 bg-white dark:bg-[#2D2D3B] text-black dark:text-white shadow-md transition duration-200 ease-in-out transform hover:scale-105 hover:border-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600"
         >
           <option value="">Seleccionar Mes</option>
           {Array.from({ length: 12 }, (_, i) => (
@@ -129,14 +129,14 @@ const MarcaTiempo = () => {
         <button
           onClick={goToPreviousPage}
           disabled={currentPage === 1}
-          className="bg-gray-500 hover:bg-gray-600 text-white py-1 px-3 rounded-lg shadow-md disabled:opacity-50"
+          className="bg-gray-500 hover:bg-gray-600 text-white py-1 px-3 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105 disabled:opacity-50"
         >
           Anterior
         </button>
         <button
           onClick={goToNextPage}
           disabled={currentPage === totalPages}
-          className="bg-gray-500 hover:bg-gray-600 text-white py-1 px-3 rounded-lg shadow-md disabled:opacity-50"
+          className="bg-gray-500 hover:bg-gray-600 text-white py-1 px-3 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105 disabled:opacity-50"
         >
           Siguiente
         </button>
@@ -145,4 +145,4 @@ const MarcaTiempo = () => {
   );
 };
 
-export default MarcaTiempo;
+export default MarcaTiempoReportes;

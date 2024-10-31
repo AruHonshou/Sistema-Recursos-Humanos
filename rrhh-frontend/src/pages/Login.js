@@ -28,39 +28,38 @@ function Login() {
   }, []);
 
   const handleSignIn = async (event) => {
-  event.preventDefault();
+    event.preventDefault();
 
-  if (!username || !password) {
-    setError('Por favor, complete ambos campos.');
-    return;
-  }
-
-  try {
-    const response = await fetch('http://localhost:3000/api/usuarios/autenticar', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ Nombre_Usuario: username, Contrasena: password }),
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
-      // Save user data and role in localStorage
-      localStorage.setItem('user', JSON.stringify({ ...data, idUsuario: data.idUsuario }));
-      localStorage.setItem('role', data.roles_idroles);
-
-      setError('');
-      navigate('/menu');
-    } else {
-      setError(data.error);
+    if (!username || !password) {
+      setError('Por favor, complete ambos campos.');
+      return;
     }
-  } catch (error) {
-    setError('Error de conexión. Por favor, intente nuevamente.');
-  }
-};
 
+    try {
+      const response = await fetch('http://localhost:3000/api/usuarios/autenticar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ Nombre_Usuario: username, Contrasena: password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Save user data and role in localStorage, including Nombre_Usuario and Contrasena
+        localStorage.setItem('user', JSON.stringify({ ...data, Nombre_Usuario: username, Contrasena: password }));
+        localStorage.setItem('role', data.roles_idroles);
+
+        setError('');
+        navigate('/menu');
+      } else {
+        setError(data.error);
+      }
+    } catch (error) {
+      setError('Error de conexión. Por favor, intente nuevamente.');
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#222831]">

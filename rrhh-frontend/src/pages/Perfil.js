@@ -1,3 +1,4 @@
+// src/pages/Perfil.js
 import React, { useEffect, useState } from 'react';
 import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
 
@@ -13,7 +14,7 @@ const Perfil = () => {
     const userData = JSON.parse(localStorage.getItem('user'));
 
     if (userData) {
-      setUserId(userData.idusuarios);
+      setUserId(userData.idusuarios || '');
       setUsername(userData.Nombre_Usuario || '');
       setPassword(userData.Contrasena || '');
       setRole(userData.roles_idroles === '1' ? 'Administrador' : 'Empleador');

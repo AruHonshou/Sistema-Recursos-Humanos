@@ -147,24 +147,22 @@ const Vacaciones = () => {
                 <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.DiasDisponibles}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.DiasConsumidos}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.Motivo_Vacacion}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.estado_solicitud_idestado_solicitud === 1 ? 'Aceptado' : vacacion.estado_solicitud_idestado_solicitud === 2 ? 'Rechazado' : 'En Espera'}</td>
+                <td className="px-4 py-2 text-black dark:text-white text-center">
+                  {vacacion.estado_solicitud_idestado_solicitud === 1 ? 'Aceptado' : vacacion.estado_solicitud_idestado_solicitud === 2 ? 'Rechazado' : 'En Espera'}
+                </td>
                 <td className="px-4 py-2 flex justify-center space-x-2">
-                  {/* Botón para aceptar */}
                   <button
                     onClick={() => aceptarVacacion(new Date(vacacion.Fecha_Inicio).toISOString().split('T')[0], vacacion.idEmpleado)}
                     className="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
                   >
                     <FaCheck />
                   </button>
-
-                  {/* Botón para rechazar */}
                   <button
                     onClick={() => rechazarVacacion(new Date(vacacion.Fecha_Inicio).toISOString().split('T')[0], vacacion.idEmpleado)}
                     className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
                   >
                     <FaTimes />
                   </button>
-                  {/* Botón para eliminar */}
                   <button
                     onClick={() => eliminarVacacion(new Date(vacacion.Fecha_Inicio).toISOString().split('T')[0], vacacion.idEmpleado)}
                     className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
@@ -193,7 +191,9 @@ const Vacaciones = () => {
                   onChange={(e) => {
                     const fechaInicio = e.target.value;
                     const fechaFin = nuevaVacacion.Fecha_Fin;
-                    const diasSolicitados = fechaInicio && fechaFin ? Math.ceil((new Date(fechaFin) - new Date(fechaInicio)) / (1000 * 60 * 60 * 24)) : 0;
+                    const diasSolicitados = fechaInicio && fechaFin
+                      ? Math.ceil((new Date(fechaFin) - new Date(fechaInicio)) / (1000 * 60 * 60 * 24)) + 1 // Add 1 to include both days
+                      : 0;
                     setNuevaVacacion({ ...nuevaVacacion, Fecha_Inicio: fechaInicio, Cantidad_Dias_Solicitados: diasSolicitados });
                   }}
                   className="border rounded-lg w-full px-3 py-2"
@@ -209,7 +209,9 @@ const Vacaciones = () => {
                   onChange={(e) => {
                     const fechaFin = e.target.value;
                     const fechaInicio = nuevaVacacion.Fecha_Inicio;
-                    const diasSolicitados = fechaInicio && fechaFin ? Math.ceil((new Date(fechaFin) - new Date(fechaInicio)) / (1000 * 60 * 60 * 24)) : 0;
+                    const diasSolicitados = fechaInicio && fechaFin
+                      ? Math.ceil((new Date(fechaFin) - new Date(fechaInicio)) / (1000 * 60 * 60 * 24)) + 1 // Add 1 to include both days
+                      : 0;
                     setNuevaVacacion({ ...nuevaVacacion, Fecha_Fin: fechaFin, Cantidad_Dias_Solicitados: diasSolicitados });
                   }}
                   className="border rounded-lg w-full px-3 py-2"

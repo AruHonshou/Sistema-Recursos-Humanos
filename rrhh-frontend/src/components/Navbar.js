@@ -32,7 +32,23 @@ const Navbar = () => {
     '/cambio-contrasena': 'Cambio de Contraseña',
     '/perfil': 'Perfil',
     '/reporte-marca-tiempo': 'Reportes de Marca de Tiempo',
-    '/marca-tiempo': 'Gestión de Marca de Tiempo'
+    '/reporte-horas-extras': 'Reportes de Horas Extras',
+    '/reporte-aguinaldo': 'Reportes de Aguinaldo',
+    '/marca-tiempo': 'Gestión de Marca de Tiempo',
+    '/reporte-planilla': 'Reportes de Planilla',
+    '/historial-pagos-planilla': 'Historial de Pagos de Planilla',
+    '/solicitar-vacacion': 'Solicitar Vacación',
+    '/solicitar-permiso': 'Solicitar Permiso',
+    '/solicitar-horas-extras': 'Solicitar Horas Extras',
+    '/consultar-planilla': 'Consultar Planilla',
+    '/consultar-incapacidad': 'Consultar Incapacidad',
+    '/consultar-vacaciones': 'Consultar Vacaciones',
+    '/consultar-horas-extras': 'Consultar Horas Extras',
+    '/consultar-planilla-pagada': 'Consultar Planilla Pagada',
+    '/consultar-permisos': 'Consultar Permisos',
+    '/consultar-aguinaldo': 'Consultar Aguinaldo',
+    '/consultar-liquidacion': 'Consultar Liquidación',
+    '/consultar-marca-tiempo': 'Consultar Marca de Tiempo',
   };
 
   // Obtener el título basado en la ruta actual

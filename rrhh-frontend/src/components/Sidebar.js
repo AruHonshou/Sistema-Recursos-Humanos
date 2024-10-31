@@ -11,6 +11,10 @@ const Sidebar = () => {
   const [showRHSubmenu, setShowRHSubmenu] = useState(false);
   const [showCRSubmenu, setShowCRSubmenu] = useState(false);
   const [showReporteSubmenu, setShowReporteSubmenu] = useState(false);
+  const [showSolicitudesSubmenu, setShowSolicitudesSubmenu] = useState(false);
+  const [showConsultasSubmenu, setShowConsultasSubmenu] = useState(false);
+
+
   const [role, setRole] = useState('');
   const navigate = useNavigate();
 
@@ -63,6 +67,7 @@ const Sidebar = () => {
 
           {showRHSubmenu && (
             <ul className="space-y-2">
+              
               <li>
                 <NavLink to="/aguinaldo" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
                   <AiOutlineDollarCircle className="mr-2" size={24} />
@@ -208,6 +213,30 @@ const Sidebar = () => {
                 </NavLink>
               </li>
               <li>
+                <NavLink to="/reporte-horas-extras" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+                  <AiOutlineClockCircle className="mr-2" size={24} />
+                  {isOpen && <span>Reportes de Horas Extras</span>}
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/reporte-aguinaldo" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+                  <AiOutlineDollarCircle className="mr-2" size={24} />
+                  {isOpen && <span>Reportes de Aguinaldo</span>}
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/reporte-planilla" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+                  <AiOutlineDollarCircle className="mr-2" size={24} />
+                  {isOpen && <span>Reportes de Planilla</span>}
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/historial-pagos-planilla" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+                  <AiOutlineDollarCircle className="mr-2" size={24} />
+                  {isOpen && <span>Historial de Pagos de Planilla</span>}
+                </NavLink>
+              </li>
+              <li>
                 <NavLink to="/cambio-contrasena" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
                   <AiOutlineUser className="mr-2" size={24} />
                   {isOpen && <span>Cambio de Contraseña</span>}
@@ -217,6 +246,60 @@ const Sidebar = () => {
           )}
         </>
       )}
+      {/* Solicitudes */}
+      <button
+        onClick={() => setShowSolicitudesSubmenu(!showSolicitudesSubmenu)}
+        className="text-[#00ADB5] font-bold mb-2 mt-4 w-full text-left flex items-center"
+      >
+        <FaRegCalendarAlt className="mr-2" size={24} />
+        {isOpen && <span>Solicitudes</span>}
+      </button>
+      {showSolicitudesSubmenu && (
+        <ul className="space-y-2">
+          <li>
+            <NavLink
+              to="/solicitar-vacacion"
+              className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center"
+            >
+              <FaRegCalendarAlt className="mr-2" size={24} />
+              {isOpen && <span>Solicitar Vacación</span>}
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/solicitar-permiso" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+              <FaRegCalendarAlt className="mr-2" size={24} />
+              {isOpen && <span>Solicitar Permiso</span>}
+            </NavLink>
+          </li>
+          <li>
+            <NavLink to="/solicitar-horas-extras" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+              <FaRegCalendarAlt className="mr-2" size={24} />
+              {isOpen && <span>Solicitar Horas Extras</span>}
+            </NavLink>
+          </li>
+        </ul>
+      )}
+      <button
+        onClick={() => setShowConsultasSubmenu(!showConsultasSubmenu)}
+        className="text-[#00ADB5] font-bold mb-2 mt-4 w-full text-left flex items-center"
+      >
+        <FaRegListAlt className="mr-2" size={24} />
+        {isOpen && <span>Consultas</span>}
+      </button>
+      {showConsultasSubmenu && (
+        <ul className="space-y-2">
+          <li><NavLink to="/consultar-planilla" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg">Consultar Planilla</NavLink></li>
+          <li><NavLink to="/consultar-incapacidad" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg">Consultar Incapacidad</NavLink></li>
+          <li><NavLink to="/consultar-vacaciones" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg">Consultar Vacaciones</NavLink></li>
+          <li><NavLink to="/consultar-horas-extras" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg">Consultar Horas Extras</NavLink></li>
+          <li><NavLink to="/consultar-planilla-pagada" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg">Consultar Planilla Pagada</NavLink></li>
+          <li><NavLink to="/consultar-permisos" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg">Consultar Permisos</NavLink></li>
+          <li><NavLink to="/consultar-aguinaldo" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg">Consultar Aguinaldo</NavLink></li>
+          <li><NavLink to="/consultar-liquidacion" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg">Consultar Liquidación</NavLink></li>
+          <li><NavLink to="/consultar-marca-tiempo" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg">Consultar Marca de Tiempo</NavLink></li>
+        </ul>
+      )}
+
 
       {/* Botón de Cerrar Sesión */}
       <button

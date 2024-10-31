@@ -4,7 +4,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 
-const IncapacidadesReportes = () => {
+const ConsultarIncapacidades = () => {
   const [incapacidades, setIncapacidades] = useState([]);
   const [empleados, setEmpleados] = useState([]);
   const [nombres, setNombres] = useState({});
@@ -35,14 +35,24 @@ const IncapacidadesReportes = () => {
     }
   };
 
-  const obtenerEmpleados = async () => {
+  // Obtener empleados
+const obtenerEmpleados = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/empleados/nombre-completo');
-      setEmpleados(response.data[0]);
+        const user = JSON.parse(localStorage.getItem('user'));
+        const idusuario = user ? user.idusuarios : null;
+
+        if (idusuario) {
+            const response = await axios.get(`http://localhost:3000/api/empleados/usuario/${idusuario}`);
+            setEmpleados([response.data]); // Wrap the object in an array to map over it in the display
+            setIdEmpleado(response.data.idEmpleado); // Set default selected employee
+        } else {
+            console.error('Usuario no encontrado en el local storage');
+        }
     } catch (error) {
-      console.error('Error al obtener los empleados:', error);
+        console.error('Error al obtener los empleados:', error);
     }
-  };
+};
+
 
   const fetchNombreEmpleado = async (id) => {
     try {
@@ -134,32 +144,30 @@ const IncapacidadesReportes = () => {
       <h1 className="text-2xl font-bold mb-4 text-black dark:text-white text-center">Reporte de Incapacidades</h1>
 
       <div className="flex justify-center mb-4 gap-4">
-        <select
-          value={idEmpleado}
-          onChange={(e) => setIdEmpleado(e.target.value)}
-          className="border rounded-lg px-4 py-2 bg-white dark:bg-[#2D2D3B] text-black dark:text-white shadow-md transition duration-200 ease-in-out transform hover:scale-105 hover:border-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600"
-        >
-          <option value="">Seleccione un Empleado</option>
-          {empleados.map((empleado) => (
-            <option key={empleado.idEmpleado} value={empleado.idEmpleado}>
-              {empleado.NombreCompleto}
-            </option>
-          ))}
-        </select>
+    <div className="border rounded-lg px-4 py-2 bg-white dark:bg-[#2D2D3B] text-black dark:text-white shadow-md">
+        <label className="block mb-1 text-center">Empleado</label>
+        <input
+            type="text"
+            value={empleados.length > 0 ? empleados[0].NombreCompleto : 'Cargando...'}
+            readOnly
+            className="text-center bg-white dark:bg-[#2D2D3B] border-none cursor-default"
+        />
+    </div>
 
-        <input
-          type="date"
-          value={fechaInicio}
-          onChange={(e) => setFechaInicio(e.target.value)}
-          className="border rounded-lg px-4 py-2 bg-white dark:bg-[#2D2D3B] text-black dark:text-white shadow-md transition duration-200 ease-in-out transform hover:scale-105 hover:border-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600"
-        />
-        <input
-          type="date"
-          value={fechaFin}
-          onChange={(e) => setFechaFin(e.target.value)}
-          className="border rounded-lg px-4 py-2 bg-white dark:bg-[#2D2D3B] text-black dark:text-white shadow-md transition duration-200 ease-in-out transform hover:scale-105 hover:border-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600"
-        />
-      </div>
+    <input
+        type="date"
+        value={fechaInicio}
+        onChange={(e) => setFechaInicio(e.target.value)}
+        className="border rounded-lg px-4 py-2 bg-white dark:bg-[#2D2D3B] text-black dark:text-white shadow-md"
+    />
+    <input
+        type="date"
+        value={fechaFin}
+        onChange={(e) => setFechaFin(e.target.value)}
+        className="border rounded-lg px-4 py-2 bg-white dark:bg-[#2D2D3B] text-black dark:text-white shadow-md"
+    />
+</div>
+
 
       <div className="flex justify-between mb-4 gap-4">
         <button
@@ -210,4 +218,4 @@ const IncapacidadesReportes = () => {
   );
 };
 
-export default IncapacidadesReportes;
+export default ConsultarIncapacidades;

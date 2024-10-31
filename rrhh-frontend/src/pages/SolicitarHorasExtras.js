@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { FaCheck, FaTimes, FaTrashAlt } from 'react-icons/fa';
 
-const HoraExtra = () => {
+const SolicitarHorasExtras = () => {
   const [horasExtras, setHorasExtras] = useState([]);
   const [empleados, setEmpleados] = useState([]);
   const [modalCrear, setModalCrear] = useState(false);
@@ -14,21 +13,36 @@ const HoraExtra = () => {
     hora_final: ''
   });
 
-  // Obtener todas las horas extras
+  // Obtener horas extras para el usuario
   const obtenerHorasExtras = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/horas-extras/');
-      setHorasExtras(response.data[0]);
+      const user = JSON.parse(localStorage.getItem('user'));
+      const idusuario = user ? user.idusuarios : null;
+
+      if (idusuario) {
+        const response = await axios.get(`http://localhost:3000/api/horas-extras/usuario/${idusuario}`);
+        const sortedHorasExtras = response.data[0].sort((a, b) => new Date(b.fecha_hora_extra) - new Date(a.fecha_hora_extra));
+        setHorasExtras(sortedHorasExtras);
+      } else {
+        console.error('Usuario no encontrado en el local storage');
+      }
     } catch (error) {
       console.error('Error al obtener las horas extras:', error);
     }
   };
 
-  // Obtener empleados
+  // Obtener empleados para el usuario
   const obtenerEmpleados = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/empleados/nombre-completo');
-      setEmpleados(response.data[0]);
+      const user = JSON.parse(localStorage.getItem('user'));
+      const idusuario = user ? user.idusuarios : null;
+
+      if (idusuario) {
+        const response = await axios.get(`http://localhost:3000/api/empleados/usuario/${idusuario}`);
+        setEmpleados([response.data]); // Wrap the object in an array to map over it in the dropdown
+      } else {
+        console.error('Usuario no encontrado en el local storage');
+      }
     } catch (error) {
       console.error('Error al obtener los empleados:', error);
     }
@@ -45,50 +59,7 @@ const HoraExtra = () => {
     }
   };
 
-  // Formatear la fecha a YYYY-MM-DD
-  const formatDate = (dateString) => {
-    return new Date(dateString).toISOString().split('T')[0];
-  };
-
-  // Función para aceptar horas extras
-  const aceptarHoraExtra = async (fecha, idEmpleado) => {
-    try {
-      await axios.put('http://localhost:3000/api/horas-extras', {
-        fecha_hora_extra: formatDate(fecha),
-        empleados_idEmpleado: idEmpleado,
-        estado_solicitud_idestado_solicitud: 1, // Estado "Aprobado"
-      });
-      await obtenerHorasExtras(); // Refrescar datos después de aceptar
-    } catch (error) {
-      console.error('Error al aceptar la solicitud de horas extras:', error);
-    }
-  };
-
-  // Función para rechazar horas extras
-  const rechazarHoraExtra = async (fecha, idEmpleado) => {
-    try {
-      await axios.put('http://localhost:3000/api/horas-extras', {
-        fecha_hora_extra: formatDate(fecha),
-        empleados_idEmpleado: idEmpleado,
-        estado_solicitud_idestado_solicitud: 2, // Estado "Rechazado"
-      });
-      await obtenerHorasExtras(); // Refrescar datos después de rechazar
-    } catch (error) {
-      console.error('Error al rechazar la solicitud de horas extras:', error);
-    }
-  };
-
-  // Función para eliminar horas extras
-  const eliminarHoraExtra = async (fecha, idEmpleado) => {
-    try {
-      await axios.delete(`http://localhost:3000/api/horas-extras/${formatDate(fecha)}/${idEmpleado}`);
-      obtenerHorasExtras();
-    } catch (error) {
-      console.error('Error al eliminar la solicitud de horas extras:', error);
-    }
-  };
-
-  // Calcular la cantidad de horas basadas en hora_inicio y hora_final cuando ambos están presentes
+  // Calcular la cantidad de horas basadas en hora_inicio y hora_final
   useEffect(() => {
     if (nuevaHoraExtra.hora_inicio && nuevaHoraExtra.hora_final) {
       const inicio = new Date(`1970-01-01T${nuevaHoraExtra.hora_inicio}:00`);
@@ -130,7 +101,6 @@ const HoraExtra = () => {
               <th className="px-4 py-2 text-black dark:text-white text-center">Monto</th>
               <th className="px-4 py-2 text-black dark:text-white text-center">Tipo de Hora Extra</th>
               <th className="px-4 py-2 text-black dark:text-white text-center">Estado</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -138,7 +108,7 @@ const HoraExtra = () => {
               <tr key={`${horaExtra.fecha_hora_extra}-${horaExtra.empleados_idEmpleado}`} className="border-b dark:border-[#4D4D61]">
                 <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.idEmpleado}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.Persona}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{formatDate(horaExtra.fecha_hora_extra)}</td>
+                <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(horaExtra.fecha_hora_extra).toISOString().split('T')[0]}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.Cantidad_Horas_Extras}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.Hora_Inicio}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.Hora_Final}</td>
@@ -146,26 +116,6 @@ const HoraExtra = () => {
                 <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.tipo_hora_extra}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">
                   {horaExtra.estado_solicitud === 'Aprobado' ? 'Aceptado' : horaExtra.estado_solicitud === 'Rechazado' ? 'Rechazado' : 'En Espera'}
-                </td>
-                <td className="px-4 py-2 flex justify-center space-x-2">
-                  <button
-                    onClick={() => aceptarHoraExtra(horaExtra.fecha_hora_extra, horaExtra.idEmpleado)}
-                    className="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded-lg shadow-md"
-                  >
-                    <FaCheck />
-                  </button>
-                  <button
-                    onClick={() => rechazarHoraExtra(horaExtra.fecha_hora_extra, horaExtra.idEmpleado)}
-                    className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg shadow-md"
-                  >
-                    <FaTimes />
-                  </button>
-                  <button
-                    onClick={() => eliminarHoraExtra(horaExtra.fecha_hora_extra, horaExtra.idEmpleado)}
-                    className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg shadow-md"
-                  >
-                    <FaTrashAlt />
-                  </button>
                 </td>
               </tr>
             ))}
@@ -197,9 +147,15 @@ const HoraExtra = () => {
                   className="border rounded-lg w-full px-3 py-2"
                 >
                   <option value="">Seleccione un Empleado</option>
-                  {empleados.map((empleado) => (
-                    <option key={empleado.idEmpleado} value={empleado.idEmpleado}>{empleado.NombreCompleto}</option>
-                  ))}
+                  {empleados.length > 0 ? (
+                    empleados.map((empleado) => (
+                      <option key={empleado.idEmpleado} value={empleado.idEmpleado}>
+                        {empleado.NombreCompleto}
+                      </option>
+                    ))
+                  ) : (
+                    <option value="">Cargando empleados...</option>
+                  )}
                 </select>
               </div>
 
@@ -233,20 +189,20 @@ const HoraExtra = () => {
                 />
               </div>
 
-              <div className="flex justify-end mt-4">
-                <button
-                  type="button"
-                  onClick={crearHoraExtra}
-                  className="bg-blue-500 text-white px-4 py-2 rounded-lg mr-2"
-                >
-                  Crear
-                </button>
+              <div className="flex justify-end mt-4 space-x-2">
                 <button
                   type="button"
                   onClick={() => setModalCrear(false)}
-                  className="bg-gray-300 text-black px-4 py-2 rounded-lg"
+                  className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
                 >
                   Cancelar
+                </button>
+                <button
+                  type="button"
+                  onClick={crearHoraExtra}
+                  className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                >
+                  Crear
                 </button>
               </div>
             </form>
@@ -257,4 +213,4 @@ const HoraExtra = () => {
   );
 };
 
-export default HoraExtra;
+export default SolicitarHorasExtras;

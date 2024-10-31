@@ -23,6 +23,23 @@ import PermisosReportes from '../pages/PermisosReportes';
 import CambioContrasena from '../pages/CambioContrasena';
 import MarcaTiempo from '../pages/MarcaTiempo';
 import MarcaTiempoReportes from '../pages/MarcaTiempoReportes';
+import HorasExtrasReportes from '../pages/HorasExtrasReportes';
+import AguinaldoReportes from '../pages/AguinaldoReportes';
+import PlanillaReportes from '../pages/PlanillaReportes.js';
+import HistorialPagosPlanilla from '../pages/HistorialPagosPlanilla';
+import SolicitarVacacion from '../pages/SolicitarVacacion';
+import SolicitarPermisos from '../pages/SolicitarPermisos';
+import SolicitarHorasExtras from '../pages/SolicitarHorasExtras';
+import ConsultarPlanilla from '../pages/ConsultarPlanilla';
+import ConsultarIncapacidad from '../pages/ConsultarIncapacidad';
+import ConsultarVacaciones from '../pages/ConsultarVacaciones';
+import ConsultarHorasExtras from '../pages/ConsultarHorasExtras';
+import ConsultarPlanillaPagada from '../pages/ConsultarPlanillaPagada';
+import ConsultarPermisos from '../pages/ConsultarPermisos';
+import ConsultarAguinaldo from '../pages/ConsultarAguinaldo';
+import ConsultarLiquidacion from '../pages/ConsultarLiquidacion';
+import ConsultarMarcaTiempo from '../pages/ConsultarMarcaTiempo';
+
 
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
@@ -61,6 +78,7 @@ const AppRoutes = () => {
             </LayoutWithSidebarNavbar>
           }
         />
+        
 
         {/* Recursos Humanos - Solo accesible por Administradores */}
         <Route
@@ -248,6 +266,46 @@ const AppRoutes = () => {
           }
         />
         <Route
+          path="/reporte-horas-extras"
+          element={
+            <ProtectedRoute requiredRoles={['1', '2']}>
+              <LayoutWithSidebarNavbar>
+                <HorasExtrasReportes />
+              </LayoutWithSidebarNavbar>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reporte-aguinaldo"
+          element={
+            <ProtectedRoute requiredRoles={['1', '2']}>
+              <LayoutWithSidebarNavbar>
+                <AguinaldoReportes />
+              </LayoutWithSidebarNavbar>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/reporte-planilla"
+          element={
+            <ProtectedRoute requiredRoles={['1', '2']}>
+              <LayoutWithSidebarNavbar>
+                <PlanillaReportes />
+              </LayoutWithSidebarNavbar>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/historial-pagos-planilla"
+          element={
+            <ProtectedRoute requiredRoles={['1', '2']}>
+              <LayoutWithSidebarNavbar>
+                <HistorialPagosPlanilla />
+              </LayoutWithSidebarNavbar>
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/cambio-contrasena"
           element={
             <ProtectedRoute requiredRoles={['1', '2']}>
@@ -257,6 +315,73 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
+        {/* Reportes - Accesible por Administradores y Empleadores */}
+        <Route
+          path="/solicitar-vacacion"
+          element={
+            <ProtectedRoute requiredRoles={['1', '2']}>
+              <LayoutWithSidebarNavbar>
+                <SolicitarVacacion />
+              </LayoutWithSidebarNavbar>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/solicitar-permiso"
+          element={
+            <ProtectedRoute requiredRoles={['1', '2']}>
+              <LayoutWithSidebarNavbar>
+                <SolicitarPermisos />
+              </LayoutWithSidebarNavbar>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/solicitar-horas-extras"
+          element={
+            <ProtectedRoute requiredRoles={['1', '2']}>
+              <LayoutWithSidebarNavbar>
+                <SolicitarHorasExtras />
+              </LayoutWithSidebarNavbar>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+  path="/consultar-planilla"
+  element={<LayoutWithSidebarNavbar><ConsultarPlanilla /></LayoutWithSidebarNavbar>}
+/>
+<Route
+  path="/consultar-incapacidad"
+  element={<LayoutWithSidebarNavbar><ConsultarIncapacidad /></LayoutWithSidebarNavbar>}
+/>
+<Route
+  path="/consultar-vacaciones"
+  element={<LayoutWithSidebarNavbar><ConsultarVacaciones /></LayoutWithSidebarNavbar>}
+/>
+<Route
+  path="/consultar-horas-extras"
+  element={<LayoutWithSidebarNavbar><ConsultarHorasExtras /></LayoutWithSidebarNavbar>}
+/>
+<Route
+  path="/consultar-planilla-pagada"
+  element={<LayoutWithSidebarNavbar><ConsultarPlanillaPagada /></LayoutWithSidebarNavbar>}
+/>
+<Route
+  path="/consultar-permisos"
+  element={<LayoutWithSidebarNavbar><ConsultarPermisos /></LayoutWithSidebarNavbar>}
+/>
+<Route
+  path="/consultar-aguinaldo"
+  element={<LayoutWithSidebarNavbar><ConsultarAguinaldo /></LayoutWithSidebarNavbar>}
+/>
+<Route
+  path="/consultar-liquidacion"
+  element={<LayoutWithSidebarNavbar><ConsultarLiquidacion /></LayoutWithSidebarNavbar>}
+/>
+<Route
+  path="/consultar-marca-tiempo"
+  element={<LayoutWithSidebarNavbar><ConsultarMarcaTiempo /></LayoutWithSidebarNavbar>}
+/>
       </Routes>
     </Router>
   );
