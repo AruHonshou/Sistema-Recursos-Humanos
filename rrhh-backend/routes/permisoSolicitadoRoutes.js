@@ -19,4 +19,7 @@ router.delete('/:fecha_permiso/:empleados_idEmpleado', permisoSolicitadoControll
 // Ruta para mostrar permisos con detalles completos
 router.get('/', permisoSolicitadoController.mostrarPermisosDetalles);
 
+router.get('/usuario/:idusuarios', permisoSolicitadoController.mostrarPermisosPorUsuarioId);
+
+
 module.exports = router;

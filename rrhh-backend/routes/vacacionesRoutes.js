@@ -19,4 +19,8 @@ router.put('/', vacacionesController.actualizarEstadoVacacion);
 // Ruta para eliminar una vacación
 router.delete('/:Fecha_Inicio/:empleados_idEmpleado', vacacionesController.eliminarVacacion);
 
+router.get('/usuario/:idusuarios', vacacionesController.obtenerVacacionesPorUsuario);
+
+router.get('/dias-vacacion/:idusuarios', vacacionesController.obtenerDiasDelEmpleadoVacacion);
+
 module.exports = router;

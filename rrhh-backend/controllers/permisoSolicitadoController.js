@@ -108,10 +108,28 @@ async function mostrarPermisosDetalles(req, res) {
     }
 }
 
+
+// Función para mostrar permisos basados en el idusuarios
+async function mostrarPermisosPorUsuarioId(req, res) {
+    const { idusuarios } = req.params;
+    let connection;
+    try {
+        connection = await db.getConnection();
+        const [rows] = await connection.query('CALL MostrarPermisosUsuarioId(?)', [idusuarios]);
+        res.status(200).json(rows);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener los permisos del usuario' });
+    } finally {
+        if (connection) connection.release();
+    }
+}
+
 module.exports = {
     crearPermisoSolicitud,
     leerPermisosPorEmpleado,
     actualizarEstadoPermiso,
     eliminarPermiso,
-    mostrarPermisosDetalles
+    mostrarPermisosDetalles,
+    mostrarPermisosPorUsuarioId
 };

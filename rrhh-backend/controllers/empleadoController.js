@@ -142,11 +142,34 @@ async function leerEmpleadosConNombreCompleto(req, res) {
     }
 }
 
+// Función para leer un empleado por idUsuario
+async function leerEmpleadoPorIdUsuario(req, res) {
+    const { idUsuario } = req.params;  // Asegúrate de que `idUsuario` sea un número entero
+    let connection;
+    try {
+        connection = await db.getConnection();
+        const [rows] = await connection.query('CALL LeerEmpleadoPorIdUsuario(?)', [parseInt(idUsuario, 10)]); // Convierte `idUsuario` a entero
+
+        if (rows[0].length > 0) {
+            res.status(200).json(rows[0][0]);
+        } else {
+            res.status(404).json({ error: 'Empleado no encontrado para el idUsuario proporcionado' });
+        }
+    } catch (error) {
+        console.error("Error en leerEmpleadoPorIdUsuario:", error); // Mostrar el error completo
+        res.status(500).json({ error: 'Error al obtener el empleado por idUsuario' });
+    } finally {
+        if (connection) connection.release();
+    }
+}
+
+
 module.exports = {
     crearEmpleado,
     leerTodosEmpleados,
     leerEmpleadoPorID,
     actualizarEmpleado,
     eliminarEmpleado,
-    leerEmpleadosConNombreCompleto 
+    leerEmpleadosConNombreCompleto,
+    leerEmpleadoPorIdUsuario
 };

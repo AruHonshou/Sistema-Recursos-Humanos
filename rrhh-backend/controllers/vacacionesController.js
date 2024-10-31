@@ -105,10 +105,43 @@ async function eliminarVacacion(req, res) {
     }
 }
 
+async function obtenerVacacionesPorUsuario(req, res) {
+    const { idusuarios } = req.params;
+    let connection;
+    try {
+        connection = await db.getConnection();
+        const [rows] = await connection.query('CALL VacacionTablaPorUsuario(?)', [idusuarios]);
+        res.status(200).json(rows);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener las vacaciones para el usuario' });
+    } finally {
+        if (connection) connection.release();
+    }
+}
+
+// Function to get available and consumed vacation days for a user
+async function obtenerDiasDelEmpleadoVacacion(req, res) {
+    const { idusuarios } = req.params;
+    let connection;
+    try {
+        connection = await db.getConnection();
+        const [rows] = await connection.query('CALL DiasDelEmpleadoVacacion(?)', [idusuarios]);
+        res.status(200).json(rows);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error al obtener los días de vacaciones del empleado' });
+    } finally {
+        if (connection) connection.release();
+    }
+}
+
 module.exports = {
     obtenerVacaciones,
     crearVacacion,
     leerVacacion,
     actualizarEstadoVacacion,
-    eliminarVacacion
+    eliminarVacacion,
+    obtenerVacacionesPorUsuario,
+    obtenerDiasDelEmpleadoVacacion // Add this line
 };
