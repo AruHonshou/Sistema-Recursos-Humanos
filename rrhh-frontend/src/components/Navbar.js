@@ -34,6 +34,7 @@ const Navbar = () => {
     '/reporte-marca-tiempo': 'Reportes de Marca de Tiempo',
     '/reporte-horas-extras': 'Reportes de Horas Extras',
     '/reporte-aguinaldo': 'Reportes de Aguinaldo',
+    '/reporte-liquidacion': 'Reportes de Liquidación',
     '/marca-tiempo': 'Gestión de Marca de Tiempo',
     '/reporte-planilla': 'Reportes de Planilla',
     '/historial-pagos-planilla': 'Historial de Pagos de Planilla',

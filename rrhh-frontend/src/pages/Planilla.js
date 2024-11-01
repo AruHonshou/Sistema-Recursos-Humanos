@@ -9,15 +9,28 @@ const Planilla = () => {
   const [fechaEliminar, setFechaEliminar] = useState('');
   const [alertMessages, setAlertMessages] = useState([]);
 
+  // Obtener mes y año actual
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth() + 1;
+
   // Fetch all payroll records
-  const obtenerPlanillas = async () => {
-    try {
-      const response = await axios.get('http://localhost:3000/api/planillas');
-      setPlanillas(response.data[0]);
-    } catch (error) {
-      console.error('Error al obtener las planillas:', error);
-    }
-  };
+const obtenerPlanillas = async () => {
+  try {
+    const response = await axios.get('http://localhost:3000/api/planillas');
+
+    // Ordena primero por fecha de planilla (más reciente a más antigua) y luego por idEmpleado (menor a mayor)
+    const planillasOrdenadas = response.data[0].sort((a, b) => {
+      const dateComparison = new Date(b.Fecha_Planilla) - new Date(a.Fecha_Planilla);
+      if (dateComparison !== 0) return dateComparison; // Ordena por fecha primero
+      return a.idEmpleado - b.idEmpleado; // Si las fechas son iguales, ordena por idEmpleado
+    });
+
+    setPlanillas(planillasOrdenadas);
+  } catch (error) {
+    console.error('Error al obtener las planillas:', error);
+  }
+};
+
 
   // Create new payroll entry with on-screen validation alerts
   const crearPlanilla = async () => {
@@ -25,7 +38,6 @@ const Planilla = () => {
       const response = await axios.post('http://localhost:3000/api/planillas/calcular', nuevaPlanilla);
       const data = response.data;
 
-      // Update the alert messages state if there are validation messages
       if (data.alertas && data.alertas.length > 0) {
         setAlertMessages(data.alertas.map(alert => alert.mensaje));
       } else {
@@ -41,18 +53,22 @@ const Planilla = () => {
   };
 
   // Delete payroll entry by selected date
-  const eliminarPlanilla = async () => {
-    try {
-      const formattedDate = new Date(fechaEliminar).toISOString().split('T')[0];
-      await axios.delete('http://localhost:3000/api/planillas/eliminar', { data: { fechaPlanilla: formattedDate } });
-      setAlertMessages(['Planilla eliminada exitosamente.']);
-      setModalEliminar(false);
-      obtenerPlanillas();
-    } catch (error) {
-      console.error('Error al eliminar la planilla:', error);
-      setAlertMessages(['Error al eliminar la planilla. Intente nuevamente.']);
-    }
-  };
+const eliminarPlanilla = async () => {
+  try {
+    const formattedDate = new Date(fechaEliminar).toISOString().split('T')[0];
+    await axios.delete('http://localhost:3000/api/planillas/eliminar', { data: { fechaPlanilla: formattedDate } });
+
+    setAlertMessages(['Planilla eliminada exitosamente.']);
+    setModalEliminar(false);
+    
+    // Actualiza la tabla llamando a obtenerPlanillas() para reflejar la eliminación
+    obtenerPlanillas();
+  } catch (error) {
+    console.error('Error al eliminar la planilla:', error);
+    setAlertMessages(['Error al eliminar la planilla. Intente nuevamente.']);
+  }
+};
+
 
   useEffect(() => {
     obtenerPlanillas();
@@ -65,7 +81,6 @@ const Planilla = () => {
     <div className="p-6 bg-[#f9f9f9] dark:bg-[#1E1E2F] min-h-screen">
       <h1 className="text-2xl font-bold mb-4 text-black dark:text-white text-center">Gestión de Planilla</h1>
 
-      {/* Alert Messages Section */}
       {alertMessages.length > 0 && (
         <div className="mb-4 p-4 bg-yellow-200 border-l-4 border-yellow-500 text-yellow-700 rounded-lg">
           {alertMessages.map((message, index) => (
@@ -75,7 +90,6 @@ const Planilla = () => {
       )}
 
       <div className="flex justify-center space-x-4 mb-4">
-        {/* Create Payroll Button */}
         <button
           onClick={() => setModalCrear(true)}
           className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
@@ -83,7 +97,6 @@ const Planilla = () => {
           + Calcular Nueva Planilla
         </button>
 
-        {/* Delete Payroll Button */}
         <button
           onClick={() => setModalEliminar(true)}
           className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
@@ -135,12 +148,38 @@ const Planilla = () => {
             <form>
               <div>
                 <label className="block mb-2">Fecha de Planilla:</label>
-                <input
-                  type="date"
-                  value={nuevaPlanilla.fechaPlanilla}
-                  onChange={(e) => setNuevaPlanilla({ ...nuevaPlanilla, fechaPlanilla: e.target.value })}
-                  className="border rounded-lg w-full px-3 py-2"
-                />
+                <div className="flex space-x-2">
+                  {/* Selector de Año */}
+                  <select
+                    value={nuevaPlanilla.anio}
+                    onChange={(e) => setNuevaPlanilla({ ...nuevaPlanilla, anio: e.target.value, mes: '' })}
+                    className="border rounded-lg w-full px-3 py-2"
+                  >
+                    <option value="">Seleccione el año</option>
+                    {Array.from({ length: 5 }, (_, i) => currentYear + i).map((year) => (
+                      <option key={year} value={year}>
+                        {year}
+                      </option>
+                    ))}
+                  </select>
+
+                  {/* Selector de Mes */}
+                  <select
+                    value={nuevaPlanilla.mes}
+                    onChange={(e) => setNuevaPlanilla({ ...nuevaPlanilla, mes: e.target.value })}
+                    className="border rounded-lg w-full px-3 py-2"
+                  >
+                    <option value="">Seleccione el mes</option>
+                    {(nuevaPlanilla.anio == currentYear
+                      ? Array.from({ length: 12 - currentMonth + 1 }, (_, i) => i + currentMonth)
+                      : Array.from({ length: 12 }, (_, i) => i + 1)
+                    ).map((month) => (
+                      <option key={month} value={month}>
+                        {new Date(0, month - 1).toLocaleString("es", { month: "long" })}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               <div className="flex justify-end mt-4">

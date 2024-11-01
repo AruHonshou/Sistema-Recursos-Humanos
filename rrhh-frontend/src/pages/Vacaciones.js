@@ -4,6 +4,7 @@ import { FaCheck, FaTimes, FaTrashAlt } from 'react-icons/fa';
 import 'jspdf-autotable';
 
 const Vacaciones = () => {
+  const [errorModal, setErrorModal] = useState({ visible: false, message: '' });
   const [vacaciones, setVacaciones] = useState([]);
   const [empleados, setEmpleados] = useState([]);
   const [modalCrear, setModalCrear] = useState(false);
@@ -42,16 +43,23 @@ const Vacaciones = () => {
     }
   };
 
-  // Crear nueva vacación
+  // Vacaciones.js
   const crearVacacion = async () => {
     try {
       await axios.post('http://localhost:3000/api/vacaciones/', nuevaVacacion);
       setModalCrear(false);
       obtenerVacaciones();
     } catch (error) {
-      console.error('Error al crear la vacación:', error);
+      if (error.response && error.response.status === 400) {
+        setErrorModal({ visible: true, message: error.response.data.error });
+      } else {
+        console.error('Error al crear la vacación:', error);
+        setErrorModal({ visible: true, message: 'Error al crear la vacación' });
+      }
     }
   };
+
+
 
   // Actualizar vacación
   const actualizarVacacion = async () => {
@@ -136,43 +144,51 @@ const Vacaciones = () => {
             </tr>
           </thead>
           <tbody>
-            {vacaciones.map((vacacion) => (
-              <tr key={`${new Date(vacacion.Fecha_Inicio).toISOString()}-${vacacion.idEmpleado}`} className="border-b dark:border-[#4D4D61]">
-                <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.idEmpleado}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.Empleador || 'Cargando...'}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(vacacion.Fecha_Inicio).toISOString().split('T')[0]}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(vacacion.Fecha_Fin).toISOString().split('T')[0]}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.Cantidad_Dias_Solicitados}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(vacacion.Fecha_Solicitud).toISOString().split('T')[0]}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.DiasDisponibles}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.DiasConsumidos}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.Motivo_Vacacion}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">
-                  {vacacion.estado_solicitud_idestado_solicitud === 1 ? 'Aceptado' : vacacion.estado_solicitud_idestado_solicitud === 2 ? 'Rechazado' : 'En Espera'}
-                </td>
-                <td className="px-4 py-2 flex justify-center space-x-2">
-                  <button
-                    onClick={() => aceptarVacacion(new Date(vacacion.Fecha_Inicio).toISOString().split('T')[0], vacacion.idEmpleado)}
-                    className="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
-                  >
-                    <FaCheck />
-                  </button>
-                  <button
-                    onClick={() => rechazarVacacion(new Date(vacacion.Fecha_Inicio).toISOString().split('T')[0], vacacion.idEmpleado)}
-                    className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
-                  >
-                    <FaTimes />
-                  </button>
-                  <button
-                    onClick={() => eliminarVacacion(new Date(vacacion.Fecha_Inicio).toISOString().split('T')[0], vacacion.idEmpleado)}
-                    className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
-                  >
-                    <FaTrashAlt />
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {vacaciones
+              // Ordenar: En Espera (3) primero, luego Aceptado (1) y Rechazado (2)
+              .sort((a, b) => {
+                if (a.estado_solicitud_idestado_solicitud === 3) return -1;
+                if (b.estado_solicitud_idestado_solicitud === 3) return 1;
+                return 0;
+              })
+              .map((vacacion) => (
+                <tr key={`${new Date(vacacion.Fecha_Inicio).toISOString()}-${vacacion.idEmpleado}`} className="border-b dark:border-[#4D4D61]">
+                  <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.idEmpleado}</td>
+                  <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.Empleador || 'Cargando...'}</td>
+                  <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(vacacion.Fecha_Inicio).toISOString().split('T')[0]}</td>
+                  <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(vacacion.Fecha_Fin).toISOString().split('T')[0]}</td>
+                  <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.Cantidad_Dias_Solicitados}</td>
+                  <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(vacacion.Fecha_Solicitud).toISOString().split('T')[0]}</td>
+                  <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.DiasDisponibles}</td>
+                  <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.DiasConsumidos}</td>
+                  <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.Motivo_Vacacion}</td>
+                  <td className="px-4 py-2 text-black dark:text-white text-center">
+                    {vacacion.estado_solicitud_idestado_solicitud === 1 ? 'Aceptado' : vacacion.estado_solicitud_idestado_solicitud === 2 ? 'Rechazado' : 'En Espera'}
+                  </td>
+                  <td className="px-4 py-2 flex justify-center space-x-2">
+                    <button
+                      onClick={() => aceptarVacacion(new Date(vacacion.Fecha_Inicio).toISOString().split('T')[0], vacacion.idEmpleado)}
+                      className="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                    >
+                      <FaCheck />
+                    </button>
+                    <button
+                      onClick={() => rechazarVacacion(new Date(vacacion.Fecha_Inicio).toISOString().split('T')[0], vacacion.idEmpleado)}
+                      className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                    >
+                      <FaTimes />
+                    </button>
+                    <button
+                      onClick={() => eliminarVacacion(new Date(vacacion.Fecha_Inicio).toISOString().split('T')[0], vacacion.idEmpleado)}
+                      className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                    >
+                      <FaTrashAlt />
+                    </button>
+                  </td>
+                </tr>
+              ))}
           </tbody>
+
         </table>
       </div>
 
@@ -243,12 +259,23 @@ const Vacaciones = () => {
               {/* Motivo de Vacación */}
               <div>
                 <label className="block mb-2">Motivo de Vacación:</label>
-                <input
-                  type="text"
+                <select
                   value={nuevaVacacion.Motivo_Vacacion}
                   onChange={(e) => setNuevaVacacion({ ...nuevaVacacion, Motivo_Vacacion: e.target.value })}
                   className="border rounded-lg w-full px-3 py-2"
-                />
+                >
+                  <option value="">Seleccione un Motivo</option>
+                  <option value="Vacaciones anuales">Vacaciones anuales</option>
+                  <option value="Vacaciones por motivos personales">Vacaciones por motivos personales</option>
+                  <option value="Vacaciones familiares">Vacaciones familiares</option>
+                  <option value="Vacaciones por salud">Vacaciones por salud</option>
+                  <option value="Vacaciones escolares">Vacaciones escolares</option>
+                  <option value="Vacaciones por estudios">Vacaciones por estudios</option>
+                  <option value="Vacaciones por viaje">Vacaciones por viaje</option>
+                  <option value="Vacaciones no programadas">Vacaciones no programadas</option>
+                  <option value="Vacaciones de fin de año">Vacaciones de fin de año</option>
+                  <option value="Vacaciones de medio año">Vacaciones de medio año</option>
+                </select>
               </div>
 
               {/* Empleado */}
@@ -351,6 +378,23 @@ const Vacaciones = () => {
           </div>
         </div>
       )}
+
+      {errorModal.visible && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg max-w-md mx-auto text-center">
+            <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
+            <p className="text-gray-700 dark:text-white">{errorModal.message}</p>
+            <button
+              onClick={() => setErrorModal({ visible: false, message: '' })}
+              className="mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
+
+
     </div>
   );
 };

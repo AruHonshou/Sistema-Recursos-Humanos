@@ -4,7 +4,7 @@ import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
 
-const ReportePermisos = () => {
+const ConsultarPermisos = () => {
     const [permisos, setPermisos] = useState([]);
     const [empleados, setEmpleados] = useState([]);
     const [idEmpleado, setIdEmpleado] = useState('');
@@ -73,7 +73,6 @@ const ReportePermisos = () => {
                 permiso.idEmpleado,
                 permiso.Persona || 'Cargando...',
                 new Date(permiso.fecha_permiso).toLocaleDateString('es-ES'),
-                permiso.detalle_permiso,
                 new Date(permiso.fecha_solicitud).toLocaleDateString('es-ES'),
                 permiso.Con_Gose === 1 ? 'Sí' : 'No',
                 permiso.horas_permiso,
@@ -91,7 +90,6 @@ const ReportePermisos = () => {
             'ID Empleado': permiso.idEmpleado,
             'Nombre': permiso.Persona || 'Cargando...',
             'Fecha Permiso': new Date(permiso.fecha_permiso).toLocaleDateString('es-ES'),
-            'Detalle': permiso.detalle_permiso,
             'Fecha Solicitud': new Date(permiso.fecha_solicitud).toLocaleDateString('es-ES'),
             'Con Goce': permiso.Con_Gose === 1 ? 'Sí' : 'No',
             'Horas Permiso': permiso.horas_permiso,
@@ -167,7 +165,6 @@ const ReportePermisos = () => {
                             <th className="px-4 py-2 text-black dark:text-white text-center">ID Empleado</th>
                             <th className="px-4 py-2 text-black dark:text-white text-center">Nombre</th>
                             <th className="px-4 py-2 text-black dark:text-white text-center">Fecha Permiso</th>
-                            <th className="px-4 py-2 text-black dark:text-white text-center">Detalle</th>
                             <th className="px-4 py-2 text-black dark:text-white text-center">Fecha Solicitud</th>
                             <th className="px-4 py-2 text-black dark:text-white text-center">Con Goce</th>
                             <th className="px-4 py-2 text-black dark:text-white text-center">Horas Permiso</th>
@@ -182,7 +179,6 @@ const ReportePermisos = () => {
                                 <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.idEmpleado}</td>
                                 <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.Persona || 'Cargando...'}</td>
                                 <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(permiso.fecha_permiso).toLocaleDateString('es-ES')}</td>
-                                <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.detalle_permiso}</td>
                                 <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(permiso.fecha_solicitud).toLocaleDateString('es-ES')}</td>
                                 <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.Con_Gose}</td>
                                 <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.horas_permiso}</td>
@@ -200,4 +196,4 @@ const ReportePermisos = () => {
     );
 };
 
-export default ReportePermisos;
+export default ConsultarPermisos;

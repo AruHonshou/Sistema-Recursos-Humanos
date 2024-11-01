@@ -4,27 +4,23 @@ const db = require('../config/db');
 
 // Función para calcular y registrar el aguinaldo
 async function calcularYRegistrarAguinaldo(req, res) {
-    const { idEmpleado, fechaInicio, fechaFin, fechaAguinaldo, idCatalogoAguinaldo } = req.body;
+    const { idEmpleado, fechaAguinaldo, idCatalogoAguinaldo } = req.body; // Usa idCatalogoAguinaldo aquí
     let connection;
     try {
         connection = await db.getConnection();
-        await connection.beginTransaction();
-
         await connection.query(
-            'CALL CalcularYRegistrarAguinaldo(?, ?, ?, ?, ?)',
-            [idEmpleado, fechaInicio, fechaFin, fechaAguinaldo, idCatalogoAguinaldo]
+            'CALL CalcularYRegistrarAguinaldo(?, ?, ?)',
+            [idEmpleado, fechaAguinaldo, idCatalogoAguinaldo]
         );
-
-        await connection.commit();
         res.status(201).json({ mensaje: 'Aguinaldo calculado y registrado exitosamente' });
     } catch (error) {
-        if (connection) await connection.rollback();
         console.error(error);
         res.status(500).json({ error: 'Error al calcular y registrar el aguinaldo' });
     } finally {
         if (connection) connection.release();
     }
 }
+
 
 // Función para obtener el reporte de aguinaldos
 async function obtenerReporteAguinaldo(req, res) {
@@ -56,9 +52,9 @@ async function leerCatalogoAguinaldo(req, res) {
     }
 }
 
-// Función para eliminar un aguinaldo
+// Controlador para eliminar un aguinaldo
 async function eliminarAguinaldo(req, res) {
-    const { idEmpleado, fechaAguinaldo } = req.body;
+    const { idEmpleado, fechaAguinaldo } = req.body; // Obtener datos de req.body
     let connection;
     try {
         connection = await db.getConnection();
@@ -71,6 +67,7 @@ async function eliminarAguinaldo(req, res) {
         if (connection) connection.release();
     }
 }
+
 
 module.exports = {
     calcularYRegistrarAguinaldo,

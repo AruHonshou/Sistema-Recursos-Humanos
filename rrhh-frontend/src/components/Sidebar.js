@@ -67,7 +67,7 @@ const Sidebar = () => {
 
           {showRHSubmenu && (
             <ul className="space-y-2">
-              
+
               <li>
                 <NavLink to="/aguinaldo" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
                   <AiOutlineDollarCircle className="mr-2" size={24} />
@@ -236,6 +236,13 @@ const Sidebar = () => {
                   {isOpen && <span>Historial de Pagos de Planilla</span>}
                 </NavLink>
               </li>
+              <li>
+                <NavLink to="/reporte-liquidacion" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+                  <AiOutlineUser className="mr-2" size={24} />
+                  {isOpen && <span>Reportes de Liquidación</span>}
+                </NavLink>
+              </li>
+
               <li>
                 <NavLink to="/cambio-contrasena" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
                   <AiOutlineUser className="mr-2" size={24} />

@@ -39,6 +39,8 @@ import ConsultarPermisos from '../pages/ConsultarPermisos';
 import ConsultarAguinaldo from '../pages/ConsultarAguinaldo';
 import ConsultarLiquidacion from '../pages/ConsultarLiquidacion';
 import ConsultarMarcaTiempo from '../pages/ConsultarMarcaTiempo';
+import LiquidacionReportes from '../pages/LiquidacionReportes';
+
 
 
 import Sidebar from '../components/Sidebar';
@@ -78,7 +80,7 @@ const AppRoutes = () => {
             </LayoutWithSidebarNavbar>
           }
         />
-        
+
 
         {/* Recursos Humanos - Solo accesible por Administradores */}
         <Route
@@ -286,6 +288,16 @@ const AppRoutes = () => {
           }
         />
         <Route
+          path="/reporte-liquidacion"
+          element={
+            <ProtectedRoute requiredRoles={['1', '2']}>
+              <LayoutWithSidebarNavbar>
+                <LiquidacionReportes />
+              </LayoutWithSidebarNavbar>
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/reporte-planilla"
           element={
             <ProtectedRoute requiredRoles={['1', '2']}>
@@ -347,41 +359,41 @@ const AppRoutes = () => {
           }
         />
         <Route
-  path="/consultar-planilla"
-  element={<LayoutWithSidebarNavbar><ConsultarPlanilla /></LayoutWithSidebarNavbar>}
-/>
-<Route
-  path="/consultar-incapacidad"
-  element={<LayoutWithSidebarNavbar><ConsultarIncapacidad /></LayoutWithSidebarNavbar>}
-/>
-<Route
-  path="/consultar-vacaciones"
-  element={<LayoutWithSidebarNavbar><ConsultarVacaciones /></LayoutWithSidebarNavbar>}
-/>
-<Route
-  path="/consultar-horas-extras"
-  element={<LayoutWithSidebarNavbar><ConsultarHorasExtras /></LayoutWithSidebarNavbar>}
-/>
-<Route
-  path="/consultar-planilla-pagada"
-  element={<LayoutWithSidebarNavbar><ConsultarPlanillaPagada /></LayoutWithSidebarNavbar>}
-/>
-<Route
-  path="/consultar-permisos"
-  element={<LayoutWithSidebarNavbar><ConsultarPermisos /></LayoutWithSidebarNavbar>}
-/>
-<Route
-  path="/consultar-aguinaldo"
-  element={<LayoutWithSidebarNavbar><ConsultarAguinaldo /></LayoutWithSidebarNavbar>}
-/>
-<Route
-  path="/consultar-liquidacion"
-  element={<LayoutWithSidebarNavbar><ConsultarLiquidacion /></LayoutWithSidebarNavbar>}
-/>
-<Route
-  path="/consultar-marca-tiempo"
-  element={<LayoutWithSidebarNavbar><ConsultarMarcaTiempo /></LayoutWithSidebarNavbar>}
-/>
+          path="/consultar-planilla"
+          element={<LayoutWithSidebarNavbar><ConsultarPlanilla /></LayoutWithSidebarNavbar>}
+        />
+        <Route
+          path="/consultar-incapacidad"
+          element={<LayoutWithSidebarNavbar><ConsultarIncapacidad /></LayoutWithSidebarNavbar>}
+        />
+        <Route
+          path="/consultar-vacaciones"
+          element={<LayoutWithSidebarNavbar><ConsultarVacaciones /></LayoutWithSidebarNavbar>}
+        />
+        <Route
+          path="/consultar-horas-extras"
+          element={<LayoutWithSidebarNavbar><ConsultarHorasExtras /></LayoutWithSidebarNavbar>}
+        />
+        <Route
+          path="/consultar-planilla-pagada"
+          element={<LayoutWithSidebarNavbar><ConsultarPlanillaPagada /></LayoutWithSidebarNavbar>}
+        />
+        <Route
+          path="/consultar-permisos"
+          element={<LayoutWithSidebarNavbar><ConsultarPermisos /></LayoutWithSidebarNavbar>}
+        />
+        <Route
+          path="/consultar-aguinaldo"
+          element={<LayoutWithSidebarNavbar><ConsultarAguinaldo /></LayoutWithSidebarNavbar>}
+        />
+        <Route
+          path="/consultar-liquidacion"
+          element={<LayoutWithSidebarNavbar><ConsultarLiquidacion /></LayoutWithSidebarNavbar>}
+        />
+        <Route
+          path="/consultar-marca-tiempo"
+          element={<LayoutWithSidebarNavbar><ConsultarMarcaTiempo /></LayoutWithSidebarNavbar>}
+        />
       </Routes>
     </Router>
   );

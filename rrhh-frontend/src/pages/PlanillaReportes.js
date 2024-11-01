@@ -10,15 +10,15 @@ const PlanillaReportes = () => {
     const [idEmpleado, setIdEmpleado] = useState('');
     const [fechaPlanilla, setFechaPlanilla] = useState('');
 
-    // Obtener todas las planillas
-    const obtenerPlanillas = async () => {
-        try {
-            const response = await axios.get('http://localhost:3000/api/planillas');
-            setPlanillas(response.data[0]);
-        } catch (error) {
-            console.error('Error al obtener las planillas:', error);
-        }
-    };
+        // Obtener todas las planillas
+        const obtenerPlanillas = async () => {
+            try {
+                const response = await axios.get('http://localhost:3000/api/planillas');
+                setPlanillas(response.data[0]);
+            } catch (error) {
+                console.error('Error al obtener las planillas:', error);
+            }
+        };
 
     // Obtener empleados
     const obtenerEmpleados = async () => {
@@ -52,7 +52,6 @@ const PlanillaReportes = () => {
                 planilla.idEmpleado,
                 planilla.Persona,
                 new Date(planilla.Fecha_Planilla).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }),
-                planilla.Descripcion_Planilla,
                 `₡${planilla.Monto_Total_Horas_Extras}`,
                 `₡${planilla.Monto_Total_Deducciones}`,
                 `₡${planilla.Monto_Total_Incapacidades}`,
@@ -71,7 +70,6 @@ const PlanillaReportes = () => {
                 'ID Empleado': planilla.idEmpleado,
                 'Persona': planilla.Persona,
                 'Fecha Planilla': new Date(planilla.Fecha_Planilla).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' }),
-                'Descripción': planilla.Descripcion_Planilla,
                 'Total Horas Extras': `₡${planilla.Monto_Total_Horas_Extras}`,
                 'Deducciones': `₡${planilla.Monto_Total_Deducciones}`,
                 'Incapacidades': `₡${planilla.Monto_Total_Incapacidades}`,
@@ -90,7 +88,7 @@ const PlanillaReportes = () => {
 
     return (
         <div className="p-6 bg-[#f9f9f9] dark:bg-[#1E1E2F] min-h-screen">
-            <h1 className="text-2xl font-bold mb-4 text-black dark:text-white text-center">Gestión de Planilla</h1>
+            <h1 className="text-2xl font-bold mb-4 text-black dark:text-white text-center">Reporte de Planilla</h1>
 
             <div className="flex justify-between mb-4 gap-4">
                 <button
@@ -142,7 +140,6 @@ const PlanillaReportes = () => {
                             <th className="px-4 py-2 text-black dark:text-white text-center">ID Empleado</th>
                             <th className="px-4 py-2 text-black dark:text-white text-center">Persona</th>
                             <th className="px-4 py-2 text-black dark:text-white text-center">Fecha Planilla</th>
-                            <th className="px-4 py-2 text-black dark:text-white text-center">Descripción</th>
                             <th className="px-4 py-2 text-black dark:text-white text-center">Total Horas Extras</th>
                             <th className="px-4 py-2 text-black dark:text-white text-center">Deducciones</th>
                             <th className="px-4 py-2 text-black dark:text-white text-center">Incapacidades</th>
@@ -157,7 +154,6 @@ const PlanillaReportes = () => {
                                 <td className="px-4 py-2 text-black dark:text-white text-center">{planilla.idEmpleado}</td>
                                 <td className="px-4 py-2 text-black dark:text-white text-center">{planilla.Persona}</td>
                                 <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(planilla.Fecha_Planilla).toLocaleDateString('es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })}</td>
-                                <td className="px-4 py-2 text-black dark:text-white text-center">{planilla.Descripcion_Planilla}</td>
                                 <td className="px-4 py-2 text-black dark:text-white text-center">₡{planilla.Monto_Total_Horas_Extras}</td>
                                 <td className="px-4 py-2 text-black dark:text-white text-center">₡{planilla.Monto_Total_Deducciones}</td>
                                 <td className="px-4 py-2 text-black dark:text-white text-center">₡{planilla.Monto_Total_Incapacidades}</td>

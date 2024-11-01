@@ -13,7 +13,7 @@ router.get('/reporte', aguinaldoController.obtenerReporteAguinaldo);
 // Ruta para leer el catálogo de tipos de aguinaldo
 router.get('/catalogo', aguinaldoController.leerCatalogoAguinaldo);
 
-// Ruta para eliminar un aguinaldo
+// Rutas en aguinaldoRoutes.js
 router.delete('/eliminar', aguinaldoController.eliminarAguinaldo);
 
 module.exports = router;

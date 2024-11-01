@@ -3,6 +3,7 @@ import axios from 'axios';
 import { FaCheck, FaTimes, FaTrashAlt } from 'react-icons/fa';
 
 const HoraExtra = () => {
+  const [errorModal, setErrorModal] = useState({ visible: false, message: '' });
   const [horasExtras, setHorasExtras] = useState([]);
   const [empleados, setEmpleados] = useState([]);
   const [modalCrear, setModalCrear] = useState(false);
@@ -41,9 +42,15 @@ const HoraExtra = () => {
       setModalCrear(false);
       obtenerHorasExtras();
     } catch (error) {
-      console.error('Error al crear la solicitud de horas extras:', error);
+      if (error.response && error.response.status === 400) {
+        setErrorModal({ visible: true, message: error.response.data.error });
+      } else {
+        console.error('Error al crear la solicitud de horas extras:', error);
+        setErrorModal({ visible: true, message: 'Error al crear la solicitud de horas extras' });
+      }
     }
   };
+
 
   // Formatear la fecha a YYYY-MM-DD
   const formatDate = (dateString) => {
@@ -134,42 +141,50 @@ const HoraExtra = () => {
             </tr>
           </thead>
           <tbody>
-            {horasExtras.map((horaExtra) => (
-              <tr key={`${horaExtra.fecha_hora_extra}-${horaExtra.empleados_idEmpleado}`} className="border-b dark:border-[#4D4D61]">
-                <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.idEmpleado}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.Persona}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{formatDate(horaExtra.fecha_hora_extra)}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.Cantidad_Horas_Extras}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.Hora_Inicio}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.Hora_Final}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.Monto_Hora_Extra}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.tipo_hora_extra}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">
-                  {horaExtra.estado_solicitud === 'Aprobado' ? 'Aceptado' : horaExtra.estado_solicitud === 'Rechazado' ? 'Rechazado' : 'En Espera'}
-                </td>
-                <td className="px-4 py-2 flex justify-center space-x-2">
-                  <button
-                    onClick={() => aceptarHoraExtra(horaExtra.fecha_hora_extra, horaExtra.idEmpleado)}
-                    className="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded-lg shadow-md"
-                  >
-                    <FaCheck />
-                  </button>
-                  <button
-                    onClick={() => rechazarHoraExtra(horaExtra.fecha_hora_extra, horaExtra.idEmpleado)}
-                    className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg shadow-md"
-                  >
-                    <FaTimes />
-                  </button>
-                  <button
-                    onClick={() => eliminarHoraExtra(horaExtra.fecha_hora_extra, horaExtra.idEmpleado)}
-                    className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg shadow-md"
-                  >
-                    <FaTrashAlt />
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {horasExtras
+              // Ordenar para mostrar primero los elementos en estado "En Espera"
+              .sort((a, b) => {
+                if (a.estado_solicitud === 'En Espera') return -1;
+                if (b.estado_solicitud === 'En Espera') return 1;
+                return 0;
+              })
+              .map((horaExtra) => (
+                <tr key={`${horaExtra.fecha_hora_extra}-${horaExtra.empleados_idEmpleado}`} className="border-b dark:border-[#4D4D61]">
+                  <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.idEmpleado}</td>
+                  <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.Persona}</td>
+                  <td className="px-4 py-2 text-black dark:text-white text-center">{formatDate(horaExtra.fecha_hora_extra)}</td>
+                  <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.Cantidad_Horas_Extras}</td>
+                  <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.Hora_Inicio}</td>
+                  <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.Hora_Final}</td>
+                  <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.Monto_Hora_Extra}</td>
+                  <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.tipo_hora_extra}</td>
+                  <td className="px-4 py-2 text-black dark:text-white text-center">
+                    {horaExtra.estado_solicitud === 'Aprobado' ? 'Aceptado' : horaExtra.estado_solicitud === 'Rechazado' ? 'Rechazado' : 'En Espera'}
+                  </td>
+                  <td className="px-4 py-2 flex justify-center space-x-2">
+                    <button
+                      onClick={() => aceptarHoraExtra(horaExtra.fecha_hora_extra, horaExtra.idEmpleado)}
+                      className="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded-lg shadow-md"
+                    >
+                      <FaCheck />
+                    </button>
+                    <button
+                      onClick={() => rechazarHoraExtra(horaExtra.fecha_hora_extra, horaExtra.idEmpleado)}
+                      className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg shadow-md"
+                    >
+                      <FaTimes />
+                    </button>
+                    <button
+                      onClick={() => eliminarHoraExtra(horaExtra.fecha_hora_extra, horaExtra.idEmpleado)}
+                      className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg shadow-md"
+                    >
+                      <FaTrashAlt />
+                    </button>
+                  </td>
+                </tr>
+              ))}
           </tbody>
+
         </table>
       </div>
 
@@ -253,6 +268,21 @@ const HoraExtra = () => {
           </div>
         </div>
       )}
+      {errorModal.visible && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg max-w-md mx-auto text-center">
+            <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
+            <p className="text-gray-700 dark:text-white">{errorModal.message}</p>
+            <button
+              onClick={() => setErrorModal({ visible: false, message: '' })}
+              className="mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

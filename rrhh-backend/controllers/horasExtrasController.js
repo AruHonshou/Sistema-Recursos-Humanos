@@ -35,11 +35,26 @@ async function crearHorasExtras(req, res) {
     } catch (error) {
         if (connection) await connection.rollback();
         console.error(error);
-        res.status(500).json({ error: 'Error al crear la solicitud de horas extras' });
+
+        // Detectar los mensajes específicos y enviar al frontend
+        if (error.message.includes('El empleado está inactivo')) {
+            res.status(400).json({ error: 'El empleado está inactivo y no se le pueden asignar horas extras.' });
+        } else if (error.message.includes('Las horas extras deben estar fuera del horario regular del día')) {
+            res.status(400).json({ error: 'Las horas extras deben estar fuera del horario regular del día.' });
+        } else if (error.message.includes('El empleado ya tiene horas extras solicitadas para esta fecha')) {
+            res.status(400).json({ error: 'El empleado ya tiene horas extras solicitadas para esta fecha.' });
+        } else if (error.message.includes('No se permiten solicitudes de horas extras con más de 4 semanas de anticipación')) {
+            res.status(400).json({ error: 'No se permiten solicitudes de horas extras con más de 4 semanas de anticipación.' });
+        } else if (error.message.includes('No se permiten solicitudes de horas extras de hace más de un mes')) {
+            res.status(400).json({ error: 'No se permiten solicitudes de horas extras de hace más de un mes.' });
+        } else {
+            res.status(500).json({ error: 'Error al crear la solicitud de horas extras' });
+        }
     } finally {
         if (connection) connection.release();
     }
 }
+
 
 // Función para actualizar el estado de una solicitud de horas extras
 async function actualizarEstadoHorasExtras(req, res) {

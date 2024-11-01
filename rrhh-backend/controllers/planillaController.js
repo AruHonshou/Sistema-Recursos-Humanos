@@ -4,19 +4,25 @@ const db = require('../config/db');
 
 // Function to calculate payroll in bulk
 async function calcularPlanillaMasiva(req, res) {
-    const { fechaPlanilla } = req.body;
+    const { mes, anio } = req.body; // Captura ambos parámetros
+
+    if (!mes || !anio) {
+        return res.status(400).json({ mensaje: 'Mes y año son requeridos' });
+    }
+
     let connection;
     try {
         connection = await db.getConnection();
         await connection.beginTransaction();
-        
-        await connection.query('CALL CalcularPlanillaMasiva(?)', [fechaPlanilla]);
+
+        // Llama al procedimiento con los dos parámetros
+        await connection.query('CALL CalcularPlanillaMasiva(?, ?)', [mes, anio]);
 
         await connection.commit();
         res.status(201).json({ mensaje: 'Planilla calculada exitosamente' });
     } catch (error) {
         if (connection) await connection.rollback();
-        console.error(error);
+        console.error("Error al calcular planilla masiva:", error);
         res.status(500).json({ error: 'Error al calcular la planilla' });
     } finally {
         if (connection) connection.release();

@@ -97,7 +97,6 @@ const obtenerPermisos = async () => {
               <th className="px-4 py-2 text-black dark:text-white text-center">ID Empleado</th>
               <th className="px-4 py-2 text-black dark:text-white text-center">Nombre</th>
               <th className="px-4 py-2 text-black dark:text-white text-center">Fecha Permiso</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Detalle</th>
               <th className="px-4 py-2 text-black dark:text-white text-center">Fecha Solicitud</th>
               <th className="px-4 py-2 text-black dark:text-white text-center">Con Goce</th>
               <th className="px-4 py-2 text-black dark:text-white text-center">Horas Permiso</th>
@@ -112,7 +111,6 @@ const obtenerPermisos = async () => {
                 <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.idEmpleado}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.Persona || 'Cargando...'}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(permiso.fecha_permiso).toISOString().split('T')[0]}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.detalle_permiso}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(permiso.fecha_solicitud).toISOString().split('T')[0]}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.Con_Gose}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.horas_permiso}</td>
@@ -143,16 +141,6 @@ const obtenerPermisos = async () => {
                   type="date"
                   value={nuevoPermiso.fecha_permiso}
                   onChange={(e) => setNuevoPermiso({ ...nuevoPermiso, fecha_permiso: e.target.value })}
-                  className="border rounded-lg w-full px-3 py-2"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-2">Detalle del Permiso:</label>
-                <input
-                  type="text"
-                  value={nuevoPermiso.detalle_permiso}
-                  onChange={(e) => setNuevoPermiso({ ...nuevoPermiso, detalle_permiso: e.target.value })}
                   className="border rounded-lg w-full px-3 py-2"
                 />
               </div>

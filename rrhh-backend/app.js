@@ -36,6 +36,7 @@ const aguinaldoRoutes = require('./routes/aguinaldoRoutes');
 const planillaRoutes = require('./routes/planillaRoutes');   
 const historialPlanillaRoutes = require('./routes/historialPlanillaRoutes');
 const rolePermissionsRoutes = require('./routes/rolePermissionsRoutes');
+const liquidacionesRoutes = require('./routes/liquidacionesRoutes');
 
 
 // Configuración de bodyParser para manejar datos JSON
@@ -81,6 +82,7 @@ app.use('/api/aguinaldo', aguinaldoRoutes);
 app.use('/api/planillas', planillaRoutes); 
 app.use('/api/historial-planillas', historialPlanillaRoutes); 
 app.use('/api/rolePermissions', rolePermissionsRoutes);
+app.use('/api/liquidaciones', liquidacionesRoutes);
 
 // Configuración del puerto
 const PORT = process.env.PORT || 3000;

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const SolicitarVacaciones = () => {
+  const [errorModal, setErrorModal] = useState({ visible: false, message: '' });
   const [vacaciones, setVacaciones] = useState([]);
   const [empleados, setEmpleados] = useState([]); // Ensure empleados is an array initially
   const [diasDisponibles, setDiasDisponibles] = useState(0);
@@ -70,17 +71,22 @@ const SolicitarVacaciones = () => {
     }
   };
 
-  // Crear nueva vacación
+  // Vacaciones.js
   const crearVacacion = async () => {
     try {
       await axios.post('http://localhost:3000/api/vacaciones/', nuevaVacacion);
       setModalCrear(false);
       obtenerVacaciones();
-      obtenerDiasVacacion(); // Refresh available and consumed days after creation
     } catch (error) {
-      console.error('Error al crear la vacación:', error);
+      if (error.response && error.response.status === 400) {
+        setErrorModal({ visible: true, message: error.response.data.error });
+      } else {
+        console.error('Error al crear la vacación:', error);
+        setErrorModal({ visible: true, message: 'Error al crear la vacación' });
+      }
     }
   };
+
 
   useEffect(() => {
     obtenerVacaciones();
@@ -127,8 +133,8 @@ const SolicitarVacaciones = () => {
                   {vacacion.estado_solicitud_idestado_solicitud === 1
                     ? 'Aceptado'
                     : vacacion.estado_solicitud_idestado_solicitud === 2
-                    ? 'Rechazado'
-                    : 'En Espera'}
+                      ? 'Rechazado'
+                      : 'En Espera'}
                 </td>
               </tr>
             ))}
@@ -219,12 +225,23 @@ const SolicitarVacaciones = () => {
               {/* Motivo de Vacación */}
               <div>
                 <label className="block mb-2">Motivo de Vacación:</label>
-                <input
-                  type="text"
+                <select
                   value={nuevaVacacion.Motivo_Vacacion}
                   onChange={(e) => setNuevaVacacion({ ...nuevaVacacion, Motivo_Vacacion: e.target.value })}
                   className="border rounded-lg w-full px-3 py-2"
-                />
+                >
+                  <option value="">Seleccione un Motivo</option>
+                  <option value="Vacaciones anuales">Vacaciones anuales</option>
+                  <option value="Vacaciones por motivos personales">Vacaciones por motivos personales</option>
+                  <option value="Vacaciones familiares">Vacaciones familiares</option>
+                  <option value="Vacaciones por salud">Vacaciones por salud</option>
+                  <option value="Vacaciones escolares">Vacaciones escolares</option>
+                  <option value="Vacaciones por estudios">Vacaciones por estudios</option>
+                  <option value="Vacaciones por viaje">Vacaciones por viaje</option>
+                  <option value="Vacaciones no programadas">Vacaciones no programadas</option>
+                  <option value="Vacaciones de fin de año">Vacaciones de fin de año</option>
+                  <option value="Vacaciones de medio año">Vacaciones de medio año</option>
+                </select>
               </div>
 
               {/* Empleado */}
@@ -268,6 +285,21 @@ const SolicitarVacaciones = () => {
           </div>
         </div>
       )}
+      {errorModal.visible && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg max-w-md mx-auto text-center">
+            <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
+            <p className="text-gray-700 dark:text-white">{errorModal.message}</p>
+            <button
+              onClick={() => setErrorModal({ visible: false, message: '' })}
+              className="mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

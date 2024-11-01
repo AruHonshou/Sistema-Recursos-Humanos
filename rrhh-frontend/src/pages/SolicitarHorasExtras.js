@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const SolicitarHorasExtras = () => {
+  const [errorModal, setErrorModal] = useState({ visible: false, message: '' });
   const [horasExtras, setHorasExtras] = useState([]);
   const [empleados, setEmpleados] = useState([]);
   const [modalCrear, setModalCrear] = useState(false);
@@ -55,7 +56,12 @@ const SolicitarHorasExtras = () => {
       setModalCrear(false);
       obtenerHorasExtras();
     } catch (error) {
-      console.error('Error al crear la solicitud de horas extras:', error);
+      if (error.response && error.response.status === 400) {
+        setErrorModal({ visible: true, message: error.response.data.error });
+      } else {
+        console.error('Error al crear la solicitud de horas extras:', error);
+        setErrorModal({ visible: true, message: 'Error al crear la solicitud de horas extras' });
+      }
     }
   };
 
@@ -206,6 +212,20 @@ const SolicitarHorasExtras = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {errorModal.visible && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg max-w-md mx-auto text-center">
+            <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
+            <p className="text-gray-700 dark:text-white">{errorModal.message}</p>
+            <button
+              onClick={() => setErrorModal({ visible: false, message: '' })}
+              className="mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
+            >
+              Cerrar
+            </button>
           </div>
         </div>
       )}

@@ -8,16 +8,12 @@ const Aguinaldo = () => {
   const [catalogoAguinaldo, setCatalogoAguinaldo] = useState([]);
   const [formData, setFormData] = useState({
     idEmpleado: '',
-    fechaInicio: '',
-    fechaFin: '',
     fechaAguinaldo: '',
     idCatalogoAguinaldo: ''
   });
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para el modal
-  const recordsPerPage = 10;
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Fetch all registered aguinaldos
+  // Obtener aguinaldos
   const obtenerAguinaldos = async () => {
     try {
       const response = await axios.get('http://localhost:3000/api/aguinaldo/reporte');
@@ -27,21 +23,21 @@ const Aguinaldo = () => {
     }
   };
 
-  // Fetch employees for dropdown
+  // Obtener empleados para el dropdown
   const obtenerEmpleados = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/empleados'); // Cambiar a la ruta correcta de empleados
-      setEmpleados(response.data);
+      const response = await axios.get('http://localhost:3000/api/empleados/nombre-completo');
+      setEmpleados(response.data[0]);
     } catch (error) {
       console.error('Error al obtener la lista de empleados:', error);
     }
   };
 
-  // Fetch aguinaldo catalog
+  // Obtener catálogo de tipos de aguinaldo
   const obtenerCatalogoAguinaldo = async () => {
     try {
       const response = await axios.get('http://localhost:3000/api/aguinaldo/catalogo');
-      setCatalogoAguinaldo(response.data[0]);
+      setCatalogoAguinaldo(response.data[0]); // Cambiado a response.data[0]
     } catch (error) {
       console.error('Error al obtener el catálogo de aguinaldo:', error);
     }
@@ -53,61 +49,44 @@ const Aguinaldo = () => {
     obtenerCatalogoAguinaldo();
   }, []);
 
-  // Handle input changes
+  // Manejar cambios en el formulario
   const handleInputChange = (e) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     });
   };
 
-  // Register and calculate aguinaldo
+  // Registrar y calcular aguinaldo
   const calcularYRegistrarAguinaldo = async () => {
+    console.log("Formulario de Aguinaldo:", formData);  // Verifica que idCatalogoAguinaldo no sea null aquí
     try {
       await axios.post('http://localhost:3000/api/aguinaldo/calcular', formData);
       alert('Aguinaldo calculado y registrado exitosamente');
       obtenerAguinaldos();
-      setIsModalOpen(false); // Cierra el modal después de registrar
+      setIsModalOpen(false);
     } catch (error) {
       console.error('Error al calcular y registrar el aguinaldo:', error);
     }
   };
 
-  // Función para formatear la fecha a YYYY-MM-DD
-  const formatDate = (date) => {
-    return new Date(date).toISOString().split('T')[0];
-  };
-
   // Función para eliminar un aguinaldo
-  const eliminarAguinaldo = async (idEmpleado, fechaAguinaldo) => {
-    try {
-      await axios.delete('http://localhost:3000/api/aguinaldo/eliminar', {
-        data: {
-          idEmpleado,
-          fechaAguinaldo: formatDate(fechaAguinaldo)  // Formatear la fecha antes de enviarla
-        }
+const eliminarAguinaldo = async (idEmpleado, fechaAguinaldo) => {
+  // Formatear fecha
+  const fechaFormateada = new Date(fechaAguinaldo).toISOString().split('T')[0];
+  try {
+      await axios.delete(`http://localhost:3000/api/aguinaldo/eliminar`, {
+          data: { idEmpleado, fechaAguinaldo: fechaFormateada } // Usar la fecha formateada
       });
       alert('Aguinaldo eliminado exitosamente');
       obtenerAguinaldos();
-    } catch (error) {
+  } catch (error) {
       console.error('Error al eliminar el aguinaldo:', error);
-    }
-  };
+  }
+};
 
 
-  // Pagination handling
-  const lastRecordIndex = currentPage * recordsPerPage;
-  const firstRecordIndex = lastRecordIndex - recordsPerPage;
-  const currentRecords = aguinaldos.slice(firstRecordIndex, lastRecordIndex);
-  const totalPages = Math.ceil(aguinaldos.length / recordsPerPage);
-
-  const goToNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-  };
-
-  const goToPreviousPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
-  };
 
   return (
     <div className="p-6 bg-[#f9f9f9] dark:bg-[#1E1E2F] min-h-screen">
@@ -115,7 +94,7 @@ const Aguinaldo = () => {
 
       <button
         onClick={() => setIsModalOpen(true)}
-        className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg shadow-md mb-6"
+        className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg mb-4 shadow-md transition duration-300 ease-in-out transform hover:scale-105 mx-auto block"
       >
         Crear Aguinaldo
       </button>
@@ -136,25 +115,12 @@ const Aguinaldo = () => {
               <option value="">Seleccionar Empleado</option>
               {empleados.map((empleado) => (
                 <option key={empleado.idEmpleado} value={empleado.idEmpleado}>
-                  {`${empleado.Nombre} ${empleado.Primer_Apellido} ${empleado.Segundo_Apellido}`}
+                  {empleado.NombreCompleto}
                 </option>
               ))}
             </select>
 
-            <input
-              type="date"
-              name="fechaInicio"
-              value={formData.fechaInicio}
-              onChange={handleInputChange}
-              className="border rounded-lg w-full px-3 py-2 mb-2"
-            />
-            <input
-              type="date"
-              name="fechaFin"
-              value={formData.fechaFin}
-              onChange={handleInputChange}
-              className="border rounded-lg w-full px-3 py-2 mb-2"
-            />
+            {/* Fecha de Aguinaldo */}
             <input
               type="date"
               name="fechaAguinaldo"
@@ -189,13 +155,14 @@ const Aguinaldo = () => {
                 onClick={calcularYRegistrarAguinaldo}
                 className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
               >
-                Calcular Aguinaldo
+                Crear Aguinaldo
               </button>
             </div>
           </div>
         </div>
       )}
 
+      {/* Tabla para mostrar los aguinaldos */}
       <div className="overflow-hidden rounded-lg shadow-lg mb-6">
         <table className="min-w-full bg-white dark:bg-[#2D2D3B] border rounded-md shadow-md">
           <thead className="bg-gray-100 dark:bg-[#3A3A4D] border-b">
@@ -211,45 +178,33 @@ const Aguinaldo = () => {
             </tr>
           </thead>
           <tbody>
-            {currentRecords.map((aguinaldo, index) => (
+            {aguinaldos.map((aguinaldo, index) => (
               <tr key={index} className="border-b dark:border-[#4D4D61]">
-                <td className="px-4 py-2 text-black dark:text-white text-center">{aguinaldo.idEmpleado}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{aguinaldo.Nombre_Empleado}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{formatDate(aguinaldo.Fecha_Aguinaldo)}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{formatDate(aguinaldo.Fecha_Inicial_Cobro)}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{formatDate(aguinaldo.Fecha_Final_Cobro)}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{aguinaldo.Monto_Aguinaldo}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{aguinaldo.Tipo_Aguinaldo}</td>
-                <td className="px-4 py-2 flex justify-center space-x-2">
-                  <button
-                    onClick={() => eliminarAguinaldo(aguinaldo.idEmpleado, aguinaldo.Fecha_Aguinaldo)}
-                    className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
-                  >
-                    <FaTrashAlt />
-                  </button>
-                </td>
-              </tr>
+              <td className="px-4 py-2 text-black dark:text-white text-center">{aguinaldo.idEmpleado}</td>
+              <td className="px-4 py-2 text-black dark:text-white text-center">{aguinaldo.Nombre_Empleado}</td>
+              <td className="px-4 py-2 text-black dark:text-white text-center">
+                {new Date(aguinaldo.Fecha_Aguinaldo).toISOString().split('T')[0]} {/* Fecha formateada */}
+              </td>
+              <td className="px-4 py-2 text-black dark:text-white text-center">
+                {new Date(aguinaldo.Fecha_Inicial_Cobro).toISOString().split('T')[0]}
+              </td>
+              <td className="px-4 py-2 text-black dark:text-white text-center">
+                {new Date(aguinaldo.Fecha_Final_Cobro).toISOString().split('T')[0]}
+              </td>
+              <td className="px-4 py-2 text-black dark:text-white text-center">{aguinaldo.Monto_Aguinaldo}</td>
+              <td className="px-4 py-2 text-black dark:text-white text-center">{aguinaldo.Tipo_Aguinaldo}</td>
+              <td className="px-4 py-2 flex justify-center space-x-2">
+                <button
+                  onClick={() => eliminarAguinaldo(aguinaldo.idEmpleado, aguinaldo.Fecha_Aguinaldo)}
+                  className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                >
+                  <FaTrashAlt />
+                </button>
+              </td>
+            </tr>
             ))}
           </tbody>
         </table>
-      </div>
-
-      {/* Pagination controls */}
-      <div className="flex justify-center space-x-4 mt-4">
-        <button
-          onClick={goToPreviousPage}
-          disabled={currentPage === 1}
-          className="bg-gray-500 hover:bg-gray-600 text-white py-1 px-3 rounded-lg shadow-md disabled:opacity-50"
-        >
-          Anterior
-        </button>
-        <button
-          onClick={goToNextPage}
-          disabled={currentPage === totalPages}
-          className="bg-gray-500 hover:bg-gray-600 text-white py-1 px-3 rounded-lg shadow-md disabled:opacity-50"
-        >
-          Siguiente
-        </button>
       </div>
     </div>
   );

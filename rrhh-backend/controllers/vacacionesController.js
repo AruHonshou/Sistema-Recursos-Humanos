@@ -17,7 +17,7 @@ async function obtenerVacaciones(req, res) {
     }
 }
 
-// Función para crear una nueva vacación
+
 async function crearVacacion(req, res) {
     const { Fecha_Inicio, Fecha_Fin, Cantidad_Dias_Solicitados, Fecha_Solicitud, Motivo_Vacacion, empleados_idEmpleado } = req.body;
     let connection;
@@ -35,11 +35,25 @@ async function crearVacacion(req, res) {
     } catch (error) {
         if (connection) await connection.rollback();
         console.error(error);
-        res.status(500).json({ error: 'Error al crear la vacación' });
+
+        // Enviar mensajes específicos de error al frontend
+        if (error.message.includes('el empleado no tiene suficientes días disponibles')) {
+            res.status(400).json({ error: 'No se puede crear la vacación porque el empleado no tiene suficientes días disponibles' });
+        } else if (error.message.includes('hay un día feriado de por medio')) {
+            res.status(400).json({ error: 'No se puede crear la vacación porque hay un día feriado de por medio' });
+        } else if (error.message.includes('la fecha de fin es menor que la fecha de inicio')) {
+            res.status(400).json({ error: 'No se puede crear la vacación porque la fecha de fin es menor que la fecha de inicio' });
+        } else if (error.message.includes('el empleado está inactivo')) {
+            res.status(400).json({ error: 'No se puede crear la vacación porque el empleado está inactivo' });
+        } else {
+            res.status(500).json({ error: 'Error al crear la vacación' });
+        }
     } finally {
         if (connection) connection.release();
     }
 }
+
+
 
 // Función para leer las vacaciones de un empleado específico
 async function leerVacacion(req, res) {

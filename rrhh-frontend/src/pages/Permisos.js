@@ -121,7 +121,6 @@ const Permisos = () => {
               <th className="px-4 py-2 text-black dark:text-white text-center">ID Empleado</th>
               <th className="px-4 py-2 text-black dark:text-white text-center">Nombre</th>
               <th className="px-4 py-2 text-black dark:text-white text-center">Fecha Permiso</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Detalle</th>
               <th className="px-4 py-2 text-black dark:text-white text-center">Fecha Solicitud</th>
               <th className="px-4 py-2 text-black dark:text-white text-center">Con Goce</th>
               <th className="px-4 py-2 text-black dark:text-white text-center">Horas Permiso</th>
@@ -132,43 +131,52 @@ const Permisos = () => {
             </tr>
           </thead>
           <tbody>
-            {permisos.map((permiso) => (
-              <tr key={`${new Date(permiso.fecha_permiso).toISOString()}-${permiso.idEmpleado}`} className="border-b dark:border-[#4D4D61]">
-                <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.idEmpleado}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.Persona || 'Cargando...'}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(permiso.fecha_permiso).toISOString().split('T')[0]}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.detalle_permiso}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(permiso.fecha_solicitud).toISOString().split('T')[0]}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.Con_Gose}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.horas_permiso}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.monto_permiso}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.descripcion_permiso}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.estado_solicitud_idestado_solicitud === 1 ? 'Aceptado' : permiso.estado_solicitud_idestado_solicitud === 2 ? 'Rechazado' : 'En Espera'}</td>
-                <td className="px-4 py-2 flex justify-center space-x-2">
-                  <button
-                    onClick={() => aceptarPermiso(new Date(permiso.fecha_permiso).toISOString().split('T')[0], permiso.idEmpleado)}
-                    className="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
-                  >
-                    <FaCheck />
-                  </button>
+            {permisos
+              // Ordenar para mostrar primero los elementos en estado "En Espera"
+              .sort((a, b) => {
+                if (a.estado_solicitud_idestado_solicitud === 3) return -1;
+                if (b.estado_solicitud_idestado_solicitud === 3) return 1;
+                return 0;
+              })
+              .map((permiso) => (
+                <tr key={`${new Date(permiso.fecha_permiso).toISOString()}-${permiso.idEmpleado}`} className="border-b dark:border-[#4D4D61]">
+                  <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.idEmpleado}</td>
+                  <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.Persona || 'Cargando...'}</td>
+                  <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(permiso.fecha_permiso).toISOString().split('T')[0]}</td>
+                  <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(permiso.fecha_solicitud).toISOString().split('T')[0]}</td>
+                  <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.Con_Gose}</td>
+                  <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.horas_permiso}</td>
+                  <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.monto_permiso}</td>
+                  <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.descripcion_permiso}</td>
+                  <td className="px-4 py-2 text-black dark:text-white text-center">
+                    {permiso.estado_solicitud_idestado_solicitud === 1 ? 'Aceptado' : permiso.estado_solicitud_idestado_solicitud === 2 ? 'Rechazado' : 'En Espera'}
+                  </td>
+                  <td className="px-4 py-2 flex justify-center space-x-2">
+                    <button
+                      onClick={() => aceptarPermiso(new Date(permiso.fecha_permiso).toISOString().split('T')[0], permiso.idEmpleado)}
+                      className="bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                    >
+                      <FaCheck />
+                    </button>
 
-                  <button
-                    onClick={() => rechazarPermiso(new Date(permiso.fecha_permiso).toISOString().split('T')[0], permiso.idEmpleado)}
-                    className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
-                  >
-                    <FaTimes />
-                  </button>
-                  
-                  <button
-                    onClick={() => eliminarPermiso(new Date(permiso.fecha_permiso).toISOString().split('T')[0], permiso.idEmpleado)}
-                    className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
-                  >
-                    <FaTrashAlt />
-                  </button>
-                </td>
-              </tr>
-            ))}
+                    <button
+                      onClick={() => rechazarPermiso(new Date(permiso.fecha_permiso).toISOString().split('T')[0], permiso.idEmpleado)}
+                      className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                    >
+                      <FaTimes />
+                    </button>
+
+                    <button
+                      onClick={() => eliminarPermiso(new Date(permiso.fecha_permiso).toISOString().split('T')[0], permiso.idEmpleado)}
+                      className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                    >
+                      <FaTrashAlt />
+                    </button>
+                  </td>
+                </tr>
+              ))}
           </tbody>
+
         </table>
       </div>
 
@@ -184,16 +192,6 @@ const Permisos = () => {
                   type="date"
                   value={nuevoPermiso.fecha_permiso}
                   onChange={(e) => setNuevoPermiso({ ...nuevoPermiso, fecha_permiso: e.target.value })}
-                  className="border rounded-lg w-full px-3 py-2"
-                />
-              </div>
-
-              <div>
-                <label className="block mb-2">Detalle del Permiso:</label>
-                <input
-                  type="text"
-                  value={nuevoPermiso.detalle_permiso}
-                  onChange={(e) => setNuevoPermiso({ ...nuevoPermiso, detalle_permiso: e.target.value })}
                   className="border rounded-lg w-full px-3 py-2"
                 />
               </div>
