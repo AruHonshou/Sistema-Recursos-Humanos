@@ -43,10 +43,12 @@ async function crearHorasExtras(req, res) {
             res.status(400).json({ error: 'Las horas extras deben estar fuera del horario regular del día.' });
         } else if (error.message.includes('El empleado ya tiene horas extras solicitadas para esta fecha')) {
             res.status(400).json({ error: 'El empleado ya tiene horas extras solicitadas para esta fecha.' });
-        } else if (error.message.includes('No se permiten solicitudes de horas extras con más de 4 semanas de anticipación')) {
-            res.status(400).json({ error: 'No se permiten solicitudes de horas extras con más de 4 semanas de anticipación.' });
-        } else if (error.message.includes('No se permiten solicitudes de horas extras de hace más de un mes')) {
-            res.status(400).json({ error: 'No se permiten solicitudes de horas extras de hace más de un mes.' });
+        } else if (error.message.includes('Las solicitudes de horas extras deben estar dentro de un margen de una semana del día actual')) {
+            res.status(400).json({ error: 'Las solicitudes de horas extras deben estar dentro de un margen de una semana del día actual.' });
+        } else if (error.message.includes('El empleado debe tener registrada la hora de entrada y salida')) {
+            res.status(400).json({ error: 'El empleado debe tener registrada la hora de entrada y salida para solicitar horas extras.' });
+        } else if (error.message.includes('La hora de fin no puede ser menor o igual a la hora de inicio')) {
+            res.status(400).json({ error: 'La hora de fin no puede ser menor o igual a la hora de inicio.' });
         } else {
             res.status(500).json({ error: 'Error al crear la solicitud de horas extras' });
         }

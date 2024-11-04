@@ -2,7 +2,6 @@
 
 const db = require('../config/db');
 
-// Función para registrar la marca de inicio de jornada
 async function registrarMarcaInicio(req, res) {
     const { idEmpleado, Fecha, Hora } = req.body;
     let connection;
@@ -10,23 +9,31 @@ async function registrarMarcaInicio(req, res) {
         connection = await db.getConnection();
         await connection.beginTransaction();
 
-        await connection.query(
-            'CALL RegistrarMarcaInicio(?, ?, ?)',
-            [idEmpleado, Fecha, Hora]
-        );
+        await connection.query('CALL RegistrarMarcaInicio(?, ?, ?)', [idEmpleado, Fecha, Hora]);
 
         await connection.commit();
         res.status(201).json({ mensaje: 'Marca de inicio registrada exitosamente' });
     } catch (error) {
         if (connection) await connection.rollback();
-        console.error(error);
-        res.status(500).json({ error: 'Error al registrar la marca de inicio' });
+        console.error('Error capturado:', error);
+
+        // Detectar y enviar mensajes específicos basados en el texto del error
+        if (error.message.includes('El usuario está inactivo')) {
+            res.status(400).json({ error: 'El usuario está inactivo. No se puede registrar la entrada.' });
+        } else if (error.message.includes('Ya existe una marca de inicio para este día')) {
+            res.status(400).json({ error: 'Ya existe una marca de inicio para este día.' });
+        } else if (error.message.includes('No se puede registrar asistencia en una fecha futura')) {
+            res.status(400).json({ error: 'No se puede registrar asistencia en una fecha futura.' });
+        } else if (error.message.includes('No se puede registrar asistencia los sábados y domingos')) {
+            res.status(400).json({ error: 'No se puede registrar asistencia los sábados y domingos.' });
+        } else {
+            res.status(500).json({ error: 'Error al registrar la marca de inicio' });
+        }
     } finally {
         if (connection) connection.release();
     }
 }
 
-// Función para registrar la marca de salida de jornada
 async function registrarMarcaSalida(req, res) {
     const { idEmpleado, Fecha, Hora } = req.body;
     let connection;
@@ -34,17 +41,26 @@ async function registrarMarcaSalida(req, res) {
         connection = await db.getConnection();
         await connection.beginTransaction();
 
-        await connection.query(
-            'CALL RegistrarMarcaSalida(?, ?, ?)',
-            [idEmpleado, Fecha, Hora]
-        );
+        await connection.query('CALL RegistrarMarcaSalida(?, ?, ?)', [idEmpleado, Fecha, Hora]);
 
         await connection.commit();
         res.status(201).json({ mensaje: 'Marca de salida registrada exitosamente' });
     } catch (error) {
         if (connection) await connection.rollback();
-        console.error(error);
-        res.status(500).json({ error: 'Error al registrar la marca de salida' });
+        console.error('Error capturado:', error);
+
+        // Detectar y enviar mensajes específicos basados en el texto del error
+        if (error.message.includes('El usuario está inactivo')) {
+            res.status(400).json({ error: 'El usuario está inactivo. No se puede registrar la salida.' });
+        } else if (error.message.includes('No se ha registrado una marca de inicio para este día')) {
+            res.status(400).json({ error: 'No se ha registrado una marca de inicio para este día.' });
+        } else if (error.message.includes('No se puede registrar asistencia en una fecha futura')) {
+            res.status(400).json({ error: 'No se puede registrar asistencia en una fecha futura.' });
+        } else if (error.message.includes('No se puede registrar asistencia los sábados y domingos')) {
+            res.status(400).json({ error: 'No se puede registrar asistencia los sábados y domingos.' });
+        } else {
+            res.status(500).json({ error: 'Error al registrar la marca de salida' });
+        }
     } finally {
         if (connection) connection.release();
     }
@@ -184,6 +200,47 @@ async function leerTodasMarcasPorIdUsuario(req, res) {
     }
 }
 
+async function justificarTardanzaEntrada(req, res) {
+    const { idEmpleado, Fecha, Motivo } = req.body;
+    let connection;
+    try {
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        await connection.query('CALL JustificarTardanzaEntrada(?, ?, ?)', [idEmpleado, Fecha, Motivo]);
+
+        await connection.commit();
+        res.status(200).json({ mensaje: 'Tardanza en entrada justificada exitosamente' });
+    } catch (error) {
+        if (connection) await connection.rollback();
+        console.error('Error capturado:', error);
+        res.status(500).json({ error: 'Error al justificar tardanza en la entrada' });
+    } finally {
+        if (connection) connection.release();
+    }
+}
+
+// Función para justificar tardanza en la salida
+async function justificarTardanzaSalida(req, res) {
+    const { idEmpleado, Fecha, Motivo } = req.body;
+    let connection;
+    try {
+        connection = await db.getConnection();
+        await connection.beginTransaction();
+
+        await connection.query('CALL JustificarTardanzaSalida(?, ?, ?)', [idEmpleado, Fecha, Motivo]);
+
+        await connection.commit();
+        res.status(200).json({ mensaje: 'Tardanza en salida justificada exitosamente' });
+    } catch (error) {
+        if (connection) await connection.rollback();
+        console.error('Error capturado:', error);
+        res.status(500).json({ error: 'Error al justificar tardanza en la salida' });
+    } finally {
+        if (connection) connection.release();
+    }
+}
+
 module.exports = {
     registrarMarcaInicio,
     registrarMarcaSalida,
@@ -193,5 +250,7 @@ module.exports = {
     eliminarMarcaTiempo,
     leerTodasMarcas,
     leerTodasMarcasPersona,
-    leerTodasMarcasPorIdUsuario  // Exportamos la nueva función
+    leerTodasMarcasPorIdUsuario,
+    justificarTardanzaEntrada,
+    justificarTardanzaSalida  // Exportamos la nueva función
 };

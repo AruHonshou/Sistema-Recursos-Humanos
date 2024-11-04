@@ -10,14 +10,24 @@ async function crearPermisoSolicitud(req, res) {
         connection = await db.getConnection();
         await connection.beginTransaction();
 
+        // Llamada al procedimiento almacenado
         const [result] = await connection.query(
             'CALL CrearPermisoSolicitud(?, ?, ?, ?, ?, ?, ?, @resultado)',
             [fecha_permiso, detalle_permiso, fecha_solicitud, con_gose, catalogo_permiso_id, empleados_idEmpleado, horas_permiso]
         );
 
+        // Obtener el mensaje de resultado desde el procedimiento almacenado
         const [[{ "@resultado": mensaje }]] = await connection.query('SELECT @resultado');
         await connection.commit();
-        res.status(201).json({ mensaje });
+
+        // Manejo de mensajes de validación específicos
+        if (mensaje.includes('El usuario no está activo')) {
+            res.status(400).json({ error: 'El usuario no está activo y no se puede crear el permiso.' });
+        } else if (mensaje.includes('El permiso ya existe para la fecha especificada')) {
+            res.status(400).json({ error: 'El permiso ya existe para la fecha especificada.' });
+        } else {
+            res.status(201).json({ mensaje: 'Permiso creado exitosamente.' });
+        }
     } catch (error) {
         if (connection) await connection.rollback();
         console.error(error);
@@ -26,6 +36,8 @@ async function crearPermisoSolicitud(req, res) {
         if (connection) connection.release();
     }
 }
+
+
 
 // Función para leer permisos por empleado
 async function leerPermisosPorEmpleado(req, res) {

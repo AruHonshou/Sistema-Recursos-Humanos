@@ -1,14 +1,14 @@
-// src/components/Navbar.js
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { FiSun, FiMoon, FiUser } from 'react-icons/fi';
+import axios from 'axios';
 
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [darkMode, setDarkMode] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const [role, setRole] = useState('');
+  const [nombreCompleto, setNombreCompleto] = useState('');
 
   // Mapear rutas a títulos actualizados
   const titlesMap = {
@@ -52,19 +52,22 @@ const Navbar = () => {
     '/consultar-marca-tiempo': 'Consultar Marca de Tiempo',
   };
 
-  // Obtener el título basado en la ruta actual
   const currentTitle = titlesMap[location.pathname] || 'Dashboard';
 
   useEffect(() => {
     const isDarkModeEnabled = localStorage.getItem('darkMode') === 'true';
     setDarkMode(isDarkModeEnabled);
 
-    // Obtener rol del usuario desde localStorage
-    const storedRole = localStorage.getItem('role');
-    if (storedRole === '1') {
-      setRole('Administrador');
-    } else if (storedRole === '2') {
-      setRole('Empleador');
+    const storedUser = JSON.parse(localStorage.getItem('user'));
+    if (storedUser) {
+      const { idusuarios } = storedUser;
+      axios.get(`http://localhost:3000/api/dashboard/nombre-evaluaciones/${idusuarios}`)
+        .then(response => {
+          setNombreCompleto(response.data.nombreCompleto);
+        })
+        .catch(error => {
+          console.error('Error fetching full name:', error);
+        });
     }
   }, []);
 
@@ -82,19 +85,15 @@ const Navbar = () => {
     }
   };
 
-  // Función para manejar la navegación a la página de perfil
   const handleProfileClick = () => {
     navigate('/perfil');
   };
 
-  // Función para manejar cerrar sesión
   const handleLogout = () => {
     localStorage.removeItem('user');
-    localStorage.removeItem('role');
     navigate('/');
   };
 
-  // Función para alternar el menú de perfil
   const toggleProfileMenu = () => {
     setIsProfileMenuOpen(!isProfileMenuOpen);
   };
@@ -102,41 +101,35 @@ const Navbar = () => {
   return (
     <nav className="bg-[#222831] text-[#EEEEEE] px-4 py-3 shadow-md relative">
       <div className="flex items-center justify-between">
-        {/* Espacio en blanco para alinear el título en el centro */}
         <div className="flex-1"></div>
 
-        {/* Título dinámico del módulo actual */}
-        <h1 className="text-xl font-bold text-[#00ADB5] text-center flex-1">{currentTitle}</h1>
+        <div className="flex-1 text-center">
+          <h1 className="text-xl font-bold text-[#00ADB5]">{currentTitle}</h1>
+        </div>
 
-        {/* Mostrar rol del usuario autenticado */}
-        <span className="text-[#00ADB5] mr-4">{role}</span>
+        <div className="flex items-center space-x-4 flex-1 justify-end">
+          <span className="px-3 py-1 rounded-full bg-[#00ADB5] text-[#222831] font-semibold">
+            {nombreCompleto}
+          </span>
 
-        {/* Opciones de perfil y dark mode */}
-        <div className="flex-1 flex justify-end items-center space-x-4">
-          {/* Botón de dark mode */}
-          <button onClick={toggleDarkMode} className="text-[#EEEEEE]">
+          {/* Dark mode button with hover effect */}
+          <button onClick={toggleDarkMode} className="text-[#EEEEEE] hover:bg-[#00ADB5] p-2 rounded">
             {darkMode ? <FiSun size={24} /> : <FiMoon size={24} />}
           </button>
 
-          {/* Botón de perfil con menú desplegable */}
+          {/* Profile icon with hover effect */}
           <div className="relative">
-            <button onClick={toggleProfileMenu} className="text-[#EEEEEE] focus:outline-none">
+            <button onClick={toggleProfileMenu} className="text-[#EEEEEE] hover:bg-[#00ADB5] p-2 rounded focus:outline-none">
               <FiUser size={24} />
             </button>
 
-            {/* Menú desplegable */}
+            {/* Profile menu with hover effect on each option */}
             {isProfileMenuOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-[#393E46] rounded-md shadow-lg py-2 z-10">
-                <button
-                  onClick={handleProfileClick}
-                  className="block px-4 py-2 text-[#EEEEEE] hover:bg-[#00ADB5] w-full text-left"
-                >
+                <button onClick={handleProfileClick} className="block px-4 py-2 text-[#EEEEEE] hover:bg-[#00ADB5] w-full text-left">
                   Perfil
                 </button>
-                <button
-                  onClick={handleLogout}
-                  className="block px-4 py-2 text-[#EEEEEE] hover:bg-[#00ADB5] w-full text-left"
-                >
+                <button onClick={handleLogout} className="block px-4 py-2 text-[#EEEEEE] hover:bg-[#00ADB5] w-full text-left">
                   Cerrar Sesión
                 </button>
               </div>

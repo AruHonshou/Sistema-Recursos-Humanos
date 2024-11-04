@@ -40,8 +40,9 @@ import ConsultarAguinaldo from '../pages/ConsultarAguinaldo';
 import ConsultarLiquidacion from '../pages/ConsultarLiquidacion';
 import ConsultarMarcaTiempo from '../pages/ConsultarMarcaTiempo';
 import LiquidacionReportes from '../pages/LiquidacionReportes';
-
-
+import MarcaTiempoEmpleados from '../pages/MarcaTiempoEmpleados';
+import EvaluacionRendimientoReportes from '../pages/EvaluacionRendimientoReportes';
+import ConsultarEvaluacionRendimiento from '../pages/ConsultarEvaluacionRendimiento';
 
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
@@ -80,7 +81,6 @@ const AppRoutes = () => {
             </LayoutWithSidebarNavbar>
           }
         />
-
 
         {/* Recursos Humanos - Solo accesible por Administradores */}
         <Route
@@ -268,6 +268,16 @@ const AppRoutes = () => {
           }
         />
         <Route
+          path="/reporte-evaluacion-rendimiento"
+          element={
+            <ProtectedRoute requiredRoles={['1', '2']}>
+              <LayoutWithSidebarNavbar>
+                <EvaluacionRendimientoReportes />
+              </LayoutWithSidebarNavbar>
+            </ProtectedRoute>
+          }
+        />
+        <Route
           path="/reporte-horas-extras"
           element={
             <ProtectedRoute requiredRoles={['1', '2']}>
@@ -327,7 +337,8 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
-        {/* Reportes - Accesible por Administradores y Empleadores */}
+
+        {/* Solicitudes - Accesible por Administradores y Empleadores */}
         <Route
           path="/solicitar-vacacion"
           element={
@@ -358,41 +369,119 @@ const AppRoutes = () => {
             </ProtectedRoute>
           }
         />
+
+        {/* Consultas - Accesible por Administradores y Empleadores */}
         <Route
           path="/consultar-planilla"
-          element={<LayoutWithSidebarNavbar><ConsultarPlanilla /></LayoutWithSidebarNavbar>}
+          element={
+            <ProtectedRoute requiredRoles={['1', '2']}>
+              <LayoutWithSidebarNavbar>
+                <ConsultarPlanilla />
+              </LayoutWithSidebarNavbar>
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/consultar-incapacidad"
-          element={<LayoutWithSidebarNavbar><ConsultarIncapacidad /></LayoutWithSidebarNavbar>}
+          element={
+            <ProtectedRoute requiredRoles={['1', '2']}>
+              <LayoutWithSidebarNavbar>
+                <ConsultarIncapacidad />
+              </LayoutWithSidebarNavbar>
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/consultar-vacaciones"
-          element={<LayoutWithSidebarNavbar><ConsultarVacaciones /></LayoutWithSidebarNavbar>}
+          element={
+            <ProtectedRoute requiredRoles={['1', '2']}>
+              <LayoutWithSidebarNavbar>
+                <ConsultarVacaciones />
+              </LayoutWithSidebarNavbar>
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/consultar-horas-extras"
-          element={<LayoutWithSidebarNavbar><ConsultarHorasExtras /></LayoutWithSidebarNavbar>}
+          element={
+            <ProtectedRoute requiredRoles={['1', '2']}>
+              <LayoutWithSidebarNavbar>
+                <ConsultarHorasExtras />
+              </LayoutWithSidebarNavbar>
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/consultar-planilla-pagada"
-          element={<LayoutWithSidebarNavbar><ConsultarPlanillaPagada /></LayoutWithSidebarNavbar>}
+          element={
+            <ProtectedRoute requiredRoles={['1', '2']}>
+              <LayoutWithSidebarNavbar>
+                <ConsultarPlanillaPagada />
+              </LayoutWithSidebarNavbar>
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/consultar-permisos"
-          element={<LayoutWithSidebarNavbar><ConsultarPermisos /></LayoutWithSidebarNavbar>}
+          element={
+            <ProtectedRoute requiredRoles={['1', '2']}>
+              <LayoutWithSidebarNavbar>
+                <ConsultarPermisos />
+              </LayoutWithSidebarNavbar>
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/consultar-aguinaldo"
-          element={<LayoutWithSidebarNavbar><ConsultarAguinaldo /></LayoutWithSidebarNavbar>}
+          element={
+            <ProtectedRoute requiredRoles={['1', '2']}>
+              <LayoutWithSidebarNavbar>
+                <ConsultarAguinaldo />
+              </LayoutWithSidebarNavbar>
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/consultar-liquidacion"
-          element={<LayoutWithSidebarNavbar><ConsultarLiquidacion /></LayoutWithSidebarNavbar>}
+          element={
+            <ProtectedRoute requiredRoles={['1', '2']}>
+              <LayoutWithSidebarNavbar>
+                <ConsultarLiquidacion />
+              </LayoutWithSidebarNavbar>
+            </ProtectedRoute>
+          }
         />
         <Route
           path="/consultar-marca-tiempo"
-          element={<LayoutWithSidebarNavbar><ConsultarMarcaTiempo /></LayoutWithSidebarNavbar>}
+          element={
+            <ProtectedRoute requiredRoles={['1', '2']}>
+              <LayoutWithSidebarNavbar>
+                <ConsultarMarcaTiempo />
+              </LayoutWithSidebarNavbar>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/consultar-evaluacion-rendimiento"
+          element={
+            <ProtectedRoute requiredRoles={['1', '2']}>
+              <LayoutWithSidebarNavbar>
+                <ConsultarEvaluacionRendimiento />
+              </LayoutWithSidebarNavbar>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Marcar Asistencia - Accesible por Administradores y Empleadores */}
+        <Route
+          path="/marca-tiempo-empleados"
+          element={
+            <ProtectedRoute requiredRoles={['1', '2']}>
+              <LayoutWithSidebarNavbar>
+                <MarcaTiempoEmpleados />
+              </LayoutWithSidebarNavbar>
+            </ProtectedRoute>
+          }
         />
       </Routes>
     </Router>

@@ -23,6 +23,8 @@ async function autenticarUsuario(req, res) {
                 res.status(401).json({ error: 'Contraseña incorrecta' });
             } else if (resultado === 'Error:Usuario inactivo') {
                 res.status(403).json({ error: 'Usuario inactivo' });
+            } else if (resultado === 'Error:Acceso denegado hasta la fecha de ingreso') {
+                res.status(403).json({ error: 'Acceso denegado hasta la fecha de ingreso' });
             } else if (resultado.startsWith('Success')) {
                 const [_, idusuarios, roles_idroles] = resultado.split(':');
                 res.status(200).json({

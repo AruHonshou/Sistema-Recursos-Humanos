@@ -68,7 +68,12 @@ const GestionUsuarios = () => {
         setError(null); // Limpiar error al cambiar el tipo de persona
     };
 
+    const validarTelefono = (telefono) => {
+        const phoneRegex = /^[245678][0-9]{7}$/;
+        return phoneRegex.test(telefono);
+    };
 
+    const validarCampoSinEspacios = (valor) => valor.trim() === valor;
 
     const crearPersona = async () => {
         // Validaciones de campos
@@ -90,32 +95,48 @@ const GestionUsuarios = () => {
         }
 
         // Validar que la longitud de la cédula sea la correcta
-        if (nuevaPersona.idPersona.length !== maxLength) {
-            setError(`La cédula para el tipo seleccionado debe tener exactamente ${maxLength} dígitos.`);
-            return;
-        }
-
-        // Validar cédula
-        if (!nuevaPersona.idPersona || !cedulaRegex.test(nuevaPersona.idPersona)) {
-            setError('La cédula debe contener solo números.');
+        if (nuevaPersona.idPersona.length !== maxLength || !cedulaRegex.test(nuevaPersona.idPersona) || !validarCampoSinEspacios(nuevaPersona.idPersona)) {
+            setError(`La cédula para el tipo seleccionado debe tener exactamente ${maxLength} dígitos y no tener espacios al inicio o al final.`);
             return;
         }
 
         // Validar nombre
-        if (!nuevaPersona.Nombre || !nameRegex.test(nuevaPersona.Nombre)) {
-            setError('El nombre debe iniciar con mayúscula y contener solo letras, incluyendo la letra Ñ.');
+        if (!nuevaPersona.Nombre || !nameRegex.test(nuevaPersona.Nombre) || !validarCampoSinEspacios(nuevaPersona.Nombre)) {
+            setError('El nombre debe iniciar con mayúscula, contener solo letras (incluyendo Ñ) y no tener espacios al inicio o al final.');
             return;
         }
 
         // Validar primer apellido
-        if (!nuevaPersona.Primer_Apellido || !nameRegex.test(nuevaPersona.Primer_Apellido)) {
-            setError('El primer apellido debe iniciar con mayúscula y contener solo letras, incluyendo la letra Ñ.');
+        if (!nuevaPersona.Primer_Apellido || !nameRegex.test(nuevaPersona.Primer_Apellido) || !validarCampoSinEspacios(nuevaPersona.Primer_Apellido)) {
+            setError('El primer apellido debe iniciar con mayúscula, contener solo letras (incluyendo Ñ) y no tener espacios al inicio o al final.');
             return;
         }
 
+        if (!nuevaPersona.Numero_Telefono || !validarTelefono(nuevaPersona.Numero_Telefono) || !validarCampoSinEspacios(nuevaPersona.Numero_Telefono)) {
+            setError('El número de teléfono debe comenzar con 2, 4, 5, 6, 7 o 8, contener exactamente 8 dígitos, y no tener espacios al inicio o al final.');
+            return;
+        }
+
+        // Validar catálogo de teléfono
+        if (!nuevaPersona.catalogo_telefono_idCatalogo_Telefono) {
+            setError('Debe seleccionar un catálogo de teléfono.');
+            return;
+        }
+
+        // Validar dirección específica
+        if (!nuevaPersona.Direccion_Especifica) {
+            setError('Debe escribir la dirección específica.');
+            return;
+        }
+
+        // Validar contraseña
+        if (!nuevaPersona.Contrasena) {
+            setError('Debe crear una contraseña.');
+            return;
+        }
         // Validar segundo apellido
-        if (!nuevaPersona.Segundo_Apellido || !nameRegex.test(nuevaPersona.Segundo_Apellido)) {
-            setError('El segundo apellido debe iniciar con mayúscula y contener solo letras, incluyendo la letra Ñ.');
+        if (!nuevaPersona.Segundo_Apellido || !nameRegex.test(nuevaPersona.Segundo_Apellido) || !validarCampoSinEspacios(nuevaPersona.Segundo_Apellido)) {
+            setError('El segundo apellido debe iniciar con mayúscula, contener solo letras (incluyendo Ñ) y no tener espacios al inicio o al final.');
             return;
         }
 
@@ -131,32 +152,28 @@ const GestionUsuarios = () => {
         }
 
         // Validar número de teléfono
-        if (!nuevaPersona.Numero_Telefono || !phoneRegex.test(nuevaPersona.Numero_Telefono) || nuevaPersona.Numero_Telefono.length !== 8) {
-            setError('El número de teléfono debe contener exactamente 8 dígitos.');
+        if (!nuevaPersona.Numero_Telefono || !phoneRegex.test(nuevaPersona.Numero_Telefono) || nuevaPersona.Numero_Telefono.length !== 8 || !validarCampoSinEspacios(nuevaPersona.Numero_Telefono)) {
+            setError('El número de teléfono debe contener exactamente 8 dígitos y no tener espacios al inicio o al final.');
             return;
         }
 
-        // Validar provincia
+        // Validar provincia, cantón y distrito
         if (!nuevaPersona.distrito_canton_provincia_idprovincia) {
             setError('Debe seleccionar una provincia.');
             return;
         }
-
-        // Validar cantón
         if (!nuevaPersona.distrito_canton_idCanton) {
             setError('Debe seleccionar un cantón.');
             return;
         }
-
-        // Validar distrito
         if (!nuevaPersona.distrito_idDistrito) {
             setError('Debe seleccionar un distrito.');
             return;
         }
 
         // Validar correo electrónico
-        if (!nuevaPersona.Descripcion_Correo || !emailRegex.test(nuevaPersona.Descripcion_Correo)) {
-            setError('Debe proporcionar un correo electrónico válido.');
+        if (!nuevaPersona.Descripcion_Correo || !emailRegex.test(nuevaPersona.Descripcion_Correo) || !validarCampoSinEspacios(nuevaPersona.Descripcion_Correo)) {
+            setError('Debe proporcionar un correo electrónico válido sin espacios al inicio o al final.');
             return;
         }
 
@@ -185,8 +202,8 @@ const GestionUsuarios = () => {
         }
 
         // Validar nombre de usuario
-        if (!nuevaPersona.Nombre_Usuario || /\d|[^\w\s]/.test(nuevaPersona.Nombre_Usuario)) {
-            setError('El nombre de usuario no puede contener números ni símbolos.');
+        if (!nuevaPersona.Nombre_Usuario || /\d|[^\w\s]/.test(nuevaPersona.Nombre_Usuario) || !validarCampoSinEspacios(nuevaPersona.Nombre_Usuario)) {
+            setError('El nombre de usuario no puede contener números, símbolos, ni espacios al inicio o al final.');
             return;
         }
 
@@ -206,30 +223,7 @@ const GestionUsuarios = () => {
 
             alert('Usuario creado exitosamente!');
             setModalCrear(false);
-            setNuevaPersona({
-                idPersona: '',
-                Nombre: '',
-                Primer_Apellido: '',
-                Segundo_Apellido: '',
-                Fecha_Nacimiento: '',
-                catalogo_persona_idCatalogo_Persona: '',
-                Numero_Telefono: '',
-                catalogo_telefono_idCatalogo_Telefono: '',
-                Direccion_Especifica: '',
-                distrito_idDistrito: '',
-                distrito_canton_idCanton: '',
-                distrito_canton_provincia_idprovincia: '',
-                Descripcion_Correo: '',
-                catalogo_correo_idCatalogo_Correo: '',
-                Fecha_Ingreso: '',
-                puesto_laboral_idpuesto_laboral: '',
-                tipo_horario_idtipo_horario: '',
-                Nombre_Usuario: '',
-                Contrasena: '',
-                roles_idroles: '',
-            });
-
-            obtenerPersonas(); // Actualizar la lista de personas
+            obtenerPersonas();
         } catch (error) {
             setError(`Error al crear el registro: ${error.message}`);
         }
@@ -237,9 +231,47 @@ const GestionUsuarios = () => {
 
 
     const abrirModalActualizar = (persona) => {
-        setNuevaPersona(persona); // Carga los datos de la persona seleccionada
-        setModalActualizar(true); // Abre el modal de actualización
+        // Imprimir el objeto persona en la consola para verificar los datos
+        console.log("Datos de la persona seleccionada:", persona);
+
+        setNuevaPersona({
+            idPersona: persona.idPersona || '',
+            Nombre: persona.Nombre || '',
+            Primer_Apellido: persona.Primer_Apellido || '',
+            Segundo_Apellido: persona.Segundo_Apellido || '',
+            Fecha_Nacimiento: persona.Fecha_Nacimiento ? new Date(persona.Fecha_Nacimiento).toISOString().split('T')[0] : '',
+            catalogo_persona_idCatalogo_Persona: persona.catalogo_persona_idCatalogo_Persona || '',
+
+            // Ajuste para el número de teléfono
+            Numero_Telefono: persona.numero_telefono || '',
+            catalogo_telefono_idCatalogo_Telefono: persona.catalogo_telefono_idCatalogo_Telefono || '',
+
+            Direccion_Especifica: persona.Direccion_Especifica || '',
+            distrito_idDistrito: persona.distrito_idDistrito || '',
+            distrito_canton_idCanton: persona.distrito_canton_idCanton || '',
+            distrito_canton_provincia_idprovincia: persona.distrito_canton_provincia_idprovincia || '',
+
+            // Ajuste para el correo electrónico
+            Descripcion_Correo: persona.descripcion_correo || '',
+            catalogo_correo_idCatalogo_Correo: persona.catalogo_correo_idCatalogo_Correo || '',
+
+            Fecha_Ingreso: persona.Fecha_Ingreso ? new Date(persona.Fecha_Ingreso).toISOString().split('T')[0] : '',
+            puesto_laboral_idpuesto_laboral: persona.puesto_laboral_idpuesto_laboral || '',
+            tipo_horario_idtipo_horario: persona.tipo_horario_idtipo_horario || '',
+
+            Nombre_Usuario: persona.Nombre_Usuario || '',
+
+            // Ajuste para la contraseña (si está en la base de datos o si no es sensible)
+            Contrasena: persona.Contrasena || '',
+
+            roles_idroles: persona.roles_idroles || '',
+            Usuario_Activo: !!persona.Usuario_Activo,
+        });
+        setModalActualizar(true);
     };
+
+
+
 
     // Nueva función para alternar el estado de usuario
     const alternarEstadoUsuario = async (idPersona, estadoActual) => {
@@ -269,24 +301,26 @@ const GestionUsuarios = () => {
     const actualizarPersona = async () => {
         // Validaciones de campos
         const nameRegex = /^[A-ZÑ][a-zA-ZÑñ\s]+$/; // Permitir la letra Ñ y ñ
-        const phoneRegex = /^[0-9]+$/; // Solo números
+        // const phoneRegex = /^[0-9]+$/; // Solo números
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Validación básica de email
 
+        const validarCampoSinEspacios = (valor) => valor.trim() === valor;
+
         // Validar nombre
-        if (!nuevaPersona.Nombre || !nameRegex.test(nuevaPersona.Nombre)) {
-            setError('El nombre debe iniciar con mayúscula y contener solo letras, incluyendo la letra Ñ.');
+        if (!nuevaPersona.Nombre || !nameRegex.test(nuevaPersona.Nombre) || !validarCampoSinEspacios(nuevaPersona.Nombre)) {
+            setError('El nombre debe iniciar con mayúscula, contener solo letras (incluyendo Ñ) y no tener espacios al inicio o al final.');
             return;
         }
 
         // Validar primer apellido
-        if (!nuevaPersona.Primer_Apellido || !nameRegex.test(nuevaPersona.Primer_Apellido)) {
-            setError('El primer apellido debe iniciar con mayúscula y contener solo letras, incluyendo la letra Ñ.');
+        if (!nuevaPersona.Primer_Apellido || !nameRegex.test(nuevaPersona.Primer_Apellido) || !validarCampoSinEspacios(nuevaPersona.Primer_Apellido)) {
+            setError('El primer apellido debe iniciar con mayúscula, contener solo letras (incluyendo Ñ) y no tener espacios al inicio o al final.');
             return;
         }
 
         // Validar segundo apellido
-        if (!nuevaPersona.Segundo_Apellido || !nameRegex.test(nuevaPersona.Segundo_Apellido)) {
-            setError('El segundo apellido debe iniciar con mayúscula y contener solo letras, incluyendo la letra Ñ.');
+        if (!nuevaPersona.Segundo_Apellido || !nameRegex.test(nuevaPersona.Segundo_Apellido) || !validarCampoSinEspacios(nuevaPersona.Segundo_Apellido)) {
+            setError('El segundo apellido debe iniciar con mayúscula, contener solo letras (incluyendo Ñ) y no tener espacios al inicio o al final.');
             return;
         }
 
@@ -301,11 +335,33 @@ const GestionUsuarios = () => {
             return;
         }
 
-        // Validar número de teléfono
-        if (!nuevaPersona.Numero_Telefono || !phoneRegex.test(nuevaPersona.Numero_Telefono) || nuevaPersona.Numero_Telefono.length !== 8) {
-            setError('El número de teléfono debe contener exactamente 8 dígitos.');
+        // if (!nuevaPersona.Numero_Telefono || !validarTelefono(nuevaPersona.Numero_Telefono) || !validarCampoSinEspacios(nuevaPersona.Numero_Telefono)) {
+        //     setError('El número de teléfono debe comenzar con 2, 4, 5, 6, 7 o 8, contener exactamente 8 dígitos, y no tener espacios al inicio o al final.');
+        //     return;
+        // }
+
+        // Validar catálogo de teléfono
+        if (!nuevaPersona.catalogo_telefono_idCatalogo_Telefono) {
+            setError('Debe seleccionar un catálogo de teléfono.');
             return;
         }
+
+        // Validar dirección específica
+        if (!nuevaPersona.Direccion_Especifica) {
+            setError('Debe escribir la dirección específica.');
+            return;
+        }
+
+        // Validar contraseña
+        if (!nuevaPersona.Contrasena) {
+            setError('Debe crear una contraseña.');
+            return;
+        }
+        // // Validar número de teléfono
+        // if (!nuevaPersona.Numero_Telefono || !phoneRegex.test(nuevaPersona.Numero_Telefono) || nuevaPersona.Numero_Telefono.length !== 8 || !validarCampoSinEspacios(nuevaPersona.Numero_Telefono)) {
+        //     setError('El número de teléfono debe contener exactamente 8 dígitos y no tener espacios al inicio o al final.');
+        //     return;
+        // }
 
         // Validar provincia
         if (!nuevaPersona.distrito_canton_provincia_idprovincia) {
@@ -326,8 +382,8 @@ const GestionUsuarios = () => {
         }
 
         // Validar correo electrónico
-        if (!nuevaPersona.Descripcion_Correo || !emailRegex.test(nuevaPersona.Descripcion_Correo)) {
-            setError('Debe proporcionar un correo electrónico válido.');
+        if (!nuevaPersona.Descripcion_Correo || !emailRegex.test(nuevaPersona.Descripcion_Correo) || !validarCampoSinEspacios(nuevaPersona.Descripcion_Correo)) {
+            setError('Debe proporcionar un correo electrónico válido sin espacios al inicio o al final.');
             return;
         }
 
@@ -356,8 +412,8 @@ const GestionUsuarios = () => {
         }
 
         // Validar nombre de usuario
-        if (!nuevaPersona.Nombre_Usuario || /\d|[^\w\s]/.test(nuevaPersona.Nombre_Usuario)) {
-            setError('El nombre de usuario no puede contener números ni símbolos.');
+        if (!nuevaPersona.Nombre_Usuario || /\d|[^\w\s]/.test(nuevaPersona.Nombre_Usuario) || !validarCampoSinEspacios(nuevaPersona.Nombre_Usuario)) {
+            setError('El nombre de usuario no puede contener números, símbolos, ni espacios al inicio o al final.');
             return;
         }
 
@@ -369,24 +425,20 @@ const GestionUsuarios = () => {
 
         // Si todas las validaciones pasan, proceder con la actualización
         try {
-            // Clonar el objeto persona sin modificar el idPersona
-            const personaActualizada = { ...nuevaPersona };
-            delete personaActualizada.idPersona; // No incluir el ID en la actualización
-
-            const response = await axios.put(`http://localhost:3000/api/personas/${nuevaPersona.idPersona}`, personaActualizada);
+            const response = await axios.put(`http://localhost:3000/api/personas/${nuevaPersona.idPersona}`, nuevaPersona);
 
             if (response.status !== 200) {
                 throw new Error('Error al actualizar la persona.');
             }
 
-            // Mostrar alerta de éxito
             alert('Usuario actualizado exitosamente!');
-            setModalActualizar(false); // Cierra el modal de actualización
-            obtenerPersonas(); // Actualiza la lista de personas
+            setModalActualizar(false);
+            obtenerPersonas();
         } catch (error) {
             setError(`Error al actualizar el registro: ${error.message}`);
         }
     };
+
 
 
 

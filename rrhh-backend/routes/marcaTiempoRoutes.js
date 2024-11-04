@@ -25,13 +25,17 @@ router.delete('/eliminar/:idEmpleado/:Fecha/:TipoMovimiento', marcaTiempoControl
 // Ruta para leer todas las marcas de tiempo
 router.get('/', marcaTiempoController.leerTodasMarcas);
 
-// routes/marcaTiempoRoutes.js
-
 // Ruta para leer todas las marcas de tiempo de todas las personas
 router.get('/todas-marcas-persona', marcaTiempoController.leerTodasMarcasPersona);
 
 // Ruta para leer todas las marcas de tiempo por idUsuario
 router.get('/marcas-persona/:idUsuario', marcaTiempoController.leerTodasMarcasPorIdUsuario);
+
+// Ruta para justificar tardanza en la entrada
+router.post('/justificar-entrada', marcaTiempoController.justificarTardanzaEntrada);
+
+// Ruta para justificar tardanza en la salida
+router.post('/justificar-salida', marcaTiempoController.justificarTardanzaSalida);
 
 
 module.exports = router;

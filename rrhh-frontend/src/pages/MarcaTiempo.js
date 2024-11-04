@@ -4,11 +4,19 @@ import { FaTrashAlt } from 'react-icons/fa';
 
 const MarcaTiempo = () => {
   const [marcas, setMarcas] = useState([]);
+  const [errorModal, setErrorModal] = useState({ visible: false, message: '' });
   const [empleados, setEmpleados] = useState([]);
   const [formData, setFormData] = useState({
     idEmpleado: '',
     Fecha: '',
     Hora: ''
+  });
+  const [showJustificarEntrada, setShowJustificarEntrada] = useState(false);
+  const [showJustificarSalida, setShowJustificarSalida] = useState(false);
+  const [justificacionData, setJustificacionData] = useState({
+    idEmpleado: '',
+    Fecha: '',
+    Motivo: ''
   });
   const [currentPage, setCurrentPage] = useState(1);
   const recordsPerPage = 10;
@@ -17,7 +25,8 @@ const MarcaTiempo = () => {
   const obtenerMarcas = async () => {
     try {
       const response = await axios.get('http://localhost:3000/api/marcas/todas-marcas-persona');
-      setMarcas(response.data[0]);
+      const sortedMarcas = response.data[0].sort((a, b) => new Date(b.Fecha_Marca) - new Date(a.Fecha_Marca));
+      setMarcas(sortedMarcas);
     } catch (error) {
       console.error('Error al obtener las marcas de tiempo:', error);
     }
@@ -38,7 +47,6 @@ const MarcaTiempo = () => {
     obtenerEmpleados();
   }, []);
 
-  // Handle input changes
   const handleInputChange = (e) => {
     setFormData({
       ...formData,
@@ -46,29 +54,65 @@ const MarcaTiempo = () => {
     });
   };
 
-  // Register start time
+  const handleJustificacionChange = (e) => {
+    setJustificacionData({
+      ...justificacionData,
+      [e.target.name]: e.target.value
+    });
+  };
+
   const registrarMarcaInicio = async () => {
     try {
       await axios.post('http://localhost:3000/api/marcas/inicio', formData);
       alert('Marca de inicio registrada exitosamente');
       obtenerMarcas();
     } catch (error) {
-      console.error('Error al registrar la marca de inicio:', error);
+      if (error.response && error.response.status === 400) {
+        setErrorModal({ visible: true, message: error.response.data.error });
+      } else {
+        console.error('Error al registrar la marca de inicio:', error);
+        setErrorModal({ visible: true, message: 'Error al registrar la marca de inicio' });
+      }
     }
   };
 
-  // Register end time
   const registrarMarcaSalida = async () => {
     try {
       await axios.post('http://localhost:3000/api/marcas/salida', formData);
       alert('Marca de salida registrada exitosamente');
       obtenerMarcas();
     } catch (error) {
-      console.error('Error al registrar la marca de salida:', error);
+      if (error.response && error.response.status === 400) {
+        setErrorModal({ visible: true, message: error.response.data.error });
+      } else {
+        console.error('Error al registrar la marca de salida:', error);
+        setErrorModal({ visible: true, message: 'Error al registrar la marca de salida' });
+      }
     }
   };
 
-  // Delete attendance mark
+  const justificarEntrada = async () => {
+    try {
+      await axios.post('http://localhost:3000/api/marcas/justificar-entrada', justificacionData);
+      alert('Justificación de entrada registrada exitosamente');
+      setShowJustificarEntrada(false);
+      obtenerMarcas();
+    } catch (error) {
+      console.error('Error al justificar la entrada:', error);
+    }
+  };
+
+  const justificarSalida = async () => {
+    try {
+      await axios.post('http://localhost:3000/api/marcas/justificar-salida', justificacionData);
+      alert('Justificación de salida registrada exitosamente');
+      setShowJustificarSalida(false);
+      obtenerMarcas();
+    } catch (error) {
+      console.error('Error al justificar la salida:', error);
+    }
+  };
+
   const eliminarMarcaTiempo = async (idEmpleado, Fecha_Marca, Movimiento) => {
     try {
       await axios.delete(`http://localhost:3000/api/marcas/eliminar/${idEmpleado}/${Fecha_Marca}/${Movimiento}`);
@@ -77,6 +121,12 @@ const MarcaTiempo = () => {
     } catch (error) {
       console.error('Error al eliminar la marca de tiempo:', error);
     }
+  };
+
+  const cancelarJustificacion = () => {
+    setShowJustificarEntrada(false);
+    setShowJustificarSalida(false);
+    setJustificacionData({ idEmpleado: '', Fecha: '', Motivo: '' });
   };
 
   // Pagination handling
@@ -186,6 +236,7 @@ const MarcaTiempo = () => {
               <th className="px-4 py-2 text-black dark:text-white text-center">Marca Hora</th>
               <th className="px-4 py-2 text-black dark:text-white text-center">Tardía</th>
               <th className="px-4 py-2 text-black dark:text-white text-center">Justificada</th>
+              <th className="px-4 py-2 text-black dark:text-white text-center">Motivo Justificación</th>
               <th className="px-4 py-2 text-black dark:text-white text-center">Acciones</th>
             </tr>
           </thead>
@@ -203,7 +254,38 @@ const MarcaTiempo = () => {
                 <td className="px-4 py-2 text-black dark:text-white text-center">
                   {marca.Justificada?.data?.[0] === 1 ? 'Sí' : 'No'}
                 </td>
+                <td className="px-4 py-2 text-black dark:text-white text-center">
+                  {marca.Motivo_Justificacion ? marca.Motivo_Justificacion : "No necesario"}
+                </td>
                 <td className="px-4 py-2 flex justify-center space-x-2">
+                  <button
+                    onClick={() => {
+                      setJustificacionData({
+                        idEmpleado: marca.idEmpleado,
+                        Fecha: new Date(marca.Fecha_Marca).toISOString().split('T')[0],
+                        Motivo: ''
+                      });
+                      setShowJustificarEntrada(true);
+                    }}
+                    disabled={marca.Tardia?.data?.[0] === 0}
+                    className={`bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-lg shadow-md ${marca.Tardia?.data?.[0] === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    Justificar Entrada
+                  </button>
+                  <button
+                    onClick={() => {
+                      setJustificacionData({
+                        idEmpleado: marca.idEmpleado,
+                        Fecha: new Date(marca.Fecha_Marca).toISOString().split('T')[0],
+                        Motivo: ''
+                      });
+                      setShowJustificarSalida(true);
+                    }}
+                    disabled={marca.Tardia?.data?.[0] === 0}
+                    className={`bg-green-500 hover:bg-green-600 text-white py-1 px-3 rounded-lg shadow-md ${marca.Tardia?.data?.[0] === 0 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    Justificar Salida
+                  </button>
                   <button
                     onClick={() => eliminarMarcaTiempo(
                       marca.idEmpleado,
@@ -220,6 +302,117 @@ const MarcaTiempo = () => {
           </tbody>
         </table>
       </div>
+
+      {errorModal.visible && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg max-w-md mx-auto text-center">
+            <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
+            <p className="text-gray-700 dark:text-white">{errorModal.message}</p>
+            <button
+              onClick={() => setErrorModal({ visible: false, message: '' })}
+              className="mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Justificar Entrada */}
+      {showJustificarEntrada && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg max-w-md mx-auto">
+            <h2 className="text-xl font-bold mb-4">Justificar Entrada</h2>
+            <select
+              name="idEmpleado"
+              value={justificacionData.idEmpleado}
+              onChange={handleJustificacionChange}
+              className="border rounded-lg w-full px-3 py-2 mb-2"
+            >
+              <option value="">Seleccionar Empleador</option>
+              {empleados.map((empleado) => (
+                <option key={empleado.idEmpleado} value={empleado.idEmpleado}>
+                  {empleado.NombreCompleto}
+                </option>
+              ))}
+            </select>
+            <input
+              type="date"
+              name="Fecha"
+              value={justificacionData.Fecha}
+              onChange={handleJustificacionChange}
+              className="border rounded-lg w-full px-3 py-2 mb-2"
+            />
+            <textarea
+              name="Motivo"
+              value={justificacionData.Motivo}
+              onChange={handleJustificacionChange}
+              className="border rounded-lg w-full px-3 py-2 mb-4"
+              placeholder="Escriba la justificación"
+            />
+            <button
+              onClick={justificarEntrada}
+              className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg shadow-md w-full mb-2"
+            >
+              Justificar Entrada
+            </button>
+            <button
+              onClick={cancelarJustificacion}
+              className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg shadow-md w-full"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Justificar Salida */}
+      {showJustificarSalida && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg max-w-md mx-auto">
+            <h2 className="text-xl font-bold mb-4">Justificar Salida</h2>
+            <select
+              name="idEmpleado"
+              value={justificacionData.idEmpleado}
+              onChange={handleJustificacionChange}
+              className="border rounded-lg w-full px-3 py-2 mb-2"
+            >
+              <option value="">Seleccionar Empleador</option>
+              {empleados.map((empleado) => (
+                <option key={empleado.idEmpleado} value={empleado.idEmpleado}>
+                  {empleado.NombreCompleto}
+                </option>
+              ))}
+            </select>
+            <input
+              type="date"
+              name="Fecha"
+              value={justificacionData.Fecha}
+              onChange={handleJustificacionChange}
+              className="border rounded-lg w-full px-3 py-2 mb-2"
+            />
+            <textarea
+              name="Motivo"
+              value={justificacionData.Motivo}
+              onChange={handleJustificacionChange}
+              className="border rounded-lg w-full px-3 py-2 mb-4"
+              placeholder="Escriba la justificación"
+            />
+            <button
+              onClick={justificarSalida}
+              className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg shadow-md w-full mb-2"
+            >
+              Justificar Salida
+            </button>
+            <button
+              onClick={cancelarJustificacion}
+              className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg shadow-md w-full"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Pagination controls */}
       <div className="flex justify-center space-x-4 mt-4">

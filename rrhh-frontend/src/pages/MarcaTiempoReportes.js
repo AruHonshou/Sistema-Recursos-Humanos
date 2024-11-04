@@ -13,11 +13,14 @@ const MarcaTiempoReportes = () => {
   const obtenerMarcas = async () => {
     try {
       const response = await axios.get('http://localhost:3000/api/marcas/todas-marcas-persona');
-      setMarcas(response.data[0]);
+      // Ordenar las marcas de tiempo por Fecha_Marca de forma descendente
+      const sortedMarcas = response.data[0].sort((a, b) => new Date(b.Fecha_Marca) - new Date(a.Fecha_Marca));
+      setMarcas(sortedMarcas);
     } catch (error) {
       console.error('Error al obtener las marcas de tiempo:', error);
     }
   };
+  
 
   // Fetch all employees
   const obtenerEmpleados = async () => {
@@ -102,6 +105,7 @@ const MarcaTiempoReportes = () => {
               <th className="px-4 py-2 text-black dark:text-white text-center">Marca Hora</th>
               <th className="px-4 py-2 text-black dark:text-white text-center">Tardía</th>
               <th className="px-4 py-2 text-black dark:text-white text-center">Justificada</th>
+              <th className="px-4 py-2 text-black dark:text-white text-center">Motivo Justificacion</th>
             </tr>
           </thead>
           <tbody>
@@ -117,6 +121,9 @@ const MarcaTiempoReportes = () => {
                 </td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">
                   {marca.Justificada?.data?.[0] === 1 ? 'Sí' : 'No'}
+                </td>
+                <td className="px-4 py-2 text-black dark:text-white text-center">
+                  {marca.Motivo_Justificacion ? marca.Motivo_Justificacion : "No necesario"}
                 </td>
               </tr>
             ))}

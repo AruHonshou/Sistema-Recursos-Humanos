@@ -54,7 +54,12 @@ function Login() {
         setError('');
         navigate('/menu');
       } else {
-        setError(data.error);
+        // Handle specific error messages from the backend
+        if (data.error === 'Acceso denegado hasta la fecha de ingreso') {
+          setError('No puede acceder hasta su fecha de ingreso.');
+        } else {
+          setError(data.error);
+        }
       }
     } catch (error) {
       setError('Error de conexión. Por favor, intente nuevamente.');

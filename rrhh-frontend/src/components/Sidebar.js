@@ -13,6 +13,8 @@ const Sidebar = () => {
   const [showReporteSubmenu, setShowReporteSubmenu] = useState(false);
   const [showSolicitudesSubmenu, setShowSolicitudesSubmenu] = useState(false);
   const [showConsultasSubmenu, setShowConsultasSubmenu] = useState(false);
+  const [showAsistenciaSubmenu, setShowAsistenciaSubmenu] = useState(false);
+
 
 
   const [role, setRole] = useState('');
@@ -170,7 +172,7 @@ const Sidebar = () => {
       )}
 
       {/* Reportes */}
-      {(role === 'Administrador' || role === 'Empleador') && (
+      {role === 'Administrador' && (
         <>
           <button
             onClick={() => setShowReporteSubmenu(!showReporteSubmenu)}
@@ -198,6 +200,12 @@ const Sidebar = () => {
                 <NavLink to="/reporte-vacaciones" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
                   <AiOutlineUser className="mr-2" size={24} />
                   {isOpen && <span>Reportes de Vacaciones</span>}
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/reporte-evaluacion-rendimiento" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+                  <AiOutlineUser className="mr-2" size={24} />
+                  {isOpen && <span>Reportes de Evaluación del Rendimiento</span>}
                 </NavLink>
               </li>
               <li>
@@ -253,6 +261,23 @@ const Sidebar = () => {
           )}
         </>
       )}
+      
+      {/* Marcar Asistencia - Only visible to Administrators and Collaborators */}
+      <button onClick={() => setShowAsistenciaSubmenu(!showAsistenciaSubmenu)} className="text-[#00ADB5] font-bold mb-2 mt-4 w-full text-left flex items-center">
+        <AiOutlineClockCircle className="mr-2" size={24} />
+        {isOpen && <span>Marcar Asistencia</span>}
+      </button>
+      {showAsistenciaSubmenu && (
+        <ul className="space-y-2">
+          <li>
+            <NavLink to="/marca-tiempo-empleados" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+              <AiOutlineClockCircle className="mr-2" size={24} />
+              {isOpen && <span>Marca Tiempo Empleados</span>}
+            </NavLink>
+          </li>
+        </ul>
+      )}
+
       {/* Solicitudes */}
       <button
         onClick={() => setShowSolicitudesSubmenu(!showSolicitudesSubmenu)}
@@ -304,6 +329,11 @@ const Sidebar = () => {
           <li><NavLink to="/consultar-aguinaldo" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg">Consultar Aguinaldo</NavLink></li>
           <li><NavLink to="/consultar-liquidacion" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg">Consultar Liquidación</NavLink></li>
           <li><NavLink to="/consultar-marca-tiempo" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg">Consultar Marca de Tiempo</NavLink></li>
+          <li>
+            <NavLink to="/consultar-evaluacion-rendimiento" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg">
+              Consultar Evaluación del Rendimiento
+            </NavLink>
+          </li>
         </ul>
       )}
 
