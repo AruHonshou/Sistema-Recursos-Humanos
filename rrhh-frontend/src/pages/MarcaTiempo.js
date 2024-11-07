@@ -234,7 +234,7 @@ const MarcaTiempo = () => {
               <th className="px-4 py-2 text-black dark:text-white text-center">Movimiento</th>
               <th className="px-4 py-2 text-black dark:text-white text-center">Fecha Marca</th>
               <th className="px-4 py-2 text-black dark:text-white text-center">Marca Hora</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Tardía</th>
+              <th className="px-4 py-2 text-black dark:text-white text-center">Tardía/Salida Anticipada</th>
               <th className="px-4 py-2 text-black dark:text-white text-center">Justificada</th>
               <th className="px-4 py-2 text-black dark:text-white text-center">Motivo Justificación</th>
               <th className="px-4 py-2 text-black dark:text-white text-center">Acciones</th>

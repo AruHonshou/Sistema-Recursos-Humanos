@@ -31,12 +31,12 @@ async function crearVacacion(req, res) {
         );
 
         await connection.commit();
-        res.status(201).json({ mensaje: 'Vacación creada exitosamente' });
+        res.status(201).json({ mensaje: 'Vacación solicitada' }); // Success message
     } catch (error) {
         if (connection) await connection.rollback();
         console.error(error);
 
-        // Enviar mensajes específicos de error al frontend
+        // Specific error handling
         if (error.message.includes('el empleado no tiene suficientes días disponibles')) {
             res.status(400).json({ error: 'No se puede crear la vacación porque el empleado no tiene suficientes días disponibles' });
         } else if (error.message.includes('hay un día feriado de por medio')) {
@@ -45,6 +45,8 @@ async function crearVacacion(req, res) {
             res.status(400).json({ error: 'No se puede crear la vacación porque la fecha de fin es menor que la fecha de inicio' });
         } else if (error.message.includes('el empleado está inactivo')) {
             res.status(400).json({ error: 'No se puede crear la vacación porque el empleado está inactivo' });
+        } else if (error.message.includes('Ya tiene vacaciones solicitadas para estos días')) {
+            res.status(400).json({ error: 'Ya tiene vacaciones solicitadas para estos días' });
         } else {
             res.status(500).json({ error: 'Error al crear la vacación' });
         }
@@ -52,6 +54,8 @@ async function crearVacacion(req, res) {
         if (connection) connection.release();
     }
 }
+
+
 
 
 
@@ -71,7 +75,6 @@ async function leerVacacion(req, res) {
     }
 }
 
-// Función para actualizar el estado de una vacación
 async function actualizarEstadoVacacion(req, res) {
     const { Fecha_Inicio, empleados_idEmpleado, estado_solicitud_idestado_solicitud } = req.body;
     let connection;
@@ -85,15 +88,28 @@ async function actualizarEstadoVacacion(req, res) {
         );
 
         await connection.commit();
-        res.status(200).json({ mensaje: 'Estado de la vacación actualizado exitosamente' });
+
+        // Send appropriate success message based on the state
+        const mensaje = estado_solicitud_idestado_solicitud === 1
+            ? 'Solicitud Aceptada'
+            : 'Solicitud Rechazada';
+
+        res.status(200).json({ mensaje });
     } catch (error) {
         if (connection) await connection.rollback();
         console.error(error);
-        res.status(500).json({ error: 'Error al actualizar el estado de la vacación' });
+
+        // Send specific error if state change is not allowed
+        if (error.message.includes('No puedes cambiar el estado de la solicitud')) {
+            res.status(400).json({ error: 'No puedes cambiar el estado de la solicitud' });
+        } else {
+            res.status(500).json({ error: 'Error al actualizar el estado de la vacación' });
+        }
     } finally {
         if (connection) connection.release();
     }
 }
+
 
 // Función para eliminar una vacación
 async function eliminarVacacion(req, res) {

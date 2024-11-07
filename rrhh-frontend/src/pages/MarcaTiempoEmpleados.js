@@ -59,8 +59,16 @@ const MarcaTiempoEmpleados = () => {
     };
 
     const setAutomaticDateTime = () => {
-        const currentDate = new Date().toISOString().split('T')[0];
-        const currentTime = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+        const currentDate = new Intl.DateTimeFormat('en-CA', {
+            timeZone: 'America/Costa_Rica'
+        }).format(new Date());
+        
+        const currentTime = new Date().toLocaleTimeString('en-GB', {
+            timeZone: 'America/Costa_Rica',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+        
         setFormData((prevData) => ({
             ...prevData,
             Fecha: currentDate,
@@ -260,7 +268,7 @@ const MarcaTiempoEmpleados = () => {
                             <th className="px-4 py-2 text-black dark:text-white text-center">Movimiento</th>
                             <th className="px-4 py-2 text-black dark:text-white text-center">Fecha Marca</th>
                             <th className="px-4 py-2 text-black dark:text-white text-center">Marca Hora</th>
-                            <th className="px-4 py-2 text-black dark:text-white text-center">Tardía</th>
+                            <th className="px-4 py-2 text-black dark:text-white text-center">Tardía/Salida Anticipada</th>
                             <th className="px-4 py-2 text-black dark:text-white text-center">Justificada</th>
                             <th className="px-4 py-2 text-black dark:text-white text-center">Motivo Justificación</th>
                             <th className="px-4 py-2 text-black dark:text-white text-center">Acciones</th>
@@ -411,3 +419,4 @@ const MarcaTiempoEmpleados = () => {
 };
 
 export default MarcaTiempoEmpleados;
+    

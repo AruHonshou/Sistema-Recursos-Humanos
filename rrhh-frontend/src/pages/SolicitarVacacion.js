@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const SolicitarVacaciones = () => {
-  const [errorModal, setErrorModal] = useState({ visible: false, message: '' });
   const [vacaciones, setVacaciones] = useState([]);
   const [empleados, setEmpleados] = useState([]); // Ensure empleados is an array initially
   const [diasDisponibles, setDiasDisponibles] = useState(0);
   const [diasConsumidos, setDiasConsumidos] = useState(0);
   const [modalCrear, setModalCrear] = useState(false);
+  const [alertModal, setAlertModal] = useState({ visible: false, message: '', type: '' });
   const [nuevaVacacion, setNuevaVacacion] = useState({
     Fecha_Inicio: '',
     Fecha_Fin: '',
@@ -71,23 +71,55 @@ const SolicitarVacaciones = () => {
     }
   };
 
-  // Vacaciones.js
   const crearVacacion = async () => {
+    const { Fecha_Inicio, Fecha_Fin, Cantidad_Dias_Solicitados, Motivo_Vacacion, empleados_idEmpleado } = nuevaVacacion;
+  
+    
+    if (!Fecha_Inicio) {
+      setAlertModal({ visible: true, message: 'Debe seleccionar la Fecha de Inicio', type: 'error' });
+      return;
+    }
+    if (!Fecha_Fin) {
+      setAlertModal({ visible: true, message: 'Debe seleccionar la Fecha de Fin', type: 'error' });
+      return;
+    }
+    if (!Cantidad_Dias_Solicitados || Cantidad_Dias_Solicitados <= 0) {
+      setAlertModal({ visible: true, message: 'La cantidad de días solicitados debe ser mayor a 0', type: 'error' });
+      return;
+    }
+    if (!Motivo_Vacacion) {
+      setAlertModal({ visible: true, message: 'Debe seleccionar un Motivo de Vacación', type: 'error' });
+      return;
+    }
+    if (!empleados_idEmpleado) {
+      setAlertModal({ visible: true, message: 'Debe seleccionar un Empleado', type: 'error' });
+      return;
+    }
+  
     try {
       await axios.post('http://localhost:3000/api/vacaciones/', nuevaVacacion);
+  
+      // Show success alert when vacation is successfully requested
+      setAlertModal({ visible: true, message: 'Vacación solicitada', type: 'success' });
+  
       setModalCrear(false);
       obtenerVacaciones();
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        setErrorModal({ visible: true, message: error.response.data.error });
-      } else {
-        console.error('Error al crear la vacación:', error);
-        setErrorModal({ visible: true, message: 'Error al crear la vacación' });
-      }
+      const errorMessage = error.response && error.response.status === 400
+        ? error.response.data.error
+        : 'Error al crear la vacación';
+      setAlertModal({ visible: true, message: errorMessage, type: 'error' });
+      console.error('Error al crear la vacación:', error);
     }
   };
+  
 
-
+  useEffect(() => {
+    const now = new Date();
+    now.setHours(now.getHours() - 6); // Adjust to UTC-6 for Costa Rica
+    const costaRicaDate = now.toISOString().split('T')[0]; // Format to YYYY-MM-DD
+    setNuevaVacacion((prev) => ({ ...prev, Fecha_Solicitud: costaRicaDate }));
+  }, []);
   useEffect(() => {
     obtenerVacaciones();
     obtenerEmpleados();
@@ -211,16 +243,16 @@ const SolicitarVacaciones = () => {
                 />
               </div>
 
-              {/* Fecha de Solicitud */}
-              <div>
-                <label className="block mb-2">Fecha de Solicitud:</label>
-                <input
-                  type="date"
-                  value={nuevaVacacion.Fecha_Solicitud}
-                  onChange={(e) => setNuevaVacacion({ ...nuevaVacacion, Fecha_Solicitud: e.target.value })}
-                  className="border rounded-lg w-full px-3 py-2"
-                />
-              </div>
+              {/* Fecha de Solicitud (readonly) */}
+            <div>
+              <label className="block mb-2">Fecha de Solicitud:</label>
+              <input
+                type="date"
+                value={nuevaVacacion.Fecha_Solicitud}
+                readOnly
+                className="border rounded-lg w-full px-3 py-2"
+              />
+            </div>
 
               {/* Motivo de Vacación */}
               <div>
@@ -285,20 +317,21 @@ const SolicitarVacaciones = () => {
           </div>
         </div>
       )}
-      {errorModal.visible && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg max-w-md mx-auto text-center">
-            <h2 className="text-xl font-bold text-red-600 mb-4">Error</h2>
-            <p className="text-gray-700 dark:text-white">{errorModal.message}</p>
-            <button
-              onClick={() => setErrorModal({ visible: false, message: '' })}
-              className="mt-4 bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
-            >
-              Cerrar
-            </button>
-          </div>
-        </div>
-      )}
+      {alertModal.visible && (
+  <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+    <div className={`bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg max-w-md mx-auto text-center ${alertModal.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+      <h2 className="text-xl font-bold mb-4">{alertModal.type === 'success' ? '¡Éxito!' : 'Error'}</h2>
+      <p className="text-gray-700 dark:text-white">{alertModal.message}</p>
+      <button
+        onClick={() => setAlertModal({ visible: false, message: '', type: '' })}
+        className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
+      >
+        Cerrar
+      </button>
+    </div>
+  </div>
+)}
+
 
     </div>
   );

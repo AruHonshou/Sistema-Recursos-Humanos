@@ -128,12 +128,12 @@ const eliminarPlanilla = async () => {
                 <td className="px-4 py-2 text-black dark:text-white text-center">{planilla.Persona}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(planilla.Fecha_Planilla).toISOString().split('T')[0]}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{planilla.Descripcion_Planilla}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{planilla.Monto_Total_Horas_Extras}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{planilla.Monto_Total_Deducciones}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{planilla.Monto_Total_Incapacidades}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{planilla.Monto_Descontado_Recortar}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{planilla.Monto_Total_Planilla}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{planilla.Monto_Calculos_Fiscales}</td>
+                <td className="px-4 py-2 text-black dark:text-white text-center">₡{planilla.Monto_Total_Horas_Extras}</td>
+                <td className="px-4 py-2 text-black dark:text-white text-center">₡{planilla.Monto_Total_Deducciones}</td>
+                <td className="px-4 py-2 text-black dark:text-white text-center">₡{planilla.Monto_Total_Incapacidades}</td>
+                <td className="px-4 py-2 text-black dark:text-white text-center">₡{planilla.Monto_Descontado_Recortar}</td>
+                <td className="px-4 py-2 text-black dark:text-white text-center">₡{planilla.Monto_Total_Planilla}</td>
+                <td className="px-4 py-2 text-black dark:text-white text-center">₡{planilla.Monto_Calculos_Fiscales}</td>
               </tr>
             ))}
           </tbody>

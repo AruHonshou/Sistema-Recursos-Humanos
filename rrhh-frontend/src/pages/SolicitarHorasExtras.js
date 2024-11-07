@@ -118,7 +118,7 @@ const SolicitarHorasExtras = () => {
                 <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.Cantidad_Horas_Extras}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.Hora_Inicio}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.Hora_Final}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.Monto_Hora_Extra}</td>
+                <td className="px-4 py-2 text-black dark:text-white text-center">₡{horaExtra.Monto_Hora_Extra}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.tipo_hora_extra}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">
                   {horaExtra.estado_solicitud === 'Aprobado' ? 'Aceptado' : horaExtra.estado_solicitud === 'Rechazado' ? 'Rechazado' : 'En Espera'}

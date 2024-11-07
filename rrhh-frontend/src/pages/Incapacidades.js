@@ -331,7 +331,7 @@ const Incapacidades = () => {
                 </td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{incapacidad.Descripcion_Incapacidades}</td>
                 <td className="px-4 py-2 text-black dark:text-white text-center">{incapacidad.Cantidad_Dias}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{incapacidad.Monto_Deduccion}</td>
+                <td className="px-4 py-2 text-black dark:text-white text-center">₡{incapacidad.Monto_Deduccion}</td>
                 <td className="px-4 py-2 flex justify-center space-x-2">
                   <button
                     onClick={() => abrirModalActualizar(incapacidad)}

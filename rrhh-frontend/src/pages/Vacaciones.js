@@ -8,6 +8,7 @@ const Vacaciones = () => {
   const [vacaciones, setVacaciones] = useState([]);
   const [empleados, setEmpleados] = useState([]);
   const [modalCrear, setModalCrear] = useState(false);
+  const [alertModal, setAlertModal] = useState({ visible: false, message: '', type: '' }); // Added 'type' to differentiate messages
   const [modalActualizar, setModalActualizar] = useState(false);
   const [nuevaVacacion, setNuevaVacacion] = useState({
     Fecha_Inicio: '',
@@ -43,21 +44,49 @@ const Vacaciones = () => {
     }
   };
 
-  // Vacaciones.js
   const crearVacacion = async () => {
+    const { Fecha_Inicio, Fecha_Fin, Cantidad_Dias_Solicitados, Motivo_Vacacion, empleados_idEmpleado } = nuevaVacacion;
+
+    // Validation checks
+    if (!Fecha_Inicio) {
+      setAlertModal({ visible: true, message: 'Debe seleccionar la Fecha de Inicio', type: 'error' });
+      return;
+    }
+    if (!Fecha_Fin) {
+      setAlertModal({ visible: true, message: 'Debe seleccionar la Fecha de Fin', type: 'error' });
+      return;
+    }
+    if (!Cantidad_Dias_Solicitados || Cantidad_Dias_Solicitados <= 0) {
+      setAlertModal({ visible: true, message: 'La cantidad de días solicitados debe ser mayor a 0', type: 'error' });
+      return;
+    }
+    if (!Motivo_Vacacion) {
+      setAlertModal({ visible: true, message: 'Debe seleccionar un Motivo de Vacación', type: 'error' });
+      return;
+    }
+    if (!empleados_idEmpleado) {
+      setAlertModal({ visible: true, message: 'Debe seleccionar un Empleado', type: 'error' });
+      return;
+    }
+
     try {
       await axios.post('http://localhost:3000/api/vacaciones/', nuevaVacacion);
+
+      // Show success alert when vacation is successfully requested
+      setAlertModal({ visible: true, message: 'Vacación solicitada', type: 'success' });
+
       setModalCrear(false);
       obtenerVacaciones();
     } catch (error) {
       if (error.response && error.response.status === 400) {
-        setErrorModal({ visible: true, message: error.response.data.error });
+        setAlertModal({ visible: true, message: error.response.data.error, type: 'error' });
       } else {
         console.error('Error al crear la vacación:', error);
-        setErrorModal({ visible: true, message: 'Error al crear la vacación' });
+        setAlertModal({ visible: true, message: 'Error al crear la vacación', type: 'error' });
       }
     }
   };
+
 
 
 
@@ -72,43 +101,69 @@ const Vacaciones = () => {
     }
   };
 
-  // Eliminar vacación
   const eliminarVacacion = async (Fecha_Inicio, empleados_idEmpleado) => {
     try {
       await axios.delete(`http://localhost:3000/api/vacaciones/${Fecha_Inicio}/${empleados_idEmpleado}`);
+
+      // Show success alert when vacation is successfully deleted
+      setAlertModal({ visible: true, message: 'Vacación eliminada exitosamente', type: 'success' });
+
       obtenerVacaciones();
     } catch (error) {
       console.error('Error al eliminar la vacación:', error);
+      setAlertModal({ visible: true, message: 'Error al eliminar la vacación', type: 'error' });
     }
   };
+
 
   // Aceptar vacación
-  const aceptarVacacion = async (Fecha_Inicio, empleados_idEmpleado) => {
-    try {
-      await axios.put('http://localhost:3000/api/vacaciones/', {
-        Fecha_Inicio,
-        empleados_idEmpleado,
-        estado_solicitud_idestado_solicitud: 1,
-      });
-      obtenerVacaciones();
-    } catch (error) {
-      console.error('Error al aceptar la vacación:', error);
-    }
-  };
+const aceptarVacacion = async (Fecha_Inicio, empleados_idEmpleado) => {
+  try {
+    const response = await axios.put('http://localhost:3000/api/vacaciones/', {
+      Fecha_Inicio,
+      empleados_idEmpleado,
+      estado_solicitud_idestado_solicitud: 1,
+    });
 
-  // Rechazar vacación
-  const rechazarVacacion = async (Fecha_Inicio, empleados_idEmpleado) => {
-    try {
-      await axios.put('http://localhost:3000/api/vacaciones/', {
-        Fecha_Inicio,
-        empleados_idEmpleado,
-        estado_solicitud_idestado_solicitud: 2,
-      });
-      obtenerVacaciones();
-    } catch (error) {
-      console.error('Error al rechazar la vacación:', error);
-    }
-  };
+    // Show success alert
+    setAlertModal({ visible: true, message: response.data.mensaje, type: 'success' });
+    obtenerVacaciones();
+  } catch (error) {
+    const errorMessage = error.response && error.response.status === 400
+      ? error.response.data.error
+      : 'Error al aceptar la vacación';
+    setAlertModal({ visible: true, message: errorMessage, type: 'error' });
+    console.error('Error al aceptar la vacación:', error);
+  }
+};
+
+// Rechazar vacación
+const rechazarVacacion = async (Fecha_Inicio, empleados_idEmpleado) => {
+  try {
+    const response = await axios.put('http://localhost:3000/api/vacaciones/', {
+      Fecha_Inicio,
+      empleados_idEmpleado,
+      estado_solicitud_idestado_solicitud: 2,
+    });
+
+    // Show success alert
+    setAlertModal({ visible: true, message: response.data.mensaje, type: 'success' });
+    obtenerVacaciones();
+  } catch (error) {
+    const errorMessage = error.response && error.response.status === 400
+      ? error.response.data.error
+      : 'Error al rechazar la vacación';
+    setAlertModal({ visible: true, message: errorMessage, type: 'error' });
+    console.error('Error al rechazar la vacación:', error);
+  }
+};
+
+  useEffect(() => {
+    const now = new Date();
+    now.setHours(now.getHours() - 6); // Adjust to UTC-6 for Costa Rica
+    const costaRicaDate = now.toISOString().split('T')[0]; // Format to YYYY-MM-DD
+    setNuevaVacacion((prev) => ({ ...prev, Fecha_Solicitud: costaRicaDate }));
+  }, []);
 
   useEffect(() => {
     obtenerVacaciones();
@@ -245,13 +300,13 @@ const Vacaciones = () => {
                 />
               </div>
 
-              {/* Fecha de Solicitud */}
+              {/* Fecha de Solicitud (readonly) */}
               <div>
                 <label className="block mb-2">Fecha de Solicitud:</label>
                 <input
                   type="date"
                   value={nuevaVacacion.Fecha_Solicitud}
-                  onChange={(e) => setNuevaVacacion({ ...nuevaVacacion, Fecha_Solicitud: e.target.value })}
+                  readOnly
                   className="border rounded-lg w-full px-3 py-2"
                 />
               </div>
@@ -393,6 +448,21 @@ const Vacaciones = () => {
           </div>
         </div>
       )}
+      {alertModal.visible && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className={`bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg max-w-md mx-auto text-center ${alertModal.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+            <h2 className="text-xl font-bold mb-4">{alertModal.type === 'success' ? '¡Éxito!' : 'Error'}</h2>
+            <p className="text-gray-700 dark:text-white">{alertModal.message}</p>
+            <button
+              onClick={() => setAlertModal({ visible: false, message: '', type: '' })}
+              className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
+
 
 
     </div>

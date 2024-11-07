@@ -191,7 +191,7 @@ const eliminarAguinaldo = async (idEmpleado, fechaAguinaldo) => {
               <td className="px-4 py-2 text-black dark:text-white text-center">
                 {new Date(aguinaldo.Fecha_Final_Cobro).toISOString().split('T')[0]}
               </td>
-              <td className="px-4 py-2 text-black dark:text-white text-center">{aguinaldo.Monto_Aguinaldo}</td>
+              <td className="px-4 py-2 text-black dark:text-white text-center">₡{aguinaldo.Monto_Aguinaldo}</td>
               <td className="px-4 py-2 text-black dark:text-white text-center">{aguinaldo.Tipo_Aguinaldo}</td>
               <td className="px-4 py-2 flex justify-center space-x-2">
                 <button

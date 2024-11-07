@@ -1,9 +1,28 @@
 // src/components/Sidebar.js
 import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { AiOutlineUser, AiOutlineDollarCircle, AiOutlineClockCircle, AiOutlineSolution, AiOutlineLogout } from 'react-icons/ai';
-import { FaRegCalendarAlt, FaRegFileAlt, FaRegListAlt } from 'react-icons/fa';
+import {
+  AiOutlineUser,
+  AiOutlineDollarCircle,
+  AiOutlineClockCircle,
+  AiOutlineSolution,
+  AiOutlineLogout,
+  AiOutlineCalendar
+} from 'react-icons/ai';
+import {
+  FaRegCalendarAlt,
+  FaCalendarCheck,
+  FaClipboardList,
+  FaRegListAlt,
+  FaChartLine,
+  FaUserCheck,
+  FaFileInvoiceDollar,
+  FaUserTie
+} from 'react-icons/fa';
 import { FiMenu } from 'react-icons/fi';
+import { MdOutlineWorkHistory } from 'react-icons/md';
+
+
 import vraiLogo from '../images/vraiLogo.png';
 
 const Sidebar = () => {
@@ -69,7 +88,6 @@ const Sidebar = () => {
 
           {showRHSubmenu && (
             <ul className="space-y-2">
-
               <li>
                 <NavLink to="/aguinaldo" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
                   <AiOutlineDollarCircle className="mr-2" size={24} />
@@ -78,7 +96,7 @@ const Sidebar = () => {
               </li>
               <li>
                 <NavLink to="/vacaciones" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
-                  <FaRegCalendarAlt className="mr-2" size={24} />
+                  <FaCalendarCheck className="mr-2" size={24} />
                   {isOpen && <span>Gestión de Vacaciones</span>}
                 </NavLink>
               </li>
@@ -102,25 +120,25 @@ const Sidebar = () => {
               </li>
               <li>
                 <NavLink to="/incapacidades" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
-                  <FaRegFileAlt className="mr-2" size={24} />
+                  <FaClipboardList className="mr-2" size={24} />
                   {isOpen && <span>Gestionar Incapacidades</span>}
                 </NavLink>
               </li>
               <li>
                 <NavLink to="/evaluacion-rendimiento" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
-                  <FaRegListAlt className="mr-2" size={24} />
+                  <FaChartLine className="mr-2" size={24} />
                   {isOpen && <span>Gestión de la Evaluación del Rendimiento</span>}
                 </NavLink>
               </li>
               <li>
                 <NavLink to="/pagos-liquidacion" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
-                  <AiOutlineUser className="mr-2" size={24} />
+                  <MdOutlineWorkHistory className="mr-2" size={24} />
                   {isOpen && <span>Gestión de Pagos de Liquidación</span>}
                 </NavLink>
               </li>
               <li>
                 <NavLink to="/gestion-usuarios" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
-                  <AiOutlineUser className="mr-2" size={24} />
+                  <FaUserTie className="mr-2" size={24} />
                   {isOpen && <span>Gestión de Usuarios</span>}
                 </NavLink>
               </li>
@@ -150,8 +168,8 @@ const Sidebar = () => {
             <ul className="space-y-2">
               <li>
                 <NavLink to="/PuestoLaboral" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
-                  <AiOutlineUser className="mr-2" size={24} />
-                  {isOpen && <span>PuestoLaboral</span>}
+                  <FaUserTie className="mr-2" size={24} />
+                  {isOpen && <span>Puesto Laboral</span>}
                 </NavLink>
               </li>
               <li>
@@ -162,7 +180,7 @@ const Sidebar = () => {
               </li>
               <li>
                 <NavLink to="/Feriados" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
-                  <FaRegListAlt className="mr-2" size={24} />
+                  <AiOutlineCalendar className="mr-2" size={24} />
                   {isOpen && <span>Feriados</span>}
                 </NavLink>
               </li>
@@ -178,7 +196,7 @@ const Sidebar = () => {
             onClick={() => setShowReporteSubmenu(!showReporteSubmenu)}
             className="text-[#00ADB5] font-bold mb-2 mt-4 w-full text-left flex items-center"
           >
-            <AiOutlineUser className="mr-2" size={24} />
+            <FaFileInvoiceDollar className="mr-2" size={24} />
             {isOpen && <span>Reportes</span>}
           </button>
 
@@ -192,31 +210,31 @@ const Sidebar = () => {
               </li>
               <li>
                 <NavLink to="/reporte-incapacidades" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
-                  <AiOutlineUser className="mr-2" size={24} />
+                  <FaClipboardList className="mr-2" size={24} />
                   {isOpen && <span>Reportes de Incapacidades</span>}
                 </NavLink>
               </li>
               <li>
                 <NavLink to="/reporte-vacaciones" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
-                  <AiOutlineUser className="mr-2" size={24} />
+                  <FaCalendarCheck className="mr-2" size={24} />
                   {isOpen && <span>Reportes de Vacaciones</span>}
                 </NavLink>
               </li>
               <li>
                 <NavLink to="/reporte-evaluacion-rendimiento" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
-                  <AiOutlineUser className="mr-2" size={24} />
+                  <FaChartLine className="mr-2" size={24} />
                   {isOpen && <span>Reportes de Evaluación del Rendimiento</span>}
                 </NavLink>
               </li>
               <li>
                 <NavLink to="/reporte-permisos" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
-                  <AiOutlineUser className="mr-2" size={24} />
+                  <FaUserCheck className="mr-2" size={24} />
                   {isOpen && <span>Reportes de Permisos Solicitados</span>}
                 </NavLink>
               </li>
               <li>
                 <NavLink to="/reporte-marca-tiempo" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
-                  <AiOutlineUser className="mr-2" size={24} />
+                  <AiOutlineClockCircle className="mr-2" size={24} />
                   {isOpen && <span>Reportes de Marca de Tiempo</span>}
                 </NavLink>
               </li>
@@ -240,13 +258,13 @@ const Sidebar = () => {
               </li>
               <li>
                 <NavLink to="/historial-pagos-planilla" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
-                  <AiOutlineDollarCircle className="mr-2" size={24} />
+                  <MdOutlineWorkHistory className="mr-2" size={24} />
                   {isOpen && <span>Historial de Pagos de Planilla</span>}
                 </NavLink>
               </li>
               <li>
                 <NavLink to="/reporte-liquidacion" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
-                  <AiOutlineUser className="mr-2" size={24} />
+                  <MdOutlineWorkHistory className="mr-2" size={24} />
                   {isOpen && <span>Reportes de Liquidación</span>}
                 </NavLink>
               </li>
@@ -261,9 +279,12 @@ const Sidebar = () => {
           )}
         </>
       )}
-      
+
       {/* Marcar Asistencia - Only visible to Administrators and Collaborators */}
-      <button onClick={() => setShowAsistenciaSubmenu(!showAsistenciaSubmenu)} className="text-[#00ADB5] font-bold mb-2 mt-4 w-full text-left flex items-center">
+      <button
+        onClick={() => setShowAsistenciaSubmenu(!showAsistenciaSubmenu)}
+        className="text-[#00ADB5] font-bold mb-2 mt-4 w-full text-left flex items-center"
+      >
         <AiOutlineClockCircle className="mr-2" size={24} />
         {isOpen && <span>Marcar Asistencia</span>}
       </button>
@@ -289,53 +310,99 @@ const Sidebar = () => {
       {showSolicitudesSubmenu && (
         <ul className="space-y-2">
           <li>
-            <NavLink
-              to="/solicitar-vacacion"
-              className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center"
-            >
-              <FaRegCalendarAlt className="mr-2" size={24} />
+            <NavLink to="/solicitar-vacacion" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+              <FaCalendarCheck className="mr-2" size={24} />
               {isOpen && <span>Solicitar Vacación</span>}
             </NavLink>
           </li>
           <li>
             <NavLink to="/solicitar-permiso" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
-              <FaRegCalendarAlt className="mr-2" size={24} />
+              <AiOutlineSolution className="mr-2" size={24} />
               {isOpen && <span>Solicitar Permiso</span>}
             </NavLink>
           </li>
           <li>
             <NavLink to="/solicitar-horas-extras" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
-              <FaRegCalendarAlt className="mr-2" size={24} />
+              <AiOutlineClockCircle className="mr-2" size={24} />
               {isOpen && <span>Solicitar Horas Extras</span>}
             </NavLink>
           </li>
         </ul>
       )}
-      <button
-        onClick={() => setShowConsultasSubmenu(!showConsultasSubmenu)}
-        className="text-[#00ADB5] font-bold mb-2 mt-4 w-full text-left flex items-center"
-      >
-        <FaRegListAlt className="mr-2" size={24} />
-        {isOpen && <span>Consultas</span>}
-      </button>
-      {showConsultasSubmenu && (
-        <ul className="space-y-2">
-          <li><NavLink to="/consultar-planilla" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg">Consultar Planilla</NavLink></li>
-          <li><NavLink to="/consultar-incapacidad" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg">Consultar Incapacidad</NavLink></li>
-          <li><NavLink to="/consultar-vacaciones" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg">Consultar Vacaciones</NavLink></li>
-          <li><NavLink to="/consultar-horas-extras" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg">Consultar Horas Extras</NavLink></li>
-          <li><NavLink to="/consultar-planilla-pagada" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg">Consultar Planilla Pagada</NavLink></li>
-          <li><NavLink to="/consultar-permisos" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg">Consultar Permisos</NavLink></li>
-          <li><NavLink to="/consultar-aguinaldo" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg">Consultar Aguinaldo</NavLink></li>
-          <li><NavLink to="/consultar-liquidacion" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg">Consultar Liquidación</NavLink></li>
-          <li><NavLink to="/consultar-marca-tiempo" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg">Consultar Marca de Tiempo</NavLink></li>
-          <li>
-            <NavLink to="/consultar-evaluacion-rendimiento" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg">
-              Consultar Evaluación del Rendimiento
-            </NavLink>
-          </li>
-        </ul>
-      )}
+
+      {/* Consultas */}
+<button
+  onClick={() => setShowConsultasSubmenu(!showConsultasSubmenu)}
+  className="text-[#00ADB5] font-bold mb-2 mt-4 w-full text-left flex items-center"
+>
+  <FaClipboardList className="mr-2" size={24} />
+  {isOpen && <span>Consultas</span>}
+</button>
+{showConsultasSubmenu && (
+  <ul className="space-y-2">
+    <li>
+      <NavLink to="/consultar-planilla" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+        <AiOutlineDollarCircle className="mr-2" size={24} />
+        {isOpen && <span>Consultar Planilla</span>}
+      </NavLink>
+    </li>
+    <li>
+      <NavLink to="/consultar-incapacidad" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+        <FaClipboardList className="mr-2" size={24} />
+        {isOpen && <span>Consultar Incapacidad</span>}
+      </NavLink>
+    </li>
+    <li>
+      <NavLink to="/consultar-vacaciones" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+        <FaCalendarCheck className="mr-2" size={24} />
+        {isOpen && <span>Consultar Vacaciones</span>}
+      </NavLink>
+    </li>
+    <li>
+      <NavLink to="/consultar-horas-extras" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+        <AiOutlineClockCircle className="mr-2" size={24} />
+        {isOpen && <span>Consultar Horas Extras</span>}
+      </NavLink>
+    </li>
+    <li>
+      <NavLink to="/consultar-planilla-pagada" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+        <AiOutlineDollarCircle className="mr-2" size={24} />
+        {isOpen && <span>Consultar Planilla Pagada</span>}
+      </NavLink>
+    </li>
+    <li>
+      <NavLink to="/consultar-permisos" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+        <AiOutlineSolution className="mr-2" size={24} />
+        {isOpen && <span>Consultar Permisos</span>}
+      </NavLink>
+    </li>
+    <li>
+      <NavLink to="/consultar-aguinaldo" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+        <AiOutlineDollarCircle className="mr-2" size={24} />
+        {isOpen && <span>Consultar Aguinaldo</span>}
+      </NavLink>
+    </li>
+    <li>
+      <NavLink to="/consultar-liquidacion" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+        <MdOutlineWorkHistory className="mr-2" size={24} />
+        {isOpen && <span>Consultar Liquidación</span>}
+      </NavLink>
+    </li>
+    <li>
+      <NavLink to="/consultar-marca-tiempo" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+        <AiOutlineClockCircle className="mr-2" size={24} />
+        {isOpen && <span>Consultar Marca de Tiempo</span>}
+      </NavLink>
+    </li>
+    <li>
+      <NavLink to="/consultar-evaluacion-rendimiento" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
+        <FaChartLine className="mr-2" size={24} />
+        {isOpen && <span>Consultar Evaluación del Rendimiento</span>}
+      </NavLink>
+    </li>
+  </ul>
+)}
+
 
 
       {/* Botón de Cerrar Sesión */}
