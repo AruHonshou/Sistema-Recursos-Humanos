@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaTrashAlt } from 'react-icons/fa';
+import Swal from 'sweetalert2';
 
 const Aguinaldo = () => {
   const [aguinaldos, setAguinaldos] = useState([]);
@@ -71,30 +72,45 @@ const Aguinaldo = () => {
     }
   };
 
-  // Función para eliminar un aguinaldo
-const eliminarAguinaldo = async (idEmpleado, fechaAguinaldo) => {
-  // Formatear fecha
-  const fechaFormateada = new Date(fechaAguinaldo).toISOString().split('T')[0];
-  try {
-      await axios.delete(`http://localhost:3000/api/aguinaldo/eliminar`, {
-          data: { idEmpleado, fechaAguinaldo: fechaFormateada } // Usar la fecha formateada
-      });
-      alert('Aguinaldo eliminado exitosamente');
-      obtenerAguinaldos();
-  } catch (error) {
-      console.error('Error al eliminar el aguinaldo:', error);
-  }
-};
+  const eliminarAguinaldo = async (idEmpleado, fechaAguinaldo) => {
+    const fechaFormateada = new Date(fechaAguinaldo).toISOString().split('T')[0];
+
+    // Mostrar mensaje de confirmación usando SweetAlert2
+    const resultado = await Swal.fire({
+      title: '¿Está seguro?',
+      text: 'Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    });
+
+    // Si el usuario confirma, proceder con la eliminación
+    if (resultado.isConfirmed) {
+      try {
+        await axios.delete(`http://localhost:3000/api/aguinaldo/eliminar`, {
+          data: { idEmpleado, fechaAguinaldo: fechaFormateada }
+        });
+        Swal.fire('Eliminado', 'El aguinaldo ha sido eliminado exitosamente.', 'success');
+        obtenerAguinaldos();
+      } catch (error) {
+        console.error('Error al eliminar el aguinaldo:', error);
+        Swal.fire('Error', 'No se pudo eliminar el aguinaldo.', 'error');
+      }
+    }
+  };
 
 
 
   return (
-    <div className="p-6 bg-[#f9f9f9] dark:bg-[#1E1E2F] min-h-screen">
-      <h1 className="text-2xl font-bold mb-4 text-black dark:text-white text-center">Gestión de Aguinaldo</h1>
+    <div className="p-6 min-h-screen bg-[#EEEEEE] dark:bg-[#222831]">
+      <h1 className="text-2xl font-bold mb-4 text-[#393E46] dark:text-[#EEEEEE] text-center">Gestión de Aguinaldo</h1>
 
       <button
         onClick={() => setIsModalOpen(true)}
-        className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg mb-4 shadow-md transition duration-300 ease-in-out transform hover:scale-105 mx-auto block"
+        className="bg-[#00ADB5] hover:bg-[#00ADB5] text-white py-2 px-4 rounded-lg mb-4 shadow-md transition duration-300 ease-in-out transform hover:scale-105 mx-auto block"
       >
         Crear Aguinaldo
       </button>
@@ -103,9 +119,8 @@ const eliminarAguinaldo = async (idEmpleado, fechaAguinaldo) => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg max-w-md w-full">
-            <h2 className="text-lg font-semibold mb-4">Calcular y Registrar Aguinaldo</h2>
+            <h2 className="text-lg font-semibold mb-4 text-[#393E46] dark:text-[#EEEEEE]">Calcular y Registrar Aguinaldo</h2>
 
-            {/* Dropdown para seleccionar empleado */}
             <select
               name="idEmpleado"
               value={formData.idEmpleado}
@@ -120,7 +135,6 @@ const eliminarAguinaldo = async (idEmpleado, fechaAguinaldo) => {
               ))}
             </select>
 
-            {/* Fecha de Aguinaldo */}
             <input
               type="date"
               name="fechaAguinaldo"
@@ -129,7 +143,6 @@ const eliminarAguinaldo = async (idEmpleado, fechaAguinaldo) => {
               className="border rounded-lg w-full px-3 py-2 mb-2"
             />
 
-            {/* Dropdown para seleccionar tipo de aguinaldo */}
             <select
               name="idCatalogoAguinaldo"
               value={formData.idCatalogoAguinaldo}
@@ -153,7 +166,7 @@ const eliminarAguinaldo = async (idEmpleado, fechaAguinaldo) => {
               </button>
               <button
                 onClick={calcularYRegistrarAguinaldo}
-                className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
+                className="bg-[#00ADB5] hover:bg-[#00ADB5] text-white py-2 px-4 rounded-lg"
               >
                 Crear Aguinaldo
               </button>
@@ -163,50 +176,51 @@ const eliminarAguinaldo = async (idEmpleado, fechaAguinaldo) => {
       )}
 
       {/* Tabla para mostrar los aguinaldos */}
-      <div className="overflow-hidden rounded-lg shadow-lg mb-6">
+      <div className="overflow-hidden rounded-lg shadow-lg mb-6 animate-scale-up">
         <table className="min-w-full bg-white dark:bg-[#2D2D3B] border rounded-md shadow-md">
-          <thead className="bg-gray-100 dark:bg-[#3A3A4D] border-b">
+          <thead className="bg-[#00ADB5]">
             <tr>
-              <th className="px-4 py-2 text-black dark:text-white text-center">ID Empleado</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Nombre Empleado</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Fecha Aguinaldo</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Fecha Inicial Cobro</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Fecha Final Cobro</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Monto Aguinaldo</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Tipo Aguinaldo</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Acciones</th>
+              <th className="px-4 py-2 text-white text-center">ID Empleado</th>
+              <th className="px-4 py-2 text-white text-center">Nombre Empleado</th>
+              <th className="px-4 py-2 text-white text-center">Fecha Aguinaldo</th>
+              <th className="px-4 py-2 text-white text-center">Fecha Inicial Cobro</th>
+              <th className="px-4 py-2 text-white text-center">Fecha Final Cobro</th>
+              <th className="px-4 py-2 text-white text-center">Monto Aguinaldo</th>
+              <th className="px-4 py-2 text-white text-center">Tipo Aguinaldo</th>
+              <th className="px-4 py-2 text-white text-center">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {aguinaldos.map((aguinaldo, index) => (
-              <tr key={index} className="border-b dark:border-[#4D4D61]">
-              <td className="px-4 py-2 text-black dark:text-white text-center">{aguinaldo.idEmpleado}</td>
-              <td className="px-4 py-2 text-black dark:text-white text-center">{aguinaldo.Nombre_Empleado}</td>
-              <td className="px-4 py-2 text-black dark:text-white text-center">
-                {new Date(aguinaldo.Fecha_Aguinaldo).toISOString().split('T')[0]} {/* Fecha formateada */}
-              </td>
-              <td className="px-4 py-2 text-black dark:text-white text-center">
-                {new Date(aguinaldo.Fecha_Inicial_Cobro).toISOString().split('T')[0]}
-              </td>
-              <td className="px-4 py-2 text-black dark:text-white text-center">
-                {new Date(aguinaldo.Fecha_Final_Cobro).toISOString().split('T')[0]}
-              </td>
-              <td className="px-4 py-2 text-black dark:text-white text-center">₡{aguinaldo.Monto_Aguinaldo}</td>
-              <td className="px-4 py-2 text-black dark:text-white text-center">{aguinaldo.Tipo_Aguinaldo}</td>
-              <td className="px-4 py-2 flex justify-center space-x-2">
-                <button
-                  onClick={() => eliminarAguinaldo(aguinaldo.idEmpleado, aguinaldo.Fecha_Aguinaldo)}
-                  className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
-                >
-                  <FaTrashAlt />
-                </button>
-              </td>
-            </tr>
+              <tr key={index} className="border-b hover:bg-[#EEEEEE] dark:hover:bg-[#393E46] transition-all duration-200">
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{aguinaldo.idEmpleado}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{aguinaldo.Nombre_Empleado}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">
+                  {new Date(aguinaldo.Fecha_Aguinaldo).toISOString().split('T')[0]}
+                </td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">
+                  {new Date(aguinaldo.Fecha_Inicial_Cobro).toISOString().split('T')[0]}
+                </td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">
+                  {new Date(aguinaldo.Fecha_Final_Cobro).toISOString().split('T')[0]}
+                </td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">₡{aguinaldo.Monto_Aguinaldo}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{aguinaldo.Tipo_Aguinaldo}</td>
+                <td className="px-4 py-2 flex justify-center space-x-2">
+                  <button
+                    onClick={() => eliminarAguinaldo(aguinaldo.idEmpleado, aguinaldo.Fecha_Aguinaldo)}
+                    className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                  >
+                    <FaTrashAlt />
+                  </button>
+                </td>
+              </tr>
             ))}
           </tbody>
         </table>
       </div>
     </div>
+
   );
 };
 

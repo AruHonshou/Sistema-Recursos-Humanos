@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaTrashAlt } from 'react-icons/fa';
+import Swal from 'sweetalert2';
 
 const Liquidacion = () => {
   const [errorModal, setErrorModal] = useState({ visible: false, message: '' });
@@ -61,13 +62,26 @@ const Liquidacion = () => {
 
 
 
-  // Eliminar liquidación
   const eliminarLiquidacion = async (idEmpleado, fechaLiquidacion) => {
-    try {
-      await axios.delete(`http://localhost:3000/api/liquidaciones/eliminar/${idEmpleado}/${fechaLiquidacion}`);
-      obtenerLiquidaciones();
-    } catch (error) {
-      console.error('Error al eliminar la liquidación:', error);
+    const confirmacion = await Swal.fire({
+      title: '¿Está seguro?',
+      text: 'Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+    });
+  
+    if (confirmacion.isConfirmed) {
+      try {
+        await axios.delete(`http://localhost:3000/api/liquidaciones/eliminar/${idEmpleado}/${fechaLiquidacion}`);
+        Swal.fire('Eliminado', 'La liquidación ha sido eliminada.', 'success');
+        obtenerLiquidaciones();
+      } catch (error) {
+        Swal.fire('Error', 'No se pudo eliminar la liquidación.', 'error');
+      }
     }
   };
 

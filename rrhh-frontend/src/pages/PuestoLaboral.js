@@ -12,7 +12,6 @@ const PuestoLaboral = () => {
     const [nuevoPuesto, setNuevoPuesto] = useState({ Nombre_Puesto: '', Salario_Puesto: '' });
     const [puestoActualizar, setPuestoActualizar] = useState({ id: '', Nombre_Puesto: '', Salario_Puesto: '' });
 
-    // Estados de error para cada campo
     const [errorNombreCrear, setErrorNombreCrear] = useState('');
     const [errorSalarioCrear, setErrorSalarioCrear] = useState('');
     const [errorNombreActualizar, setErrorNombreActualizar] = useState('');
@@ -20,7 +19,6 @@ const PuestoLaboral = () => {
 
     const [searchTerm, setSearchTerm] = useState('');
 
-    // Modificar generarPDF para usar puestosFiltrados
     const generarPDF = () => {
         const doc = new jsPDF();
         doc.autoTable({
@@ -30,7 +28,6 @@ const PuestoLaboral = () => {
         doc.save('puestos_laborales.pdf');
     };
 
-    // Modificar generarExcel para usar puestosFiltrados
     const generarExcel = () => {
         const ws = XLSX.utils.json_to_sheet(puestosFiltrados);
         const wb = XLSX.utils.book_new();
@@ -42,11 +39,9 @@ const PuestoLaboral = () => {
         const { Nombre_Puesto, Salario_Puesto } = nuevoPuesto;
         let isValid = true;
 
-        // Limpiar errores anteriores
         setErrorNombreCrear('');
         setErrorSalarioCrear('');
 
-        // Validaciones
         if (!/^[A-Z][a-zA-Z\s]*$/.test(Nombre_Puesto)) {
             setErrorNombreCrear("El nombre debe empezar con mayúscula y no contener números ni signos.");
             isValid = false;
@@ -58,6 +53,7 @@ const PuestoLaboral = () => {
 
         return isValid;
     };
+    
 
     const handleCrearPuesto = async () => {
         if (!validatePuestoCrear()) {
@@ -66,7 +62,7 @@ const PuestoLaboral = () => {
 
         const success = await crearPuesto(nuevoPuesto);
         if (!success) {
-            setErrorNombreCrear('Error al crear el puesto laboral.'); // Mensaje de error genérico
+            setErrorNombreCrear('Error al crear el puesto laboral.'); 
         } else {
             setNuevoPuesto({ Nombre_Puesto: '', Salario_Puesto: '' });
             setModalCrear(false);
@@ -77,11 +73,9 @@ const PuestoLaboral = () => {
         const { Nombre_Puesto, Salario_Puesto } = puestoActualizar;
         let isValid = true;
 
-        // Limpiar errores anteriores
         setErrorNombreActualizar('');
         setErrorSalarioActualizar('');
 
-        // Validaciones
         if (!/^[A-Z][a-zA-Z\s]*$/.test(Nombre_Puesto)) {
             setErrorNombreActualizar("El nombre debe empezar con mayúscula y no contener números ni signos.");
             isValid = false;
@@ -101,7 +95,7 @@ const PuestoLaboral = () => {
 
         const success = await actualizarPuesto(puestoActualizar.id, puestoActualizar);
         if (!success) {
-            setErrorNombreActualizar('Error al actualizar el puesto laboral.'); // Mensaje de error genérico
+            setErrorNombreActualizar('Error al actualizar el puesto laboral.'); 
         } else {
             setPuestoActualizar({ id: '', Nombre_Puesto: '', Salario_Puesto: '' });
             setModalActualizar(false);
@@ -123,7 +117,6 @@ const PuestoLaboral = () => {
                 + Nuevo Puesto
             </button>
 
-            {/* Campo de búsqueda */}
             <input
                 type="text"
                 placeholder="Buscar por nombre del puesto"
@@ -207,7 +200,6 @@ const PuestoLaboral = () => {
                 </table>
             </div>
 
-            {/* Modal para crear nuevo puesto laboral */}
             {modalCrear && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg">
@@ -246,7 +238,6 @@ const PuestoLaboral = () => {
                 </div>
             )}
 
-            {/* Modal para actualizar puesto laboral */}
             {modalActualizar && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg">

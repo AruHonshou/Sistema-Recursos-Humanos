@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaTrashAlt } from 'react-icons/fa';
+import Swal from 'sweetalert2';
 
 const MarcaTiempo = () => {
   const [marcas, setMarcas] = useState([]);
@@ -114,12 +115,25 @@ const MarcaTiempo = () => {
   };
 
   const eliminarMarcaTiempo = async (idEmpleado, Fecha_Marca, Movimiento) => {
-    try {
-      await axios.delete(`http://localhost:3000/api/marcas/eliminar/${idEmpleado}/${Fecha_Marca}/${Movimiento}`);
-      alert('Marca de tiempo eliminada exitosamente');
-      obtenerMarcas();
-    } catch (error) {
-      console.error('Error al eliminar la marca de tiempo:', error);
+    const confirmacion = await Swal.fire({
+      title: '¿Está seguro?',
+      text: 'Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+    });
+  
+    if (confirmacion.isConfirmed) {
+      try {
+        await axios.delete(`http://localhost:3000/api/marcas/eliminar/${idEmpleado}/${Fecha_Marca}/${Movimiento}`);
+        Swal.fire('Eliminado', 'La marca de tiempo ha sido eliminada.', 'success');
+        obtenerMarcas();
+      } catch (error) {
+        Swal.fire('Error', 'No se pudo eliminar la marca de tiempo.', 'error');
+      }
     }
   };
 

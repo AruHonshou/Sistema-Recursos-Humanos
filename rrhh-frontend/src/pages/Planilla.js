@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const Planilla = () => {
   const [planillas, setPlanillas] = useState([]);
@@ -52,22 +53,28 @@ const obtenerPlanillas = async () => {
     }
   };
 
-  // Delete payroll entry by selected date
-const eliminarPlanilla = async () => {
-  try {
-    const formattedDate = new Date(fechaEliminar).toISOString().split('T')[0];
-    await axios.delete('http://localhost:3000/api/planillas/eliminar', { data: { fechaPlanilla: formattedDate } });
-
-    setAlertMessages(['Planilla eliminada exitosamente.']);
-    setModalEliminar(false);
-    
-    // Actualiza la tabla llamando a obtenerPlanillas() para reflejar la eliminación
-    obtenerPlanillas();
-  } catch (error) {
-    console.error('Error al eliminar la planilla:', error);
-    setAlertMessages(['Error al eliminar la planilla. Intente nuevamente.']);
-  }
-};
+  const eliminarPlanilla = async () => {
+    const confirmacion = await Swal.fire({
+      title: '¿Está seguro?',
+      text: 'Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+    });
+  
+    if (confirmacion.isConfirmed) {
+      try {
+        await axios.delete('http://localhost:3000/api/planillas/eliminar', { data: { fechaPlanilla: fechaEliminar } });
+        Swal.fire('Eliminado', 'La planilla ha sido eliminada.', 'success');
+        obtenerPlanillas();
+      } catch (error) {
+        Swal.fire('Error', 'No se pudo eliminar la planilla.', 'error');
+      }
+    }
+  };
 
 
   useEffect(() => {

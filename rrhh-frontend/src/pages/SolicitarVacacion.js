@@ -73,8 +73,8 @@ const SolicitarVacaciones = () => {
 
   const crearVacacion = async () => {
     const { Fecha_Inicio, Fecha_Fin, Cantidad_Dias_Solicitados, Motivo_Vacacion, empleados_idEmpleado } = nuevaVacacion;
-  
-    
+
+
     if (!Fecha_Inicio) {
       setAlertModal({ visible: true, message: 'Debe seleccionar la Fecha de Inicio', type: 'error' });
       return;
@@ -95,13 +95,13 @@ const SolicitarVacaciones = () => {
       setAlertModal({ visible: true, message: 'Debe seleccionar un Empleado', type: 'error' });
       return;
     }
-  
+
     try {
       await axios.post('http://localhost:3000/api/vacaciones/', nuevaVacacion);
-  
+
       // Show success alert when vacation is successfully requested
       setAlertModal({ visible: true, message: 'Vacación solicitada', type: 'success' });
-  
+
       setModalCrear(false);
       obtenerVacaciones();
     } catch (error) {
@@ -112,7 +112,7 @@ const SolicitarVacaciones = () => {
       console.error('Error al crear la vacación:', error);
     }
   };
-  
+
 
   useEffect(() => {
     const now = new Date();
@@ -127,52 +127,51 @@ const SolicitarVacaciones = () => {
   }, []);
 
   return (
-    <div className="p-6 bg-[#f9f9f9] dark:bg-[#1E1E2F] min-h-screen">
-      <h1 className="text-2xl font-bold mb-4 text-black dark:text-white text-center">Gestión de Vacaciones</h1>
+    <div className="p-6 min-h-screen">
+      <h1 className="text-2xl font-bold mb-4 text-[#393E46] dark:text-white text-center">Solicitar Vacaciones</h1>
 
       <button
         onClick={() => setModalCrear(true)}
-        className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg mb-4 shadow-md transition duration-300 ease-in-out transform hover:scale-105 mx-auto block"
+        className="bg-[#00ADB5] hover:bg-[#00ADB5] text-white py-2 px-4 rounded-lg mb-4 shadow-md transition duration-300 ease-in-out transform hover:scale-105 mx-auto block"
       >
         + Nueva Vacación
       </button>
 
-      <div className="overflow-hidden rounded-lg shadow-lg mb-4">
-        <table className="min-w-full bg-white dark:bg-[#2D2D3B] border rounded-md shadow-md">
-          <thead className="bg-gray-100 dark:bg-[#3A3A4D] border-b">
+
+      <div className="overflow-hidden rounded-lg shadow-2xl mb-4 animate-scale-up">
+        <table className="min-w-full border rounded-md shadow-md">
+          <thead className="bg-[#00ADB5]">
             <tr>
-              <th className="px-4 py-2 text-black dark:text-white text-center">ID Empleado</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Nombre</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Fecha Inicio</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Fecha Fin</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Días Solicitados</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Fecha Solicitud</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Motivo</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Estado Solicitud</th>
+              <th className="px-4 py-2 text-white text-center">ID Empleado</th>
+              <th className="px-4 py-2 text-white text-center">Nombre</th>
+              <th className="px-4 py-2 text-white text-center">Fecha Inicio</th>
+              <th className="px-4 py-2 text-white text-center">Fecha Fin</th>
+              <th className="px-4 py-2 text-white text-center">Días Solicitados</th>
+              <th className="px-4 py-2 text-white text-center">Fecha Solicitud</th>
+              <th className="px-4 py-2 text-white text-center">Motivo</th>
+              <th className="px-4 py-2 text-white text-center">Estado Solicitud</th>
             </tr>
           </thead>
           <tbody>
             {vacaciones.map((vacacion) => (
-              <tr key={`${new Date(vacacion.Fecha_Inicio).toISOString()}-${vacacion.idEmpleado}`} className="border-b dark:border-[#4D4D61]">
-                <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.idEmpleado}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.Empleador || 'Cargando...'}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(vacacion.Fecha_Inicio).toLocaleDateString()}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(vacacion.Fecha_Fin).toLocaleDateString()}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.Cantidad_Dias_Solicitados}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(vacacion.Fecha_Solicitud).toLocaleDateString()}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{vacacion.Motivo_Vacacion}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">
-                  {vacacion.estado_solicitud_idestado_solicitud === 1
-                    ? 'Aceptado'
-                    : vacacion.estado_solicitud_idestado_solicitud === 2
-                      ? 'Rechazado'
-                      : 'En Espera'}
+              <tr key={`${vacacion.Fecha_Inicio}-${vacacion.idEmpleado}`} className="border-b hover:bg-[#EEEEEE] dark:hover:bg-[#393E46] transition-all duration-200">
+                <td className="px-4 py-2 text-[#393E46] dark:text-white text-center">{vacacion.idEmpleado}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-white text-center">{vacacion.Empleador}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-white text-center">{new Date(vacacion.Fecha_Inicio).toLocaleDateString()}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-white text-center">{new Date(vacacion.Fecha_Fin).toLocaleDateString()}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-white text-center">{vacacion.Cantidad_Dias_Solicitados}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-white text-center">{new Date(vacacion.Fecha_Solicitud).toLocaleDateString()}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-white text-center">{vacacion.Motivo_Vacacion}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-white text-center">
+                  {vacacion.estado_solicitud_idestado_solicitud === 1 ? 'Aceptado' : vacacion.estado_solicitud_idestado_solicitud === 2 ? 'Rechazado' : 'En Espera'}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+
       </div>
+
 
       {/* Días Disponibles and Días Consumidos Boxes */}
       <div className="flex gap-4">
@@ -191,146 +190,145 @@ const SolicitarVacaciones = () => {
       </div>
 
       {/* Modal Crear */}
-      {modalCrear && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg">
-            <h2 className="text-xl font-bold mb-4">Crear Nueva Vacación</h2>
-            <form>
-              {/* Fecha de Inicio */}
-              <div>
-                <label className="block mb-2">Fecha de Inicio:</label>
-                <input
-                  type="date"
-                  value={nuevaVacacion.Fecha_Inicio}
-                  onChange={(e) => {
-                    const fechaInicio = e.target.value;
-                    const fechaFin = nuevaVacacion.Fecha_Fin;
-                    const diasSolicitados = fechaInicio && fechaFin
-                      ? Math.ceil((new Date(fechaFin) - new Date(fechaInicio)) / (1000 * 60 * 60 * 24)) + 1 // Add 1 to include both days
-                      : 0;
-                    setNuevaVacacion({ ...nuevaVacacion, Fecha_Inicio: fechaInicio, Cantidad_Dias_Solicitados: diasSolicitados });
-                  }}
-                  className="border rounded-lg w-full px-3 py-2"
-                />
-              </div>
-
-              {/* Fecha de Fin */}
-              <div>
-                <label className="block mb-2">Fecha de Fin:</label>
-                <input
-                  type="date"
-                  value={nuevaVacacion.Fecha_Fin}
-                  onChange={(e) => {
-                    const fechaFin = e.target.value;
-                    const fechaInicio = nuevaVacacion.Fecha_Inicio;
-                    const diasSolicitados = fechaInicio && fechaFin
-                      ? Math.ceil((new Date(fechaFin) - new Date(fechaInicio)) / (1000 * 60 * 60 * 24)) + 1 // Add 1 to include both days
-                      : 0;
-                    setNuevaVacacion({ ...nuevaVacacion, Fecha_Fin: fechaFin, Cantidad_Dias_Solicitados: diasSolicitados });
-                  }}
-                  className="border rounded-lg w-full px-3 py-2"
-                />
-              </div>
-
-              {/* Cantidad de Días Solicitados */}
-              <div>
-                <label className="block mb-2">Cantidad de Días Solicitados:</label>
-                <input
-                  type="number"
-                  value={nuevaVacacion.Cantidad_Dias_Solicitados}
-                  readOnly
-                  className="border rounded-lg w-full px-3 py-2"
-                />
-              </div>
-
-              {/* Fecha de Solicitud (readonly) */}
-            <div>
-              <label className="block mb-2">Fecha de Solicitud:</label>
-              <input
-                type="date"
-                value={nuevaVacacion.Fecha_Solicitud}
-                readOnly
-                className="border rounded-lg w-full px-3 py-2"
-              />
-            </div>
-
-              {/* Motivo de Vacación */}
-              <div>
-                <label className="block mb-2">Motivo de Vacación:</label>
-                <select
-                  value={nuevaVacacion.Motivo_Vacacion}
-                  onChange={(e) => setNuevaVacacion({ ...nuevaVacacion, Motivo_Vacacion: e.target.value })}
-                  className="border rounded-lg w-full px-3 py-2"
-                >
-                  <option value="">Seleccione un Motivo</option>
-                  <option value="Vacaciones anuales">Vacaciones anuales</option>
-                  <option value="Vacaciones por motivos personales">Vacaciones por motivos personales</option>
-                  <option value="Vacaciones familiares">Vacaciones familiares</option>
-                  <option value="Vacaciones por salud">Vacaciones por salud</option>
-                  <option value="Vacaciones escolares">Vacaciones escolares</option>
-                  <option value="Vacaciones por estudios">Vacaciones por estudios</option>
-                  <option value="Vacaciones por viaje">Vacaciones por viaje</option>
-                  <option value="Vacaciones no programadas">Vacaciones no programadas</option>
-                  <option value="Vacaciones de fin de año">Vacaciones de fin de año</option>
-                  <option value="Vacaciones de medio año">Vacaciones de medio año</option>
-                </select>
-              </div>
-
-              {/* Empleado */}
-              <div>
-                <label className="block mb-2">Empleado:</label>
-                <select
-                  value={nuevaVacacion.empleados_idEmpleado}
-                  onChange={(e) => setNuevaVacacion({ ...nuevaVacacion, empleados_idEmpleado: e.target.value })}
-                  className="border rounded-lg w-full px-3 py-2"
-                >
-                  <option value="">Seleccione un Empleado</option>
-                  {empleados.length > 0 ? (
-                    empleados.map((empleado) => (
-                      <option key={empleado.idEmpleado} value={empleado.idEmpleado}>
-                        {empleado.NombreCompleto}
-                      </option>
-                    ))
-                  ) : (
-                    <option value="">Cargando empleados...</option>
-                  )}
-                </select>
-              </div>
-
-              <div className="flex justify-end mt-4">
-                <button
-                  type="button"
-                  onClick={crearVacacion}
-                  className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg shadow-md"
-                >
-                  Crear
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setModalCrear(false)}
-                  className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg shadow-md ml-2"
-                >
-                  Cancelar
-                </button>
-              </div>
-            </form>
-          </div>
+{modalCrear && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in">
+    <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-2xl max-w-md w-full animate-scale-up">
+      <h2 className="text-xl font-bold mb-4 text-[#393E46] dark:text-[#EEEEEE]">Crear Nueva Vacación</h2>
+      <form>
+        {/* Fecha de Inicio */}
+        <div>
+          <label className="block mb-2 text-[#393E46] dark:text-[#EEEEEE]">Fecha de Inicio:</label>
+          <input
+            type="date"
+            value={nuevaVacacion.Fecha_Inicio}
+            onChange={(e) => {
+              const fechaInicio = e.target.value;
+              const fechaFin = nuevaVacacion.Fecha_Fin;
+              const diasSolicitados = fechaInicio && fechaFin
+                ? Math.ceil((new Date(fechaFin) - new Date(fechaInicio)) / (1000 * 60 * 60 * 24)) + 1
+                : 0;
+              setNuevaVacacion({ ...nuevaVacacion, Fecha_Inicio: fechaInicio, Cantidad_Dias_Solicitados: diasSolicitados });
+            }}
+            className="border rounded-lg w-full px-3 py-2 mb-2 dark:bg-[#3A3A4D] dark:text-[#EEEEEE]"
+          />
         </div>
-      )}
-      {alertModal.visible && (
-  <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-    <div className={`bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg max-w-md mx-auto text-center ${alertModal.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
-      <h2 className="text-xl font-bold mb-4">{alertModal.type === 'success' ? '¡Éxito!' : 'Error'}</h2>
-      <p className="text-gray-700 dark:text-white">{alertModal.message}</p>
-      <button
-        onClick={() => setAlertModal({ visible: false, message: '', type: '' })}
-        className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
-      >
-        Cerrar
-      </button>
+
+        {/* Fecha de Fin */}
+        <div>
+          <label className="block mb-2 text-[#393E46] dark:text-[#EEEEEE]">Fecha de Fin:</label>
+          <input
+            type="date"
+            value={nuevaVacacion.Fecha_Fin}
+            onChange={(e) => {
+              const fechaFin = e.target.value;
+              const fechaInicio = nuevaVacacion.Fecha_Inicio;
+              const diasSolicitados = fechaInicio && fechaFin
+                ? Math.ceil((new Date(fechaFin) - new Date(fechaInicio)) / (1000 * 60 * 60 * 24)) + 1
+                : 0;
+              setNuevaVacacion({ ...nuevaVacacion, Fecha_Fin: fechaFin, Cantidad_Dias_Solicitados: diasSolicitados });
+            }}
+            className="border rounded-lg w-full px-3 py-2 mb-2 dark:bg-[#3A3A4D] dark:text-[#EEEEEE]"
+          />
+        </div>
+
+        {/* Cantidad de Días Solicitados */}
+        <div>
+          <label className="block mb-2 text-[#393E46] dark:text-[#EEEEEE]">Cantidad de Días Solicitados:</label>
+          <input
+            type="number"
+            value={nuevaVacacion.Cantidad_Dias_Solicitados}
+            readOnly
+            className="border rounded-lg w-full px-3 py-2 mb-2 dark:bg-[#3A3A4D] dark:text-[#EEEEEE]"
+          />
+        </div>
+
+        {/* Fecha de Solicitud (readonly) */}
+        <div>
+          <label className="block mb-2 text-[#393E46] dark:text-[#EEEEEE]">Fecha de Solicitud:</label>
+          <input
+            type="date"
+            value={nuevaVacacion.Fecha_Solicitud}
+            readOnly
+            className="border rounded-lg w-full px-3 py-2 mb-2 dark:bg-[#3A3A4D] dark:text-[#EEEEEE]"
+          />
+        </div>
+
+        {/* Motivo de Vacación */}
+        <div>
+          <label className="block mb-2 text-[#393E46] dark:text-[#EEEEEE]">Motivo de Vacación:</label>
+          <select
+            value={nuevaVacacion.Motivo_Vacacion}
+            onChange={(e) => setNuevaVacacion({ ...nuevaVacacion, Motivo_Vacacion: e.target.value })}
+            className="border rounded-lg w-full px-3 py-2 mb-2 dark:bg-[#3A3A4D] dark:text-[#EEEEEE]"
+          >
+            <option value="">Seleccione un Motivo</option>
+            <option value="Vacaciones anuales">Vacaciones anuales</option>
+            <option value="Vacaciones por motivos personales">Vacaciones por motivos personales</option>
+            <option value="Vacaciones familiares">Vacaciones familiares</option>
+            <option value="Vacaciones por salud">Vacaciones por salud</option>
+            <option value="Vacaciones escolares">Vacaciones escolares</option>
+            <option value="Vacaciones por estudios">Vacaciones por estudios</option>
+            <option value="Vacaciones por viaje">Vacaciones por viaje</option>
+            <option value="Vacaciones no programadas">Vacaciones no programadas</option>
+            <option value="Vacaciones de fin de año">Vacaciones de fin de año</option>
+            <option value="Vacaciones de medio año">Vacaciones de medio año</option>
+          </select>
+        </div>
+
+        {/* Empleado */}
+        <div>
+          <label className="block mb-2 text-[#393E46] dark:text-[#EEEEEE]">Empleado:</label>
+          <select
+            value={nuevaVacacion.empleados_idEmpleado}
+            onChange={(e) => setNuevaVacacion({ ...nuevaVacacion, empleados_idEmpleado: e.target.value })}
+            className="border rounded-lg w-full px-3 py-2 mb-2 dark:bg-[#3A3A4D] dark:text-[#EEEEEE]"
+          >
+            <option value="">Seleccione un Empleado</option>
+            {empleados.length > 0 ? (
+              empleados.map((empleado) => (
+                <option key={empleado.idEmpleado} value={empleado.idEmpleado}>{empleado.NombreCompleto}</option>
+              ))
+            ) : (
+              <option value="">Cargando empleados...</option>
+            )}
+          </select>
+        </div>
+
+        <div className="flex justify-end mt-4">
+          <button
+            type="button"
+            onClick={crearVacacion}
+            className="bg-[#00ADB5] hover:bg-[#00ADB5] text-white py-2 px-4 rounded-lg shadow-md"
+          >
+            Crear
+          </button>
+          <button
+            type="button"
+            onClick={() => setModalCrear(false)}
+            className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg ml-2 shadow-md"
+          >
+            Cancelar
+          </button>
+        </div>
+      </form>
     </div>
   </div>
 )}
+
+      {alertModal.visible && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className={`bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg max-w-md mx-auto text-center ${alertModal.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+            <h2 className="text-xl font-bold mb-4">{alertModal.type === 'success' ? '¡Éxito!' : 'Error'}</h2>
+            <p className="text-gray-700 dark:text-white">{alertModal.message}</p>
+            <button
+              onClick={() => setAlertModal({ visible: false, message: '', type: '' })}
+              className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
 
 
     </div>

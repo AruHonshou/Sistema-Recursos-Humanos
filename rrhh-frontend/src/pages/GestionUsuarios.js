@@ -4,6 +4,7 @@ import { FaEdit, FaTrashAlt, FaCheck, FaTimes } from 'react-icons/fa';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
+import Swal from 'sweetalert2';
 
 const GestionUsuarios = () => {
     const [catalogoPersonas, setCatalogoPersonas] = useState([]);
@@ -16,6 +17,10 @@ const GestionUsuarios = () => {
     const [tiposHorario, setTiposHorario] = useState([]);
     const [puestosLaborales, setPuestosLaborales] = useState([]);
     const [roles, setRoles] = useState([]);
+    const [confirmarContrasena, setConfirmarContrasena] = useState('');
+    const [errorContrasena, setErrorContrasena] = useState(null);
+    const [usuarioEditadoManual, setUsuarioEditadoManual] = useState(false);
+
 
     const [personas, setPersonas] = useState([]);
     const [nuevaPersona, setNuevaPersona] = useState({
@@ -78,9 +83,12 @@ const GestionUsuarios = () => {
     const crearPersona = async () => {
         // Validaciones de campos
         const cedulaRegex = /^[0-9]+$/; // Solo números
-        const nameRegex = /^[A-ZÑ][a-zA-ZÑñ\s]+$/; // Permitir la letra Ñ y ñ
-        const phoneRegex = /^[0-9]+$/; // Solo números
+        const nameFormatRegex = /^[A-ZÑ][a-zñ]+$/; // Inicial en mayúscula, el resto en minúscula
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Validación básica de email
+
+        const formatearNombre = (nombre) => {
+            return nombre.charAt(0).toUpperCase() + nombre.slice(1).toLowerCase();
+        };
 
         const selectedCatalogo = nuevaPersona.catalogo_persona_idCatalogo_Persona;
         let maxLength = 12;
@@ -100,18 +108,39 @@ const GestionUsuarios = () => {
             return;
         }
 
-        // Validar nombre
-        if (!nuevaPersona.Nombre || !nameRegex.test(nuevaPersona.Nombre) || !validarCampoSinEspacios(nuevaPersona.Nombre)) {
-            setError('El nombre debe iniciar con mayúscula, contener solo letras (incluyendo Ñ) y no tener espacios al inicio o al final.');
+        // Validar y formatear nombre
+        if (!nuevaPersona.Nombre || !nameFormatRegex.test(nuevaPersona.Nombre) || !validarCampoSinEspacios(nuevaPersona.Nombre)) {
+            setError('El nombre debe iniciar con mayúscula, el resto de letras deben ser minúsculas, permitiendo la letra Ñ, y no tener espacios al inicio o al final.');
+            return;
+        }
+        nuevaPersona.Nombre = formatearNombre(nuevaPersona.Nombre);
+
+        // Validar y formatear primer apellido
+        if (!nuevaPersona.Primer_Apellido || !nameFormatRegex.test(nuevaPersona.Primer_Apellido) || !validarCampoSinEspacios(nuevaPersona.Primer_Apellido)) {
+            setError('El primer apellido debe iniciar con mayúscula, el resto de letras deben ser minúsculas, permitiendo la letra Ñ, y no tener espacios al inicio o al final.');
+            return;
+        }
+        nuevaPersona.Primer_Apellido = formatearNombre(nuevaPersona.Primer_Apellido);
+
+        // Validar y formatear segundo apellido
+        if (!nuevaPersona.Segundo_Apellido || !nameFormatRegex.test(nuevaPersona.Segundo_Apellido) || !validarCampoSinEspacios(nuevaPersona.Segundo_Apellido)) {
+            setError('El segundo apellido debe iniciar con mayúscula, el resto de letras deben ser minúsculas, permitiendo la letra Ñ, y no tener espacios al inicio o al final.');
+            return;
+        }
+        nuevaPersona.Segundo_Apellido = formatearNombre(nuevaPersona.Segundo_Apellido);
+
+        // Validar fecha de nacimiento
+        const fechaNacimiento = new Date(nuevaPersona.Fecha_Nacimiento);
+        const hoy = new Date();
+        const edadMinima = 15;
+        const fechaLimite = new Date(hoy.getFullYear() - edadMinima, hoy.getMonth(), hoy.getDate());
+
+        if (!nuevaPersona.Fecha_Nacimiento || fechaNacimiento > fechaLimite) {
+            setError('La fecha de nacimiento debe ser de al menos 15 años atrás.');
             return;
         }
 
-        // Validar primer apellido
-        if (!nuevaPersona.Primer_Apellido || !nameRegex.test(nuevaPersona.Primer_Apellido) || !validarCampoSinEspacios(nuevaPersona.Primer_Apellido)) {
-            setError('El primer apellido debe iniciar con mayúscula, contener solo letras (incluyendo Ñ) y no tener espacios al inicio o al final.');
-            return;
-        }
-
+        // Validar número de teléfono
         if (!nuevaPersona.Numero_Telefono || !validarTelefono(nuevaPersona.Numero_Telefono) || !validarCampoSinEspacios(nuevaPersona.Numero_Telefono)) {
             setError('El número de teléfono debe comenzar con 2, 4, 5, 6, 7 o 8, contener exactamente 8 dígitos, y no tener espacios al inicio o al final.');
             return;
@@ -126,34 +155,6 @@ const GestionUsuarios = () => {
         // Validar dirección específica
         if (!nuevaPersona.Direccion_Especifica) {
             setError('Debe escribir la dirección específica.');
-            return;
-        }
-
-        // Validar contraseña
-        if (!nuevaPersona.Contrasena) {
-            setError('Debe crear una contraseña.');
-            return;
-        }
-        // Validar segundo apellido
-        if (!nuevaPersona.Segundo_Apellido || !nameRegex.test(nuevaPersona.Segundo_Apellido) || !validarCampoSinEspacios(nuevaPersona.Segundo_Apellido)) {
-            setError('El segundo apellido debe iniciar con mayúscula, contener solo letras (incluyendo Ñ) y no tener espacios al inicio o al final.');
-            return;
-        }
-
-        // Validar fecha de nacimiento
-        const fechaNacimiento = new Date(nuevaPersona.Fecha_Nacimiento);
-        const hoy = new Date();
-        const edadMinima = 15;
-        const fechaLimite = new Date(hoy.getFullYear() - edadMinima, hoy.getMonth(), hoy.getDate());
-
-        if (!nuevaPersona.Fecha_Nacimiento || fechaNacimiento > fechaLimite) {
-            setError('La fecha de nacimiento debe ser de al menos 15 años atrás.');
-            return;
-        }
-
-        // Validar número de teléfono
-        if (!nuevaPersona.Numero_Telefono || !phoneRegex.test(nuevaPersona.Numero_Telefono) || nuevaPersona.Numero_Telefono.length !== 8 || !validarCampoSinEspacios(nuevaPersona.Numero_Telefono)) {
-            setError('El número de teléfono debe contener exactamente 8 dígitos y no tener espacios al inicio o al final.');
             return;
         }
 
@@ -207,6 +208,18 @@ const GestionUsuarios = () => {
             return;
         }
 
+        // Validar contraseña
+        if (!nuevaPersona.Contrasena) {
+            setError('Debe crear una contraseña.');
+            return;
+        }
+
+        if (nuevaPersona.Contrasena !== confirmarContrasena) {
+            setErrorContrasena('Las contraseñas no coinciden.');
+            return;
+        }
+        setErrorContrasena(null);
+
         // Validar rol
         if (!nuevaPersona.roles_idroles) {
             setError('Debe seleccionar un rol.');
@@ -228,6 +241,33 @@ const GestionUsuarios = () => {
             setError(`Error al crear el registro: ${error.message}`);
         }
     };
+
+    const generarNombreUsuario = () => {
+        const nombre = nuevaPersona.Nombre || "";
+        const primerApellido = nuevaPersona.Primer_Apellido || "";
+        const segundoApellido = nuevaPersona.Segundo_Apellido || "";
+        const cedula = nuevaPersona.idPersona || "";
+
+        // Verificar que los campos necesarios no estén vacíos
+        if (!nombre || !primerApellido || !segundoApellido || cedula.length < 2) {
+            return;
+        }
+
+        // Crear el nombre de usuario respetando mayúsculas
+        const inicialNombre = nombre.charAt(0).toUpperCase();
+        const inicialSegundoApellido = segundoApellido.charAt(0).toUpperCase();
+        const ultimosDosDigitosCedula = cedula.slice(-2);
+
+        const nombreUsuario = `${inicialNombre}${primerApellido}${inicialSegundoApellido}${ultimosDosDigitosCedula}`;
+
+        // Actualizar el campo Nombre_Usuario solo si no ha sido editado manualmente
+        if (!usuarioEditadoManual) {
+            setNuevaPersona({ ...nuevaPersona, Nombre_Usuario: nombreUsuario });
+        }
+    };
+
+
+
 
 
     const abrirModalActualizar = (persona) => {
@@ -290,11 +330,26 @@ const GestionUsuarios = () => {
 
 
     const eliminarPersona = async (id) => {
-        try {
-            await axios.delete(`http://localhost:3000/api/personas/${id}`);
-            obtenerPersonas();
-        } catch (error) {
-            console.error('Error al eliminar la persona:', error);
+        const resultado = await Swal.fire({
+            title: '¿Está seguro?',
+            text: 'Esta acción no se puede deshacer.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+        });
+
+        if (resultado.isConfirmed) {
+            try {
+                await axios.delete(`http://localhost:3000/api/personas/${id}`);
+                Swal.fire('Eliminado', 'El usuario ha sido eliminado exitosamente.', 'success');
+                obtenerPersonas();
+            } catch (error) {
+                console.error('Error al eliminar la persona:', error);
+                Swal.fire('Error', 'No se pudo eliminar el usuario.', 'error');
+            }
         }
     };
 
@@ -758,30 +813,12 @@ const GestionUsuarios = () => {
                                     placeholder="Cédula"
                                     value={nuevaPersona.idPersona}
                                     onChange={(e) => {
-                                        const selectedCatalogo = nuevaPersona.catalogo_persona_idCatalogo_Persona;
-                                        let maxLength = 12;
-
-                                        if (selectedCatalogo === 'extranjero') {
-                                            maxLength = 12;
-                                        } else if (selectedCatalogo === 'nacional') {
-                                            maxLength = 9;
-                                        } else if (selectedCatalogo === 'pasaporte') {
-                                            maxLength = 5;
-                                        }
-
                                         const value = e.target.value.replace(/\D/g, '');
-
-                                        if (value.length > maxLength) {
-                                            setError(`La cédula para ${selectedCatalogo} debe tener exactamente ${maxLength} dígitos.`);
-                                        } else {
-                                            setError(null);
-                                        }
-
-                                        setNuevaPersona({ ...nuevaPersona, idPersona: value.slice(0, maxLength) });
+                                        setNuevaPersona({ ...nuevaPersona, idPersona: value });
                                     }}
+                                    onBlur={generarNombreUsuario}
                                     className="border rounded-md p-2 mb-2 w-full"
                                 />
-
                             </div>
                             <div>
                                 <label className="text-black dark:text-white mb-2 block">Nombre</label>
@@ -790,6 +827,7 @@ const GestionUsuarios = () => {
                                     placeholder="Nombre"
                                     value={nuevaPersona.Nombre}
                                     onChange={(e) => setNuevaPersona({ ...nuevaPersona, Nombre: e.target.value })}
+                                    onBlur={generarNombreUsuario}
                                     className="border rounded-md p-2 mb-2 w-full"
                                 />
                             </div>
@@ -800,6 +838,7 @@ const GestionUsuarios = () => {
                                     placeholder="Primer Apellido"
                                     value={nuevaPersona.Primer_Apellido}
                                     onChange={(e) => setNuevaPersona({ ...nuevaPersona, Primer_Apellido: e.target.value })}
+                                    onBlur={generarNombreUsuario}
                                     className="border rounded-md p-2 mb-2 w-full"
                                 />
                             </div>
@@ -810,6 +849,7 @@ const GestionUsuarios = () => {
                                     placeholder="Segundo Apellido"
                                     value={nuevaPersona.Segundo_Apellido}
                                     onChange={(e) => setNuevaPersona({ ...nuevaPersona, Segundo_Apellido: e.target.value })}
+                                    onBlur={generarNombreUsuario}
                                     className="border rounded-md p-2 mb-2 w-full"
                                 />
                             </div>
@@ -975,7 +1015,10 @@ const GestionUsuarios = () => {
                                     type="text"
                                     placeholder="Nombre de Usuario"
                                     value={nuevaPersona.Nombre_Usuario}
-                                    onChange={(e) => setNuevaPersona({ ...nuevaPersona, Nombre_Usuario: e.target.value })}
+                                    onChange={(e) => {
+                                        setNuevaPersona({ ...nuevaPersona, Nombre_Usuario: e.target.value });
+                                        setUsuarioEditadoManual(true); // Marcar como editado manualmente
+                                    }}
                                     className="border rounded-md p-2 mb-2 w-full"
                                 />
                             </div>
@@ -988,6 +1031,17 @@ const GestionUsuarios = () => {
                                     onChange={(e) => setNuevaPersona({ ...nuevaPersona, Contrasena: e.target.value })}
                                     className="border rounded-md p-2 mb-2 w-full"
                                 />
+                            </div>
+                            <div>
+                                <label className="text-black dark:text-white mb-2 block">Confirmar Contraseña</label>
+                                <input
+                                    type="password"
+                                    placeholder="Confirmar Contraseña"
+                                    value={confirmarContrasena}
+                                    onChange={(e) => setConfirmarContrasena(e.target.value)}
+                                    className="border rounded-md p-2 mb-2 w-full"
+                                />
+                                {errorContrasena && <p className="text-red-500">{errorContrasena}</p>}
                             </div>
                             <div>
                                 <label className="text-black dark:text-white mb-2 block">Rol</label>

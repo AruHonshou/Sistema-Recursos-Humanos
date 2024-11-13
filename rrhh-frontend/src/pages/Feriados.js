@@ -4,6 +4,8 @@ import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
+import Swal from 'sweetalert2';
+
 
 const Feriados = () => {
     const [feriados, setFeriados] = useState([]);
@@ -56,13 +58,29 @@ const Feriados = () => {
 
     const eliminarFeriado = async (fechaFeriado) => {
         const fechaFeriadoFormateada = new Date(fechaFeriado).toISOString().split('T')[0];
-        try {
+      
+        const resultado = await Swal.fire({
+          title: '¿Está seguro?',
+          text: 'Esta acción no se puede deshacer.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Sí, eliminar',
+          cancelButtonText: 'Cancelar',
+        });
+      
+        if (resultado.isConfirmed) {
+          try {
             await axios.delete(`http://localhost:3000/api/feriados/${fechaFeriadoFormateada}`);
+            Swal.fire('Eliminado', 'El feriado ha sido eliminado exitosamente.', 'success');
             obtenerFeriados();
-        } catch (error) {
+          } catch (error) {
             console.error('Error al eliminar el feriado:', error);
+            Swal.fire('Error', 'No se pudo eliminar el feriado.', 'error');
+          }
         }
-    };
+      };
 
     const actualizarFeriado = async () => {
         if (!validarFeriado(feriadoActualizar)) {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaCheck, FaTimes, FaTrashAlt } from 'react-icons/fa';
 import 'jspdf-autotable';
+import Swal from 'sweetalert2';
 
 const Permisos = () => {
   const [permisos, setPermisos] = useState([]);
@@ -144,16 +145,25 @@ const Permisos = () => {
   };
 
   const eliminarPermiso = async (fecha_permiso, empleados_idEmpleado) => {
-    try {
-      const response = await axios.delete(`http://localhost:3000/api/permisos/${fecha_permiso}/${empleados_idEmpleado}`);
-      setAlertModal({ visible: true, message: response.data.mensaje, type: 'success' });
-      obtenerPermisos();
-    } catch (error) {
-      const errorMessage = error.response && error.response.status === 400
-        ? error.response.data.error
-        : 'Error al eliminar el permiso';
-      setAlertModal({ visible: true, message: errorMessage, type: 'error' });
-      console.error('Error al eliminar el permiso:', error);
+    const confirmacion = await Swal.fire({
+      title: '¿Está seguro?',
+      text: 'Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+    });
+  
+    if (confirmacion.isConfirmed) {
+      try {
+        await axios.delete(`http://localhost:3000/api/permisos/${fecha_permiso}/${empleados_idEmpleado}`);
+        Swal.fire('Eliminado', 'El permiso ha sido eliminado.', 'success');
+        obtenerPermisos();
+      } catch (error) {
+        Swal.fire('Error', 'No se pudo eliminar el permiso.', 'error');
+      }
     }
   };
 

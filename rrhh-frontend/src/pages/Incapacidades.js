@@ -4,6 +4,7 @@ import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import * as XLSX from 'xlsx';
+import Swal from 'sweetalert2';
 
 const Incapacidades = () => {
 
@@ -107,13 +108,25 @@ const Incapacidades = () => {
 
 
   const eliminarIncapacidad = async (Fecha_Inicio, empleados_idEmpleado) => {
-    const fechaFormateada = new Date(Fecha_Inicio).toISOString().split('T')[0];
-
-    try {
-      await axios.delete(`http://localhost:3000/api/incapacidad/${fechaFormateada}/${empleados_idEmpleado}`);
-      obtenerIncapacidades();
-    } catch (error) {
-      console.error('Error al eliminar la incapacidad:', error);
+    const confirmacion = await Swal.fire({
+      title: '¿Está seguro?',
+      text: 'Esta acción no se puede deshacer.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+    });
+  
+    if (confirmacion.isConfirmed) {
+      try {
+        await axios.delete(`http://localhost:3000/api/incapacidad/${Fecha_Inicio}/${empleados_idEmpleado}`);
+        Swal.fire('Eliminado', 'La incapacidad ha sido eliminada.', 'success');
+        obtenerIncapacidades();
+      } catch (error) {
+        Swal.fire('Error', 'No se pudo eliminar la incapacidad.', 'error');
+      }
     }
   };
 

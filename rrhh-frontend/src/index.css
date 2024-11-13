@@ -12,3 +12,36 @@ body {
     background-color: #1E1E2F; /* Fondo oscuro en modo dark */
   }
   
+  @layer components {
+    /* Animación de fade-in */
+    .animate-fade-in {
+      animation: fade-in 0.5s ease-in-out forwards;
+    }
+  
+    /* Animación de escala */
+    .animate-scale-up {
+      animation: scale-up 0.3s ease-in-out forwards;
+    }
+  
+    /* Definición de las animaciones */
+    @keyframes fade-in {
+      0% {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  
+    @keyframes scale-up {
+      0% {
+        transform: scale(0.95);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+  }
+  

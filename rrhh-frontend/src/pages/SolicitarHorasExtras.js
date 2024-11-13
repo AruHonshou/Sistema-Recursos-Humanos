@@ -5,6 +5,7 @@ const SolicitarHorasExtras = () => {
   const [errorModal, setErrorModal] = useState({ visible: false, message: '' });
   const [horasExtras, setHorasExtras] = useState([]);
   const [empleados, setEmpleados] = useState([]);
+  const [alertModal, setAlertModal] = useState({ visible: false, message: '', type: '' });
   const [modalCrear, setModalCrear] = useState(false);
   const [nuevaHoraExtra, setNuevaHoraExtra] = useState({
     fecha_hora_extra: '',
@@ -49,21 +50,44 @@ const SolicitarHorasExtras = () => {
     }
   };
 
-  // Crear nueva solicitud de horas extras
   const crearHoraExtra = async () => {
+    const { fecha_hora_extra, empleados_idEmpleado, hora_inicio, hora_final } = nuevaHoraExtra;
+  
+    // Validation checks
+    if (!fecha_hora_extra) {
+      setAlertModal({ visible: true, message: 'Debe seleccionar la Fecha', type: 'error' });
+      return;
+    }
+    if (!empleados_idEmpleado) {
+      setAlertModal({ visible: true, message: 'Debe seleccionar un Empleado', type: 'error' });
+      return;
+    }
+    if (!hora_inicio) {
+      setAlertModal({ visible: true, message: 'Debe ingresar la Hora de Inicio', type: 'error' });
+      return;
+    }
+    if (!hora_final) {
+      setAlertModal({ visible: true, message: 'Debe ingresar la Hora Final', type: 'error' });
+      return;
+    }
+  
     try {
       await axios.post('http://localhost:3000/api/horas-extras/', nuevaHoraExtra);
+  
+      // Show success alert
+      setAlertModal({ visible: true, message: 'Hora Extra Solicitada', type: 'success' });
+  
       setModalCrear(false);
       obtenerHorasExtras();
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        setErrorModal({ visible: true, message: error.response.data.error });
-      } else {
-        console.error('Error al crear la solicitud de horas extras:', error);
-        setErrorModal({ visible: true, message: 'Error al crear la solicitud de horas extras' });
-      }
+      const errorMessage = error.response && error.response.status === 400
+        ? error.response.data.error
+        : 'Error al crear la solicitud de horas extras';
+      setAlertModal({ visible: true, message: errorMessage, type: 'error' });
+      console.error('Error al crear la solicitud de horas extras:', error);
     }
   };
+  
 
   // Calcular la cantidad de horas basadas en hora_inicio y hora_final
   useEffect(() => {
@@ -229,6 +253,23 @@ const SolicitarHorasExtras = () => {
           </div>
         </div>
       )}
+
+{alertModal.visible && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className={`bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg max-w-md mx-auto text-center ${alertModal.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+            <h2 className="text-xl font-bold mb-4">{alertModal.type === 'success' ? '¡Éxito!' : 'Error'}</h2>
+            <p className="text-gray-700 dark:text-white">{alertModal.message}</p>
+            <button
+              onClick={() => setAlertModal({ visible: false, message: '', type: '' })}
+              className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
+
+
     </div>
   );
 };
