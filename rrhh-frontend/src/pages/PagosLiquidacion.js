@@ -73,7 +73,7 @@ const Liquidacion = () => {
       confirmButtonText: 'Sí, eliminar',
       cancelButtonText: 'Cancelar',
     });
-  
+
     if (confirmacion.isConfirmed) {
       try {
         await axios.delete(`http://localhost:3000/api/liquidaciones/eliminar/${idEmpleado}/${fechaLiquidacion}`);
@@ -92,48 +92,50 @@ const Liquidacion = () => {
   }, []);
 
   return (
-    <div className="p-6 bg-[#f9f9f9] dark:bg-[#1E1E2F] min-h-screen">
-      <h1 className="text-2xl font-bold mb-4 text-black dark:text-white text-center">Gestión de Liquidaciones</h1>
+    <div className="p-6 bg-[#EEEEEE] dark:bg-[#222831] min-h-screen">
+      <h1 className="text-2xl font-bold mb-4 text-[#393E46] dark:text-[#EEEEEE] text-center">Gestión de Liquidaciones</h1>
 
+      {/* Botón para Crear Nueva Liquidación */}
       <button
         onClick={() => setModalCrear(true)}
-        className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg mb-4 shadow-md transition duration-300 ease-in-out transform hover:scale-105 mx-auto block"
+        className="bg-[#00ADB5] hover:bg-[#00ADB5] text-white py-2 px-4 rounded-lg mb-4 shadow-md transition duration-300 ease-in-out transform hover:scale-105 mx-auto block"
       >
         + Nueva Liquidación
       </button>
 
-      <div className="overflow-hidden rounded-lg shadow-lg">
+      {/* Tabla de Liquidaciones */}
+      <div className="overflow-hidden rounded-lg shadow-lg mb-6 animate-scale-up">
         <table className="min-w-full bg-white dark:bg-[#2D2D3B] border rounded-md shadow-md">
-          <thead className="bg-gray-100 dark:bg-[#3A3A4D] border-b">
+          <thead className="bg-[#00ADB5]">
             <tr>
-              <th className="px-4 py-2 text-black dark:text-white text-center">ID Empleado</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Persona</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Fecha Liquidación</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Preaviso</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Días Preaviso</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Monto Total Preaviso</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Monto Total Liquidación</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Monto Cesantía</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Monto Vacaciones</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Monto Aguinaldo</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Tipo Liquidación</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Acciones</th>
+              <th className="px-4 py-2 text-white text-center">ID Empleado</th>
+              <th className="px-4 py-2 text-white text-center">Persona</th>
+              <th className="px-4 py-2 text-white text-center">Fecha Liquidación</th>
+              <th className="px-4 py-2 text-white text-center">Preaviso</th>
+              <th className="px-4 py-2 text-white text-center">Días Preaviso</th>
+              <th className="px-4 py-2 text-white text-center">Monto Total Preaviso</th>
+              <th className="px-4 py-2 text-white text-center">Monto Total Liquidación</th>
+              <th className="px-4 py-2 text-white text-center">Monto Cesantía</th>
+              <th className="px-4 py-2 text-white text-center">Monto Vacaciones</th>
+              <th className="px-4 py-2 text-white text-center">Monto Aguinaldo</th>
+              <th className="px-4 py-2 text-white text-center">Tipo Liquidación</th>
+              <th className="px-4 py-2 text-white text-center">Acciones</th>
             </tr>
           </thead>
           <tbody>
             {liquidaciones.map((liquidacion) => (
-              <tr key={`${liquidacion.Fecha_Liquidacion}-${liquidacion.empleados_idEmpleado}`} className="border-b dark:border-[#4D4D61]">
-                <td className="px-4 py-2 text-black dark:text-white text-center">{liquidacion.empleados_idEmpleado}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{liquidacion.Persona}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(liquidacion.Fecha_Liquidacion).toLocaleDateString()}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{liquidacion.Preaviso ? 'Sí' : 'No'}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{liquidacion.Dias_Preaviso}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">₡{liquidacion.Monto_Total_Preaviso.toLocaleString()}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">₡{liquidacion.Monto_Total_Liquidacion.toLocaleString()}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">₡{liquidacion.Monto_Total_Cesantia.toLocaleString()}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">₡{liquidacion.Monto_Total_Vacaciones.toLocaleString()}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">₡{liquidacion.Monto_Total_Aguinaldo.toLocaleString()}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{liquidacion.tipo_liquidacion}</td>
+              <tr key={`${liquidacion.Fecha_Liquidacion}-${liquidacion.empleados_idEmpleado}`} className="border-b hover:bg-[#EEEEEE] dark:hover:bg-[#393E46] transition-all duration-200">
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{liquidacion.empleados_idEmpleado}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{liquidacion.Persona}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{new Date(liquidacion.Fecha_Liquidacion).toLocaleDateString()}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{liquidacion.Preaviso ? 'Sí' : 'No'}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{liquidacion.Dias_Preaviso}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">₡{liquidacion.Monto_Total_Preaviso.toLocaleString()}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">₡{liquidacion.Monto_Total_Liquidacion.toLocaleString()}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">₡{liquidacion.Monto_Total_Cesantia.toLocaleString()}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">₡{liquidacion.Monto_Total_Vacaciones.toLocaleString()}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">₡{liquidacion.Monto_Total_Aguinaldo.toLocaleString()}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{liquidacion.tipo_liquidacion}</td>
                 <td className="px-4 py-2 flex justify-center space-x-2">
                   <button
                     onClick={() => eliminarLiquidacion(liquidacion.empleados_idEmpleado, liquidacion.Fecha_Liquidacion)}
@@ -148,45 +150,49 @@ const Liquidacion = () => {
         </table>
       </div>
 
+
+
       {/* Modal Crear */}
       {modalCrear && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg">
-            <h2 className="text-xl font-bold mb-4">Crear Nueva Liquidación</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in">
+          <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg max-w-md w-full animate-scale-up">
+            <h2 className="text-lg font-semibold mb-4 text-[#393E46] dark:text-[#EEEEEE]">Crear Nueva Liquidación</h2>
             <form>
-              {/* Empleado */}
-              <div>
-                <label className="block mb-2">Empleado:</label>
+              {/* Selección de Empleado */}
+              <div className="mb-4">
+                <label className="block mb-2 text-[#393E46] dark:text-[#EEEEEE]">Empleado:</label>
                 <select
                   value={nuevaLiquidacion.idEmpleado}
                   onChange={(e) => setNuevaLiquidacion({ ...nuevaLiquidacion, idEmpleado: e.target.value })}
-                  className="border rounded-lg w-full px-3 py-2"
+                  className="border rounded-lg w-full px-3 py-2 mb-2 bg-white dark:bg-[#3A3A4D] text-[#393E46] dark:text-[#EEEEEE]"
                 >
                   <option value="">Seleccione un Empleado</option>
                   {empleados.map((empleado) => (
-                    <option key={empleado.idEmpleado} value={empleado.idEmpleado}>{empleado.NombreCompleto}</option>
+                    <option key={empleado.idEmpleado} value={empleado.idEmpleado}>
+                      {empleado.NombreCompleto}
+                    </option>
                   ))}
                 </select>
               </div>
 
               {/* Fecha de Liquidación */}
-              <div>
-                <label className="block mb-2">Fecha de Liquidación:</label>
+              <div className="mb-4">
+                <label className="block mb-2 text-[#393E46] dark:text-[#EEEEEE]">Fecha de Liquidación:</label>
                 <input
                   type="date"
                   value={nuevaLiquidacion.fechaLiquidacion}
                   onChange={(e) => setNuevaLiquidacion({ ...nuevaLiquidacion, fechaLiquidacion: e.target.value })}
-                  className="border rounded-lg w-full px-3 py-2"
+                  className="border rounded-lg w-full px-3 py-2 mb-2 bg-white dark:bg-[#3A3A4D] text-[#393E46] dark:text-[#EEEEEE]"
                 />
               </div>
 
               {/* Tipo de Liquidación */}
-              <div>
-                <label className="block mb-2">Tipo de Liquidación:</label>
+              <div className="mb-4">
+                <label className="block mb-2 text-[#393E46] dark:text-[#EEEEEE]">Tipo de Liquidación:</label>
                 <select
                   value={nuevaLiquidacion.tipoLiquidacion}
                   onChange={(e) => setNuevaLiquidacion({ ...nuevaLiquidacion, tipoLiquidacion: e.target.value })}
-                  className="border rounded-lg w-full px-3 py-2"
+                  className="border rounded-lg w-full px-3 py-2 mb-2 bg-white dark:bg-[#3A3A4D] text-[#393E46] dark:text-[#EEEEEE]"
                 >
                   <option value="">Seleccione Tipo de Liquidación</option>
                   {tipoLiquidaciones.map((tipo) => (
@@ -197,18 +203,19 @@ const Liquidacion = () => {
                 </select>
               </div>
 
-              <div className="flex justify-end mt-4">
+              {/* Botones de Acción */}
+              <div className="flex justify-end mt-4 space-x-4">
                 <button
                   type="button"
                   onClick={crearLiquidacion}
-                  className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg shadow-md"
+                  className="bg-[#00ADB5] hover:bg-[#00ADB5] text-white py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
                 >
                   Crear
                 </button>
                 <button
                   type="button"
                   onClick={() => setModalCrear(false)}
-                  className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg shadow-md ml-2"
+                  className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
                 >
                   Cancelar
                 </button>
@@ -217,6 +224,7 @@ const Liquidacion = () => {
           </div>
         </div>
       )}
+
 
       {errorModal.visible && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">

@@ -203,10 +203,10 @@ const GestionUsuarios = () => {
         }
 
         // Validar nombre de usuario
-        if (!nuevaPersona.Nombre_Usuario || /\d|[^\w\s]/.test(nuevaPersona.Nombre_Usuario) || !validarCampoSinEspacios(nuevaPersona.Nombre_Usuario)) {
-            setError('El nombre de usuario no puede contener números, símbolos, ni espacios al inicio o al final.');
-            return;
-        }
+        // if (!nuevaPersona.Nombre_Usuario || /\d|[^\w\s]/.test(nuevaPersona.Nombre_Usuario) || !validarCampoSinEspacios(nuevaPersona.Nombre_Usuario)) {
+        //     setError('El nombre de usuario no puede contener números, símbolos, ni espacios al inicio o al final.');
+        //     return;
+        // }
 
         // Validar contraseña
         if (!nuevaPersona.Contrasena) {
@@ -681,12 +681,12 @@ const GestionUsuarios = () => {
     }, []);
 
     return (
-        <div className="p-6 bg-[#f9f9f9] dark:bg-[#1E1E2F] min-h-screen">
-            <h1 className="text-2xl font-bold mb-4 text-black dark:text-white text-center">Gestión de Personas - 2024</h1>
+        <div className="p-6 bg-[#EEEEEE] dark:bg-[#222831] min-h-screen">
+            <h1 className="text-2xl font-bold mb-4 text-[#393E46] dark:text-[#EEEEEE] text-center">Gestión de Personas - 2024</h1>
 
+            {/* Botón para Crear Nueva Persona */}
             <button
                 onClick={() => {
-                    // Reiniciar el estado de nuevaPersona antes de abrir el modal
                     setNuevaPersona({
                         idPersona: '',
                         Nombre: '',
@@ -709,14 +709,14 @@ const GestionUsuarios = () => {
                         Contrasena: '',
                         roles_idroles: '',
                     });
-                    setModalCrear(true); // Abrir el modal de crear nueva persona
+                    setModalCrear(true);
                 }}
-                className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg mb-4 shadow-md transition duration-300 ease-in-out transform hover:scale-105 mx-auto block"
+                className="bg-[#00ADB5] hover:bg-[#00ADB5] text-white py-2 px-4 rounded-lg mb-4 shadow-md transition duration-300 ease-in-out transform hover:scale-105 mx-auto block"
             >
                 + Nueva Persona
             </button>
 
-
+            {/* Botones de Exportar */}
             <div className="flex justify-between mb-4">
                 <button
                     onClick={generarPDF}
@@ -732,51 +732,51 @@ const GestionUsuarios = () => {
                 </button>
             </div>
 
-            <div className="overflow-hidden rounded-lg shadow-lg">
+            {/* Tabla de Personas */}
+            <div className="overflow-hidden rounded-lg shadow-lg mb-6 animate-scale-up">
                 <table className="min-w-full bg-white dark:bg-[#2D2D3B] border rounded-md shadow-md">
-                    <thead className="bg-gray-100 dark:bg-[#3A3A4D] border-b">
+                    <thead className="bg-[#00ADB5]">
                         <tr>
-                            <th className="px-4 py-2 text-black dark:text-white text-center">ID</th>
-                            <th className="px-4 py-2 text-black dark:text-white text-center">Nombre</th>
-                            <th className="px-4 py-2 text-black dark:text-white text-center">Primer Apellido</th>
-                            <th className="px-4 py-2 text-black dark:text-white text-center">Segundo Apellido</th>
-                            <th className="px-4 py-2 text-black dark:text-white text-center">Fecha de Nacimiento</th>
-                            <th className="px-4 py-2 text-black dark:text-white text-center">Número de Teléfono</th>
-                            <th className="px-4 py-2 text-black dark:text-white text-center">Correo Electrónico</th>
-                            <th className="px-4 py-2 text-black dark:text-white text-center">Username</th>
-                            <th className="px-4 py-2 text-black dark:text-white text-center">Usuario Activo/Inactivo</th>
-                            <th className="px-4 py-2 text-black dark:text-white text-center">Acción</th>
+                            <th className="px-4 py-2 text-white text-center">ID</th>
+                            <th className="px-4 py-2 text-white text-center">Nombre</th>
+                            <th className="px-4 py-2 text-white text-center">Primer Apellido</th>
+                            <th className="px-4 py-2 text-white text-center">Segundo Apellido</th>
+                            <th className="px-4 py-2 text-white text-center">Fecha de Nacimiento</th>
+                            <th className="px-4 py-2 text-white text-center">Número de Teléfono</th>
+                            <th className="px-4 py-2 text-white text-center">Correo Electrónico</th>
+                            <th className="px-4 py-2 text-white text-center">Username</th>
+                            <th className="px-4 py-2 text-white text-center">Usuario Activo/Inactivo</th>
+                            <th className="px-4 py-2 text-white text-center">Acción</th>
                         </tr>
                     </thead>
                     <tbody>
                         {personas.map((persona) => (
-                            <tr key={persona.idPersona} className="border-b hover:bg-gray-100 dark:hover:bg-[#3A3A4D]">
-                                <td className="px-4 py-2 text-black dark:text-white text-center">{persona.idPersona}</td>
-                                <td className="px-4 py-2 text-black dark:text-white text-center">{persona.Nombre}</td>
-                                <td className="px-4 py-2 text-black dark:text-white text-center">{persona.Primer_Apellido}</td>
-                                <td className="px-4 py-2 text-black dark:text-white text-center">{persona.Segundo_Apellido}</td>
-                                <td className="px-4 py-2 text-black dark:text-white text-center">
-                                    {new Date(persona.Fecha_Nacimiento).toLocaleDateString('es-ES')} {/* Solo año, mes y día */}
+                            <tr key={persona.idPersona} className="border-b hover:bg-[#EEEEEE] dark:hover:bg-[#393E46] transition-all duration-200">
+                                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{persona.idPersona}</td>
+                                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{persona.Nombre}</td>
+                                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{persona.Primer_Apellido}</td>
+                                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{persona.Segundo_Apellido}</td>
+                                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">
+                                    {new Date(persona.Fecha_Nacimiento).toLocaleDateString('es-ES')}
                                 </td>
-                                <td className="px-4 py-2 text-black dark:text-white text-center">{persona.numero_telefono}</td>
-                                <td className="px-4 py-2 text-black dark:text-white text-center">{persona.descripcion_correo}</td>
-                                <td className="px-4 py-2 text-black dark:text-white text-center">{persona.Nombre_Usuario}</td>
-                                <td className="px-4 py-2 text-black dark:text-white text-center">
+                                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{persona.numero_telefono}</td>
+                                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{persona.descripcion_correo}</td>
+                                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{persona.Nombre_Usuario}</td>
+                                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">
                                     {persona.Usuario_Activo.data[0] === 1 ? "Activo" : "Inactivo"}
                                 </td>
-
-                                <td className="px-4 py-2 text-black dark:text-white text-center">
-                                    <button onClick={() => abrirModalActualizar(persona)} className="text-yellow-500 hover:text-yellow-700">
+                                <td className="px-4 py-2 flex justify-center space-x-2">
+                                    <button onClick={() => abrirModalActualizar(persona)} className="text-yellow-500 hover:text-yellow-700 transition transform hover:scale-105">
                                         <FaEdit />
                                     </button>
-                                    <button onClick={() => eliminarPersona(persona.idPersona)} className="text-red-500 hover:text-red-700 ml-2">
+                                    <button onClick={() => eliminarPersona(persona.idPersona)} className="text-red-500 hover:text-red-700 ml-2 transition transform hover:scale-105">
                                         <FaTrashAlt />
                                     </button>
                                     <button
                                         onClick={() => alternarEstadoUsuario(persona.idPersona, persona.Usuario_Activo.data[0])}
-                                        className={`ml-2 ${persona.Usuario_Activo.data[0] === 1 ? 'text-green-500' : 'text-gray-500'} hover:text-blue-700`}
+                                        className={`ml-2 ${persona.Usuario_Activo.data[0] === 1 ? 'text-green-500' : 'text-gray-500'} hover:text-blue-700 transition transform hover:scale-105`}
                                     >
-                                        {persona.Usuario_Activo.data[0] === 1 ? <><FaTimes /> </> : <><FaCheck /> </>}
+                                        {persona.Usuario_Activo.data[0] === 1 ? <FaTimes /> : <FaCheck />}
                                     </button>
                                 </td>
                             </tr>
@@ -785,11 +785,13 @@ const GestionUsuarios = () => {
                 </table>
             </div>
 
+
+
             {/* Modal Crear Persona */}
             {modalCrear && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                    <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-xl transition duration-300 ease-in-out w-full max-w-7xl h-screen overflow-y-auto">
-                        <h2 className="text-lg font-bold mb-4 text-black dark:text-white">Nueva Persona</h2>
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center animate-fade-in">
+                    <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-xl transition duration-300 ease-in-out w-full max-w-7xl h-screen overflow-y-auto animate-scale-up">
+                        <h2 className="text-lg font-bold mb-4 text-[#393E46] dark:text-[#EEEEEE]">Nueva Persona</h2>
                         <div className="grid grid-cols-2 gap-4">
                             <div>
                                 <label className="text-black dark:text-white mb-2 block">Catálogo de Persona</label>
@@ -1060,16 +1062,17 @@ const GestionUsuarios = () => {
                             </div>
                         </div>
                         {error && <p className="text-red-500">{error}</p>}
+                        {/* Botones de Acción */}
                         <div className="flex justify-end space-x-4 mt-4">
                             <button
                                 onClick={() => setModalCrear(false)}
-                                className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg"
+                                className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105"
                             >
                                 Cancelar
                             </button>
                             <button
                                 onClick={crearPersona}
-                                className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
+                                className="bg-[#00ADB5] hover:bg-[#00ADB5] text-white py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
                             >
                                 Crear
                             </button>
@@ -1081,10 +1084,11 @@ const GestionUsuarios = () => {
 
             {/* Modal Actualizar Persona */}
             {modalActualizar && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                    <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-xl transition duration-300 ease-in-out w-full max-w-7xl h-screen overflow-y-auto"> {/* Cambiado el max-w a 7xl y añadido h-screen y overflow-y-auto */}
-                        <h2 className="text-lg font-bold mb-4 text-black dark:text-white">Actualizar Persona</h2>
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center animate-fade-in">
+                    <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-xl transition duration-300 ease-in-out w-full max-w-7xl h-screen overflow-y-auto animate-scale-up">
+                        <h2 className="text-lg font-bold mb-4 text-[#393E46] dark:text-[#EEEEEE]">Actualizar Persona</h2>
                         <div className="grid grid-cols-2 gap-4">
+
                             <div>
                                 <label className="text-black dark:text-white mb-2 block">Cédula</label>
                                 <input
@@ -1359,13 +1363,13 @@ const GestionUsuarios = () => {
                         <div className="flex justify-end space-x-4 mt-4">
                             <button
                                 onClick={() => setModalActualizar(false)}
-                                className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg"
+                                className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105"
                             >
                                 Cancelar
                             </button>
                             <button
                                 onClick={actualizarPersona}
-                                className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
+                                className="bg-[#00ADB5] hover:bg-[#00ADB5] text-white py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
                             >
                                 Actualizar
                             </button>

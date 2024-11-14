@@ -15,22 +15,22 @@ const Planilla = () => {
   const currentMonth = new Date().getMonth() + 1;
 
   // Fetch all payroll records
-const obtenerPlanillas = async () => {
-  try {
-    const response = await axios.get('http://localhost:3000/api/planillas');
+  const obtenerPlanillas = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/api/planillas');
 
-    // Ordena primero por fecha de planilla (más reciente a más antigua) y luego por idEmpleado (menor a mayor)
-    const planillasOrdenadas = response.data[0].sort((a, b) => {
-      const dateComparison = new Date(b.Fecha_Planilla) - new Date(a.Fecha_Planilla);
-      if (dateComparison !== 0) return dateComparison; // Ordena por fecha primero
-      return a.idEmpleado - b.idEmpleado; // Si las fechas son iguales, ordena por idEmpleado
-    });
+      // Ordena primero por fecha de planilla (más reciente a más antigua) y luego por idEmpleado (menor a mayor)
+      const planillasOrdenadas = response.data[0].sort((a, b) => {
+        const dateComparison = new Date(b.Fecha_Planilla) - new Date(a.Fecha_Planilla);
+        if (dateComparison !== 0) return dateComparison; // Ordena por fecha primero
+        return a.idEmpleado - b.idEmpleado; // Si las fechas son iguales, ordena por idEmpleado
+      });
 
-    setPlanillas(planillasOrdenadas);
-  } catch (error) {
-    console.error('Error al obtener las planillas:', error);
-  }
-};
+      setPlanillas(planillasOrdenadas);
+    } catch (error) {
+      console.error('Error al obtener las planillas:', error);
+    }
+  };
 
 
   // Create new payroll entry with on-screen validation alerts
@@ -64,7 +64,7 @@ const obtenerPlanillas = async () => {
       confirmButtonText: 'Sí, eliminar',
       cancelButtonText: 'Cancelar',
     });
-  
+
     if (confirmacion.isConfirmed) {
       try {
         await axios.delete('http://localhost:3000/api/planillas/eliminar', { data: { fechaPlanilla: fechaEliminar } });
@@ -85,8 +85,8 @@ const obtenerPlanillas = async () => {
   const uniqueDates = [...new Set(planillas.map(planilla => new Date(planilla.Fecha_Planilla).toISOString().split('T')[0]))];
 
   return (
-    <div className="p-6 bg-[#f9f9f9] dark:bg-[#1E1E2F] min-h-screen">
-      <h1 className="text-2xl font-bold mb-4 text-black dark:text-white text-center">Gestión de Planilla</h1>
+    <div className="p-6 bg-[#EEEEEE] dark:bg-[#222831] min-h-screen">
+      <h1 className="text-2xl font-bold mb-4 text-[#393E46] dark:text-[#EEEEEE] text-center">Gestión de Planilla</h1>
 
       {alertMessages.length > 0 && (
         <div className="mb-4 p-4 bg-yellow-200 border-l-4 border-yellow-500 text-yellow-700 rounded-lg">
@@ -97,13 +97,15 @@ const obtenerPlanillas = async () => {
       )}
 
       <div className="flex justify-center space-x-4 mb-4">
+        {/* Botón Calcular Nueva Planilla */}
         <button
           onClick={() => setModalCrear(true)}
-          className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+          className="bg-[#00ADB5] hover:bg-[#00ADB5] text-white py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
         >
           + Calcular Nueva Planilla
         </button>
 
+        {/* Botón Eliminar Planilla */}
         <button
           onClick={() => setModalEliminar(true)}
           className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
@@ -112,55 +114,59 @@ const obtenerPlanillas = async () => {
         </button>
       </div>
 
-      <div className="overflow-hidden rounded-lg shadow-lg">
+      {/* Tabla de Planillas */}
+      <div className="overflow-hidden rounded-lg shadow-lg mb-6 animate-scale-up">
         <table className="min-w-full bg-white dark:bg-[#2D2D3B] border rounded-md shadow-md">
-          <thead className="bg-gray-100 dark:bg-[#3A3A4D] border-b">
+          <thead className="bg-[#00ADB5]">
             <tr>
-              <th className="px-4 py-2 text-black dark:text-white text-center">ID Empleado</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Nombre</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Fecha Planilla</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Descripción</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Total Horas Extras</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Deducciones</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Incapacidades</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Recortes</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Monto Total</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Cálculos Fiscales</th>
+              <th className="px-4 py-2 text-white text-center">ID Empleado</th>
+              <th className="px-4 py-2 text-white text-center">Nombre</th>
+              <th className="px-4 py-2 text-white text-center">Fecha Planilla</th>
+              <th className="px-4 py-2 text-white text-center">Descripción</th>
+              <th className="px-4 py-2 text-white text-center">Total Horas Extras</th>
+              <th className="px-4 py-2 text-white text-center">Deducciones</th>
+              <th className="px-4 py-2 text-white text-center">Incapacidades</th>
+              <th className="px-4 py-2 text-white text-center">Recortes</th>
+              <th className="px-4 py-2 text-white text-center">Monto Total</th>
+              <th className="px-4 py-2 text-white text-center">Cálculos Fiscales</th>
             </tr>
           </thead>
           <tbody>
             {planillas.map((planilla) => (
-              <tr key={planilla.Fecha_Planilla} className="border-b dark:border-[#4D4D61]">
-                <td className="px-4 py-2 text-black dark:text-white text-center">{planilla.idEmpleado}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{planilla.Persona}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(planilla.Fecha_Planilla).toISOString().split('T')[0]}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{planilla.Descripcion_Planilla}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">₡{planilla.Monto_Total_Horas_Extras}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">₡{planilla.Monto_Total_Deducciones}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">₡{planilla.Monto_Total_Incapacidades}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">₡{planilla.Monto_Descontado_Recortar}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">₡{planilla.Monto_Total_Planilla}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">₡{planilla.Monto_Calculos_Fiscales}</td>
+              <tr key={planilla.Fecha_Planilla} className="border-b hover:bg-[#EEEEEE] dark:hover:bg-[#393E46] transition-all duration-200">
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{planilla.idEmpleado}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{planilla.Persona}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{new Date(planilla.Fecha_Planilla).toISOString().split('T')[0]}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{planilla.Descripcion_Planilla}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">₡{planilla.Monto_Total_Horas_Extras}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">₡{planilla.Monto_Total_Deducciones}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">₡{planilla.Monto_Total_Incapacidades}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">₡{planilla.Monto_Descontado_Recortar}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">₡{planilla.Monto_Total_Planilla}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">₡{planilla.Monto_Calculos_Fiscales}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
+
+
       {/* Modal Crear Planilla */}
       {modalCrear && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg">
-            <h2 className="text-xl font-bold mb-4">Calcular Nueva Planilla</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in">
+          <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg max-w-md w-full animate-scale-up">
+            <h2 className="text-lg font-semibold mb-4 text-[#393E46] dark:text-[#EEEEEE]">Calcular Nueva Planilla</h2>
             <form>
+              {/* Fecha de Planilla */}
               <div>
-                <label className="block mb-2">Fecha de Planilla:</label>
+                <label className="block mb-2 text-[#393E46] dark:text-[#EEEEEE]">Fecha de Planilla:</label>
                 <div className="flex space-x-2">
                   {/* Selector de Año */}
                   <select
                     value={nuevaPlanilla.anio}
                     onChange={(e) => setNuevaPlanilla({ ...nuevaPlanilla, anio: e.target.value, mes: '' })}
-                    className="border rounded-lg w-full px-3 py-2"
+                    className="border rounded-lg w-full px-3 py-2 mb-2 bg-white dark:bg-[#2D2D3B] text-[#393E46] dark:text-[#EEEEEE]"
                   >
                     <option value="">Seleccione el año</option>
                     {Array.from({ length: 5 }, (_, i) => currentYear + i).map((year) => (
@@ -174,7 +180,7 @@ const obtenerPlanillas = async () => {
                   <select
                     value={nuevaPlanilla.mes}
                     onChange={(e) => setNuevaPlanilla({ ...nuevaPlanilla, mes: e.target.value })}
-                    className="border rounded-lg w-full px-3 py-2"
+                    className="border rounded-lg w-full px-3 py-2 mb-2 bg-white dark:bg-[#2D2D3B] text-[#393E46] dark:text-[#EEEEEE]"
                   >
                     <option value="">Seleccione el mes</option>
                     {(nuevaPlanilla.anio == currentYear
@@ -189,18 +195,19 @@ const obtenerPlanillas = async () => {
                 </div>
               </div>
 
-              <div className="flex justify-end mt-4">
+              {/* Botones de Acción */}
+              <div className="flex justify-end mt-4 space-x-4">
                 <button
                   type="button"
                   onClick={crearPlanilla}
-                  className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg shadow-md"
+                  className="bg-[#00ADB5] hover:bg-[#00ADB5] text-white py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
                 >
                   Calcular
                 </button>
                 <button
                   type="button"
                   onClick={() => setModalCrear(false)}
-                  className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg shadow-md ml-2"
+                  className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
                 >
                   Cancelar
                 </button>
@@ -210,18 +217,20 @@ const obtenerPlanillas = async () => {
         </div>
       )}
 
+
       {/* Modal Eliminar Planilla */}
       {modalEliminar && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg">
-            <h2 className="text-xl font-bold mb-4">Eliminar Planilla</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in">
+          <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg max-w-md w-full animate-scale-up">
+            <h2 className="text-lg font-semibold mb-4 text-[#393E46] dark:text-[#EEEEEE]">Eliminar Planilla</h2>
             <form>
+              {/* Selector de Fecha de Planilla */}
               <div>
-                <label className="block mb-2">Seleccione la Fecha de Planilla a Eliminar:</label>
+                <label className="block mb-2 text-[#393E46] dark:text-[#EEEEEE]">Seleccione la Fecha de Planilla a Eliminar:</label>
                 <select
                   value={fechaEliminar}
                   onChange={(e) => setFechaEliminar(e.target.value)}
-                  className="border rounded-lg w-full px-3 py-2"
+                  className="border rounded-lg w-full px-3 py-2 mb-2 bg-white dark:bg-[#2D2D3B] text-[#393E46] dark:text-[#EEEEEE]"
                 >
                   <option value="">Seleccione una fecha</option>
                   {uniqueDates.map((date) => (
@@ -230,18 +239,19 @@ const obtenerPlanillas = async () => {
                 </select>
               </div>
 
-              <div className="flex justify-end mt-4">
+              {/* Botones de Acción */}
+              <div className="flex justify-end mt-4 space-x-4">
                 <button
                   type="button"
                   onClick={eliminarPlanilla}
-                  className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg shadow-md"
+                  className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
                 >
                   Eliminar
                 </button>
                 <button
                   type="button"
                   onClick={() => setModalEliminar(false)}
-                  className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg shadow-md ml-2"
+                  className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
                 >
                   Cancelar
                 </button>
@@ -250,6 +260,7 @@ const obtenerPlanillas = async () => {
           </div>
         </div>
       )}
+
     </div>
   );
 };

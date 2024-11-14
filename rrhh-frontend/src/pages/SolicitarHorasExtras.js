@@ -52,7 +52,7 @@ const SolicitarHorasExtras = () => {
 
   const crearHoraExtra = async () => {
     const { fecha_hora_extra, empleados_idEmpleado, hora_inicio, hora_final } = nuevaHoraExtra;
-  
+
     // Validation checks
     if (!fecha_hora_extra) {
       setAlertModal({ visible: true, message: 'Debe seleccionar la Fecha', type: 'error' });
@@ -70,13 +70,13 @@ const SolicitarHorasExtras = () => {
       setAlertModal({ visible: true, message: 'Debe ingresar la Hora Final', type: 'error' });
       return;
     }
-  
+
     try {
       await axios.post('http://localhost:3000/api/horas-extras/', nuevaHoraExtra);
-  
+
       // Show success alert
       setAlertModal({ visible: true, message: 'Hora Extra Solicitada', type: 'success' });
-  
+
       setModalCrear(false);
       obtenerHorasExtras();
     } catch (error) {
@@ -87,7 +87,7 @@ const SolicitarHorasExtras = () => {
       console.error('Error al crear la solicitud de horas extras:', error);
     }
   };
-  
+
 
   // Calcular la cantidad de horas basadas en hora_inicio y hora_final
   useEffect(() => {
@@ -108,44 +108,55 @@ const SolicitarHorasExtras = () => {
   }, []);
 
   return (
-    <div className="p-6 bg-[#f9f9f9] dark:bg-[#1E1E2F] min-h-screen">
-      <h1 className="text-2xl font-bold mb-4 text-black dark:text-white text-center">Gestión de Horas Extras</h1>
+    <div className="p-6 bg-[#EEEEEE] dark:bg-[#222831] min-h-screen">
+      <h1 className="text-2xl font-bold mb-4 text-[#393E46] dark:text-[#EEEEEE] text-center animate-fade-in">
+        Gestión de Horas Extras
+      </h1>
 
       <button
         onClick={() => setModalCrear(true)}
-        className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg mb-4 shadow-md transition duration-300 ease-in-out transform hover:scale-105 mx-auto block"
+        className="bg-[#00ADB5] hover:bg-[#00ADB5] text-white py-2 px-4 rounded-lg mb-4 shadow-md transition duration-300 ease-in-out transform hover:scale-105 mx-auto block"
       >
         + Nueva Hora Extra
       </button>
 
-      <div className="overflow-hidden rounded-lg shadow-lg">
+      <div className="overflow-hidden rounded-lg shadow-lg animate-scale-up">
         <table className="min-w-full bg-white dark:bg-[#2D2D3B] border rounded-md shadow-md">
-          <thead className="bg-gray-100 dark:bg-[#3A3A4D] border-b">
+          <thead className="bg-[#00ADB5]">
             <tr>
-              <th className="px-4 py-2 text-black dark:text-white text-center">ID Empleado</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Persona</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Fecha</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Cantidad de Horas</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Hora Inicio</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Hora Final</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Monto</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Tipo de Hora Extra</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Estado</th>
+              <th className="px-4 py-2 text-white text-center">ID Empleado</th>
+              <th className="px-4 py-2 text-white text-center">Persona</th>
+              <th className="px-4 py-2 text-white text-center">Fecha</th>
+              <th className="px-4 py-2 text-white text-center">Cantidad de Horas</th>
+              <th className="px-4 py-2 text-white text-center">Hora Inicio</th>
+              <th className="px-4 py-2 text-white text-center">Hora Final</th>
+              <th className="px-4 py-2 text-white text-center">Monto</th>
+              <th className="px-4 py-2 text-white text-center">Tipo de Hora Extra</th>
+              <th className="px-4 py-2 text-white text-center">Estado</th>
             </tr>
           </thead>
           <tbody>
             {horasExtras.map((horaExtra) => (
-              <tr key={`${horaExtra.fecha_hora_extra}-${horaExtra.empleados_idEmpleado}`} className="border-b dark:border-[#4D4D61]">
-                <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.idEmpleado}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.Persona}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(horaExtra.fecha_hora_extra).toISOString().split('T')[0]}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.Cantidad_Horas_Extras}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.Hora_Inicio}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.Hora_Final}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">₡{horaExtra.Monto_Hora_Extra}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">{horaExtra.tipo_hora_extra}</td>
-                <td className="px-4 py-2 text-black dark:text-white text-center">
-                  {horaExtra.estado_solicitud === 'Aprobado' ? 'Aceptado' : horaExtra.estado_solicitud === 'Rechazado' ? 'Rechazado' : 'En Espera'}
+              <tr
+                key={`${horaExtra.fecha_hora_extra}-${horaExtra.empleados_idEmpleado}`}
+                className="border-b hover:bg-[#EEEEEE] dark:hover:bg-[#393E46] transition-all duration-200"
+              >
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{horaExtra.idEmpleado}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{horaExtra.Persona}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">
+                  {new Date(horaExtra.fecha_hora_extra).toISOString().split('T')[0]}
+                </td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{horaExtra.Cantidad_Horas_Extras}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{horaExtra.Hora_Inicio}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{horaExtra.Hora_Final}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">₡{horaExtra.Monto_Hora_Extra}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{horaExtra.tipo_hora_extra}</td>
+                <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">
+                  {horaExtra.estado_solicitud === 'Aprobado'
+                    ? 'Aceptado'
+                    : horaExtra.estado_solicitud === 'Rechazado'
+                      ? 'Rechazado'
+                      : 'En Espera'}
                 </td>
               </tr>
             ))}
@@ -153,28 +164,30 @@ const SolicitarHorasExtras = () => {
         </table>
       </div>
 
+
+
       {/* Modal Crear */}
       {modalCrear && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg">
-            <h2 className="text-xl font-bold mb-4">Crear Nueva Hora Extra</h2>
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg max-w-md w-full animate-scale-up">
+            <h2 className="text-xl font-bold mb-4 text-[#393E46] dark:text-[#EEEEEE]">Crear Nueva Hora Extra</h2>
             <form>
               <div>
-                <label className="block mb-2">Fecha:</label>
+                <label className="block mb-2 text-[#393E46] dark:text-[#EEEEEE]">Fecha:</label>
                 <input
                   type="date"
                   value={nuevaHoraExtra.fecha_hora_extra}
                   onChange={(e) => setNuevaHoraExtra({ ...nuevaHoraExtra, fecha_hora_extra: e.target.value })}
-                  className="border rounded-lg w-full px-3 py-2"
+                  className="border rounded-lg w-full px-3 py-2 mb-2 dark:bg-[#393E46] dark:text-[#EEEEEE]"
                 />
               </div>
 
               <div>
-                <label className="block mb-2">Empleado:</label>
+                <label className="block mb-2 text-[#393E46] dark:text-[#EEEEEE]">Empleado:</label>
                 <select
                   value={nuevaHoraExtra.empleados_idEmpleado}
                   onChange={(e) => setNuevaHoraExtra({ ...nuevaHoraExtra, empleados_idEmpleado: e.target.value })}
-                  className="border rounded-lg w-full px-3 py-2"
+                  className="border rounded-lg w-full px-3 py-2 mb-2 dark:bg-[#393E46] dark:text-[#EEEEEE]"
                 >
                   <option value="">Seleccione un Empleado</option>
                   {empleados.length > 0 ? (
@@ -190,32 +203,32 @@ const SolicitarHorasExtras = () => {
               </div>
 
               <div>
-                <label className="block mb-2">Hora de Inicio:</label>
+                <label className="block mb-2 text-[#393E46] dark:text-[#EEEEEE]">Hora de Inicio:</label>
                 <input
                   type="time"
                   value={nuevaHoraExtra.hora_inicio}
                   onChange={(e) => setNuevaHoraExtra({ ...nuevaHoraExtra, hora_inicio: e.target.value })}
-                  className="border rounded-lg w-full px-3 py-2"
+                  className="border rounded-lg w-full px-3 py-2 mb-2 dark:bg-[#393E46] dark:text-[#EEEEEE]"
                 />
               </div>
 
               <div>
-                <label className="block mb-2">Hora Final:</label>
+                <label className="block mb-2 text-[#393E46] dark:text-[#EEEEEE]">Hora Final:</label>
                 <input
                   type="time"
                   value={nuevaHoraExtra.hora_final}
                   onChange={(e) => setNuevaHoraExtra({ ...nuevaHoraExtra, hora_final: e.target.value })}
-                  className="border rounded-lg w-full px-3 py-2"
+                  className="border rounded-lg w-full px-3 py-2 mb-2 dark:bg-[#393E46] dark:text-[#EEEEEE]"
                 />
               </div>
 
               <div>
-                <label className="block mb-2">Cantidad de Horas:</label>
+                <label className="block mb-2 text-[#393E46] dark:text-[#EEEEEE]">Cantidad de Horas:</label>
                 <input
                   type="number"
                   value={nuevaHoraExtra.cantidad_horas}
                   readOnly
-                  className="border rounded-lg w-full px-3 py-2"
+                  className="border rounded-lg w-full px-3 py-2 mb-2 dark:bg-[#393E46] dark:text-[#EEEEEE]"
                 />
               </div>
 
@@ -230,7 +243,7 @@ const SolicitarHorasExtras = () => {
                 <button
                   type="button"
                   onClick={crearHoraExtra}
-                  className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                  className="bg-[#00ADB5] hover:bg-[#00ADB5] text-white py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
                 >
                   Crear
                 </button>
@@ -239,6 +252,7 @@ const SolicitarHorasExtras = () => {
           </div>
         </div>
       )}
+
       {errorModal.visible && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
           <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg max-w-md mx-auto text-center">
@@ -254,7 +268,7 @@ const SolicitarHorasExtras = () => {
         </div>
       )}
 
-{alertModal.visible && (
+      {alertModal.visible && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
           <div className={`bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg max-w-md mx-auto text-center ${alertModal.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
             <h2 className="text-xl font-bold mb-4">{alertModal.type === 'success' ? '¡Éxito!' : 'Error'}</h2>

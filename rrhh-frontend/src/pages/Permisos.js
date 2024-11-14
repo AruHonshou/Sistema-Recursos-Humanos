@@ -155,7 +155,7 @@ const Permisos = () => {
       confirmButtonText: 'Sí, eliminar',
       cancelButtonText: 'Cancelar',
     });
-  
+
     if (confirmacion.isConfirmed) {
       try {
         await axios.delete(`http://localhost:3000/api/permisos/${fecha_permiso}/${empleados_idEmpleado}`);
@@ -180,30 +180,30 @@ const Permisos = () => {
   }, []);
 
   return (
-    <div className="p-6 bg-[#f9f9f9] dark:bg-[#1E1E2F] min-h-screen">
-      <h1 className="text-2xl font-bold mb-4 text-black dark:text-white text-center">Gestión de Permisos</h1>
+    <div className="p-6 bg-[#EEEEEE] dark:bg-[#222831] min-h-screen">
+      <h1 className="text-2xl font-bold mb-4 text-[#393E46] dark:text-[#EEEEEE] text-center">Gestión de Permisos</h1>
 
       <button
         onClick={() => setModalCrear(true)}
-        className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg mb-4 shadow-md transition duration-300 ease-in-out transform hover:scale-105 mx-auto block"
+        className="bg-[#00ADB5] hover:bg-[#00ADB5] text-white py-2 px-4 rounded-lg mb-4 shadow-md transition duration-300 ease-in-out transform hover:scale-105 mx-auto block"
       >
         + Nuevo Permiso
       </button>
 
-      <div className="overflow-hidden rounded-lg shadow-lg">
+      <div className="overflow-hidden rounded-lg shadow-lg mb-6 animate-scale-up">
         <table className="min-w-full bg-white dark:bg-[#2D2D3B] border rounded-md shadow-md">
-          <thead className="bg-gray-100 dark:bg-[#3A3A4D] border-b">
+          <thead className="bg-[#00ADB5]">
             <tr>
-              <th className="px-4 py-2 text-black dark:text-white text-center">ID Empleado</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Nombre</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Fecha Permiso</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Fecha Solicitud</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Con Goce</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Horas Permiso</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Monto Permiso</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Descripción Permiso</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Estado Solicitud</th>
-              <th className="px-4 py-2 text-black dark:text-white text-center">Acciones</th>
+              <th className="px-4 py-2 text-white text-center">ID Empleado</th>
+              <th className="px-4 py-2 text-white text-center">Nombre</th>
+              <th className="px-4 py-2 text-white text-center">Fecha Permiso</th>
+              <th className="px-4 py-2 text-white text-center">Fecha Solicitud</th>
+              <th className="px-4 py-2 text-white text-center">Con Goce</th>
+              <th className="px-4 py-2 text-white text-center">Horas Permiso</th>
+              <th className="px-4 py-2 text-white text-center">Monto Permiso</th>
+              <th className="px-4 py-2 text-white text-center">Descripción Permiso</th>
+              <th className="px-4 py-2 text-white text-center">Estado Solicitud</th>
+              <th className="px-4 py-2 text-white text-center">Acciones</th>
             </tr>
           </thead>
           <tbody>
@@ -214,16 +214,16 @@ const Permisos = () => {
                 return 0;
               })
               .map((permiso) => (
-                <tr key={`${new Date(permiso.fecha_permiso).toISOString()}-${permiso.idEmpleado}`} className="border-b dark:border-[#4D4D61]">
-                  <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.idEmpleado}</td>
-                  <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.Persona || 'Cargando...'}</td>
-                  <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(permiso.fecha_permiso).toISOString().split('T')[0]}</td>
-                  <td className="px-4 py-2 text-black dark:text-white text-center">{new Date(permiso.fecha_solicitud).toISOString().split('T')[0]}</td>
-                  <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.Con_Gose}</td>
-                  <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.horas_permiso}</td>
-                  <td className="px-4 py-2 text-black dark:text-white text-center">₡{permiso.monto_permiso}</td>
-                  <td className="px-4 py-2 text-black dark:text-white text-center">{permiso.descripcion_permiso}</td>
-                  <td className="px-4 py-2 text-black dark:text-white text-center">
+                <tr key={`${new Date(permiso.fecha_permiso).toISOString()}-${permiso.idEmpleado}`} className="border-b hover:bg-[#EEEEEE] dark:hover:bg-[#393E46] transition-all duration-200">
+                  <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{permiso.idEmpleado}</td>
+                  <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{permiso.Persona || 'Cargando...'}</td>
+                  <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{new Date(permiso.fecha_permiso).toISOString().split('T')[0]}</td>
+                  <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{new Date(permiso.fecha_solicitud).toISOString().split('T')[0]}</td>
+                  <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{permiso.Con_Gose}</td>
+                  <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{permiso.horas_permiso}</td>
+                  <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">₡{permiso.monto_permiso}</td>
+                  <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">{permiso.descripcion_permiso}</td>
+                  <td className="px-4 py-2 text-[#393E46] dark:text-[#EEEEEE] text-center">
                     {permiso.estado_solicitud_idestado_solicitud === 1 ? 'Aceptado' : permiso.estado_solicitud_idestado_solicitud === 2 ? 'Rechazado' : 'En Espera'}
                   </td>
                   <td className="px-4 py-2 flex justify-center space-x-2">
@@ -233,14 +233,12 @@ const Permisos = () => {
                     >
                       <FaCheck />
                     </button>
-
                     <button
                       onClick={() => rechazarPermiso(new Date(permiso.fecha_permiso).toISOString().split('T')[0], permiso.idEmpleado)}
-                      className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                      className="bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-3 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
                     >
                       <FaTimes />
                     </button>
-
                     <button
                       onClick={() => eliminarPermiso(new Date(permiso.fecha_permiso).toISOString().split('T')[0], permiso.idEmpleado)}
                       className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
@@ -254,50 +252,56 @@ const Permisos = () => {
         </table>
       </div>
 
+
+
       {/* Modal Crear */}
       {modalCrear && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg">
-            <h2 className="text-xl font-bold mb-4">Crear Nuevo Permiso</h2>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 animate-fade-in">
+          <div className="bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg max-w-md w-full animate-scale-up">
+            <h2 className="text-lg font-semibold mb-4 text-[#393E46] dark:text-[#EEEEEE]">Crear Nuevo Permiso</h2>
             <form>
+              {/* Fecha de Permiso */}
               <div>
-                <label className="block mb-2">Fecha de Permiso:</label>
+                <label className="block mb-2 text-[#393E46] dark:text-[#EEEEEE]">Fecha de Permiso:</label>
                 <input
                   type="date"
                   value={nuevoPermiso.fecha_permiso}
                   onChange={(e) => setNuevoPermiso({ ...nuevoPermiso, fecha_permiso: e.target.value })}
-                  className="border rounded-lg w-full px-3 py-2"
+                  className="border rounded-lg w-full px-3 py-2 mb-2 bg-white dark:bg-[#2D2D3B] text-[#393E46] dark:text-[#EEEEEE]"
                 />
               </div>
 
+              {/* Fecha de Solicitud */}
               <div>
-                <label className="block mb-2">Fecha de Solicitud:</label>
+                <label className="block mb-2 text-[#393E46] dark:text-[#EEEEEE]">Fecha de Solicitud:</label>
                 <input
                   type="date"
                   value={nuevoPermiso.fecha_solicitud}
                   readOnly
-                  className="border rounded-lg w-full px-3 py-2"
+                  className="border rounded-lg w-full px-3 py-2 mb-2 bg-white dark:bg-[#2D2D3B] text-[#393E46] dark:text-[#EEEEEE]"
                 />
               </div>
 
+              {/* Con Goce */}
               <div>
-                <label className="block mb-2">Con Goce:</label>
+                <label className="block mb-2 text-[#393E46] dark:text-[#EEEEEE]">Con Goce:</label>
                 <select
                   value={nuevoPermiso.con_gose}
                   onChange={(e) => setNuevoPermiso({ ...nuevoPermiso, con_gose: parseInt(e.target.value) })}
-                  className="border rounded-lg w-full px-3 py-2"
+                  className="border rounded-lg w-full px-3 py-2 mb-2 bg-white dark:bg-[#2D2D3B] text-[#393E46] dark:text-[#EEEEEE]"
                 >
                   <option value="1">Sí</option>
                   <option value="0">No</option>
                 </select>
               </div>
 
+              {/* Tipo de Permiso */}
               <div>
-                <label className="block mb-2">Tipo de Permiso:</label>
+                <label className="block mb-2 text-[#393E46] dark:text-[#EEEEEE]">Tipo de Permiso:</label>
                 <select
                   value={nuevoPermiso.catalogo_permiso_id}
                   onChange={(e) => setNuevoPermiso({ ...nuevoPermiso, catalogo_permiso_id: e.target.value })}
-                  className="border rounded-lg w-full px-3 py-2"
+                  className="border rounded-lg w-full px-3 py-2 mb-2 bg-white dark:bg-[#2D2D3B] text-[#393E46] dark:text-[#EEEEEE]"
                 >
                   <option value="">Seleccione un Tipo de Permiso</option>
                   {catalogoPermisos.map((permiso) => (
@@ -308,12 +312,13 @@ const Permisos = () => {
                 </select>
               </div>
 
+              {/* Empleado */}
               <div>
-                <label className="block mb-2">Empleado:</label>
+                <label className="block mb-2 text-[#393E46] dark:text-[#EEEEEE]">Empleado:</label>
                 <select
                   value={nuevoPermiso.empleados_idEmpleado}
                   onChange={(e) => setNuevoPermiso({ ...nuevoPermiso, empleados_idEmpleado: e.target.value })}
-                  className="border rounded-lg w-full px-3 py-2"
+                  className="border rounded-lg w-full px-3 py-2 mb-2 bg-white dark:bg-[#2D2D3B] text-[#393E46] dark:text-[#EEEEEE]"
                 >
                   <option value="">Seleccione un Empleado</option>
                   {empleados.map((empleado) => (
@@ -324,17 +329,19 @@ const Permisos = () => {
                 </select>
               </div>
 
+              {/* Horas de Permiso */}
               <div>
-                <label className="block mb-2">Horas de Permiso:</label>
+                <label className="block mb-2 text-[#393E46] dark:text-[#EEEEEE]">Horas de Permiso:</label>
                 <input
                   type="number"
                   value={nuevoPermiso.horas_permiso}
                   onChange={(e) => setNuevoPermiso({ ...nuevoPermiso, horas_permiso: e.target.value })}
-                  className="border rounded-lg w-full px-3 py-2"
+                  className="border rounded-lg w-full px-3 py-2 mb-2 bg-white dark:bg-[#2D2D3B] text-[#393E46] dark:text-[#EEEEEE]"
                 />
               </div>
 
-              <div className="flex justify-end mt-4 space-x-2">
+              {/* Botones de Acción */}
+              <div className="flex justify-end mt-4 space-x-4">
                 <button
                   type="button"
                   onClick={() => setModalCrear(false)}
@@ -345,15 +352,16 @@ const Permisos = () => {
                 <button
                   type="button"
                   onClick={crearPermiso}
-                  className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
+                  className="bg-[#00ADB5] hover:bg-[#00ADB5] text-white py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105"
                 >
-                  Crear
+                  Crear Permiso
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
+
 
       {alertModal.visible && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
