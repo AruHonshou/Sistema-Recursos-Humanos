@@ -2,9 +2,8 @@
 
 const db = require('../config/db');
 
-// Función para calcular y registrar el aguinaldo
 async function calcularYRegistrarAguinaldo(req, res) {
-    const { idEmpleado, fechaAguinaldo, idCatalogoAguinaldo } = req.body; // Usa idCatalogoAguinaldo aquí
+    const { idEmpleado, fechaAguinaldo, idCatalogoAguinaldo } = req.body;
     let connection;
     try {
         connection = await db.getConnection();
@@ -15,7 +14,15 @@ async function calcularYRegistrarAguinaldo(req, res) {
         res.status(201).json({ mensaje: 'Aguinaldo calculado y registrado exitosamente' });
     } catch (error) {
         console.error(error);
-        res.status(500).json({ error: 'Error al calcular y registrar el aguinaldo' });
+
+        // Manejo específico de errores
+        if (error.message.includes('usuario está inactivo')) {
+            res.status(400).json({ error: 'No se puede registrar el aguinaldo porque el usuario está inactivo' });
+        } else if (error.message.includes('aguinaldo registrado para esta fecha')) {
+            res.status(400).json({ error: 'Este empleado ya tiene un aguinaldo registrado para esta fecha' });
+        } else {
+            res.status(500).json({ error: 'Error al calcular y registrar el aguinaldo' });
+        }
     } finally {
         if (connection) connection.release();
     }

@@ -7,6 +7,7 @@ const Aguinaldo = () => {
   const [aguinaldos, setAguinaldos] = useState([]);
   const [empleados, setEmpleados] = useState([]);
   const [catalogoAguinaldo, setCatalogoAguinaldo] = useState([]);
+  const [alertModal, setAlertModal] = useState({ visible: false, message: '', type: '' });
   const [formData, setFormData] = useState({
     idEmpleado: '',
     fechaAguinaldo: '',
@@ -59,18 +60,46 @@ const Aguinaldo = () => {
     });
   };
 
-  // Registrar y calcular aguinaldo
+
   const calcularYRegistrarAguinaldo = async () => {
-    console.log("Formulario de Aguinaldo:", formData);  // Verifica que idCatalogoAguinaldo no sea null aquí
+    const { idEmpleado, fechaAguinaldo, idCatalogoAguinaldo } = formData;
+
+    // Validaciones del formulario
+    if (!idEmpleado) {
+      setAlertModal({ visible: true, message: 'Debe seleccionar un Empleado', type: 'error' });
+      return;
+    }
+    if (!fechaAguinaldo) {
+      setAlertModal({ visible: true, message: 'Debe seleccionar la Fecha del Aguinaldo', type: 'error' });
+      return;
+    }
+    if (!idCatalogoAguinaldo) {
+      setAlertModal({ visible: true, message: 'Debe seleccionar un Tipo de Aguinaldo', type: 'error' });
+      return;
+    }
+
     try {
+      // Llamada a la API para registrar y calcular el aguinaldo
       await axios.post('http://localhost:3000/api/aguinaldo/calcular', formData);
-      alert('Aguinaldo calculado y registrado exitosamente');
+
+      // Mostrar alerta de éxito
+      setAlertModal({ visible: true, message: 'Aguinaldo calculado y registrado exitosamente', type: 'success' });
+
+      // Actualizar la lista de aguinaldos y cerrar el modal
       obtenerAguinaldos();
       setIsModalOpen(false);
     } catch (error) {
+      // Manejo de errores específicos desde el backend
+      const errorMessage = error.response && error.response.status === 400
+        ? error.response.data.error
+        : 'Error al calcular y registrar el aguinaldo';
+
+      // Mostrar alerta de error
+      setAlertModal({ visible: true, message: errorMessage, type: 'error' });
       console.error('Error al calcular y registrar el aguinaldo:', error);
     }
   };
+
 
   const eliminarAguinaldo = async (idEmpleado, fechaAguinaldo) => {
     const fechaFormateada = new Date(fechaAguinaldo).toISOString().split('T')[0];
@@ -174,6 +203,21 @@ const Aguinaldo = () => {
           </div>
         </div>
       )}
+      
+      {alertModal.visible && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className={`bg-white dark:bg-[#2D2D3B] p-6 rounded-lg shadow-lg max-w-md mx-auto text-center ${alertModal.type === 'success' ? 'text-green-600' : 'text-red-600'}`}>
+            <h2 className="text-xl font-bold mb-4">{alertModal.type === 'success' ? '¡Éxito!' : 'Error'}</h2>
+            <p className="text-gray-700 dark:text-white">{alertModal.message}</p>
+            <button
+              onClick={() => setAlertModal({ visible: false, message: '', type: '' })}
+              className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Tabla para mostrar los aguinaldos */}
       <div className="overflow-hidden rounded-lg shadow-lg mb-6 animate-scale-up">
@@ -221,7 +265,11 @@ const Aguinaldo = () => {
       </div>
     </div>
 
+
   );
+
+
+
 };
 
 export default Aguinaldo;

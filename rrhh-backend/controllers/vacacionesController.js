@@ -89,19 +89,24 @@ async function actualizarEstadoVacacion(req, res) {
 
         await connection.commit();
 
-        // Send appropriate success message based on the state
-        const mensaje = estado_solicitud_idestado_solicitud === 1
-            ? 'Solicitud Aceptada'
-            : 'Solicitud Rechazada';
+        // Mensajes de respuesta según el estado
+        let mensaje;
+        if (estado_solicitud_idestado_solicitud === 1) {
+            mensaje = 'Solicitud aceptada correctamente';
+        } else if (estado_solicitud_idestado_solicitud === 2) {
+            mensaje = 'Solicitud rechazada correctamente';
+        }
 
         res.status(200).json({ mensaje });
     } catch (error) {
         if (connection) await connection.rollback();
         console.error(error);
 
-        // Send specific error if state change is not allowed
+        // Manejo específico de errores
         if (error.message.includes('No puedes cambiar el estado de la solicitud')) {
-            res.status(400).json({ error: 'No puedes cambiar el estado de la solicitud' });
+            res.status(400).json({ error: 'La solicitud ya fue aceptada o rechazada y no se puede modificar nuevamente.' });
+        } else if (error.message.includes('el empleado no tiene suficientes días disponibles')) {
+            res.status(400).json({ error: 'El empleado no tiene suficientes días disponibles para aprobar esta solicitud.' });
         } else {
             res.status(500).json({ error: 'Error al actualizar el estado de la vacación' });
         }
@@ -109,6 +114,7 @@ async function actualizarEstadoVacacion(req, res) {
         if (connection) connection.release();
     }
 }
+
 
 
 // Función para eliminar una vacación
