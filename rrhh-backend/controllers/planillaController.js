@@ -1,10 +1,7 @@
-// controllers/planillaController.js
-
 const db = require('../config/db');
 
-// Function to calculate payroll in bulk
 async function calcularPlanillaMasiva(req, res) {
-    const { mes, anio } = req.body; // Captura ambos parámetros
+    const { mes, anio } = req.body; 
 
     if (!mes || !anio) {
         return res.status(400).json({ mensaje: 'Mes y año son requeridos' });
@@ -14,8 +11,6 @@ async function calcularPlanillaMasiva(req, res) {
     try {
         connection = await db.getConnection();
         await connection.beginTransaction();
-
-        // Llama al procedimiento con los dos parámetros
         await connection.query('CALL CalcularPlanillaMasiva(?, ?)', [mes, anio]);
 
         await connection.commit();
@@ -29,7 +24,6 @@ async function calcularPlanillaMasiva(req, res) {
     }
 }
 
-// Function to delete payroll by date
 async function eliminarPlanillaPorFecha(req, res) {
     const { fechaPlanilla } = req.body;
     let connection;

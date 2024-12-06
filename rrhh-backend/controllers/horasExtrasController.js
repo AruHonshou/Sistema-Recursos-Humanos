@@ -1,8 +1,5 @@
-// controllers/horasExtrasController.js
-
 const db = require('../config/db');
 
-// Función para obtener todas las horas extras y detalles
 async function leerHorasExtraPersona(req, res) {
     let connection;
     try {
@@ -17,7 +14,6 @@ async function leerHorasExtraPersona(req, res) {
     }
 }
 
-// Función para crear una solicitud de horas extras
 async function crearHorasExtras(req, res) {
     const { fecha_hora_extra, empleados_idEmpleado, cantidad_horas, hora_inicio, hora_final } = req.body;
     let connection;
@@ -36,26 +32,20 @@ async function crearHorasExtras(req, res) {
         if (connection) await connection.rollback();
         console.error(error);
 
-        // Detectar los mensajes específicos y enviar al frontend
-        if (error.message.includes('El empleado está inactivo')) {
+        // Extraer el mensaje SQL y enviarlo como respuesta si está disponible
+        if (error.sqlMessage) {
+            res.status(400).json({ error: error.sqlMessage });
+        } else if (error.message.includes('El empleado está inactivo')) {
             res.status(400).json({ error: 'El empleado está inactivo y no se le pueden asignar horas extras.' });
-        } else if (error.message.includes('Las horas extras deben estar fuera del horario regular del día')) {
-            res.status(400).json({ error: 'Las horas extras deben estar fuera del horario regular del día.' });
-        } else if (error.message.includes('El empleado ya tiene horas extras solicitadas para esta fecha')) {
-            res.status(400).json({ error: 'El empleado ya tiene horas extras solicitadas para esta fecha.' });
-        } else if (error.message.includes('Las solicitudes de horas extras deben estar dentro de un margen de una semana del día actual')) {
-            res.status(400).json({ error: 'Las solicitudes de horas extras deben estar dentro de un margen de una semana del día actual.' });
-        } else if (error.message.includes('El empleado debe tener registrada la hora de entrada y salida')) {
-            res.status(400).json({ error: 'El empleado debe tener registrada la hora de entrada y salida para solicitar horas extras.' });
-        } else if (error.message.includes('La hora de fin no puede ser menor o igual a la hora de inicio')) {
-            res.status(400).json({ error: 'La hora de fin no puede ser menor o igual a la hora de inicio.' });
         } else {
-            res.status(500).json({ error: 'Error al crear la solicitud de horas extras' });
+            res.status(500).json({ error: 'Error al crear la solicitud de horas extras.' });
         }
     } finally {
         if (connection) connection.release();
     }
 }
+
+
 
 
 // Función para actualizar el estado de una solicitud de horas extras

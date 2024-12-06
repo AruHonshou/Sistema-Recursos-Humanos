@@ -172,12 +172,12 @@ const Sidebar = () => {
                   {isOpen && <span>Puesto Laboral</span>}
                 </NavLink>
               </li>
-              <li>
+              {/* <li>
                 <NavLink to="/Roles" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
                   <FaRegListAlt className="mr-2" size={24} />
                   {isOpen && <span>Roles</span>}
                 </NavLink>
-              </li>
+              </li> */}
               <li>
                 <NavLink to="/Feriados" className="text-[#EEEEEE] bg-[#393E46] hover:bg-[#00ADB5] transition-all block p-3 rounded-lg flex items-center">
                   <AiOutlineCalendar className="mr-2" size={24} />

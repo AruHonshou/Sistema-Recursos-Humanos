@@ -10,16 +10,13 @@ const Planilla = () => {
   const [fechaEliminar, setFechaEliminar] = useState('');
   const [alertMessages, setAlertMessages] = useState([]);
 
-  // Obtener mes y año actual
   const currentYear = new Date().getFullYear();
   const currentMonth = new Date().getMonth() + 1;
 
-  // Fetch all payroll records
   const obtenerPlanillas = async () => {
     try {
       const response = await axios.get('http://localhost:3000/api/planillas');
 
-      // Ordena primero por fecha de planilla (más reciente a más antigua) y luego por idEmpleado (menor a mayor)
       const planillasOrdenadas = response.data[0].sort((a, b) => {
         const dateComparison = new Date(b.Fecha_Planilla) - new Date(a.Fecha_Planilla);
         if (dateComparison !== 0) return dateComparison; // Ordena por fecha primero
@@ -33,7 +30,6 @@ const Planilla = () => {
   };
 
 
-  // Create new payroll entry with on-screen validation alerts
   const crearPlanilla = async () => {
     try {
       const response = await axios.post('http://localhost:3000/api/planillas/calcular', nuevaPlanilla);
@@ -169,12 +165,13 @@ const Planilla = () => {
                     className="border rounded-lg w-full px-3 py-2 mb-2 bg-white dark:bg-[#2D2D3B] text-[#393E46] dark:text-[#EEEEEE]"
                   >
                     <option value="">Seleccione el año</option>
-                    {Array.from({ length: 5 }, (_, i) => currentYear + i).map((year) => (
+                    {Array.from({ length: new Date().getFullYear() - 2000 + 1 }, (_, i) => 2000 + i).map((year) => (
                       <option key={year} value={year}>
                         {year}
                       </option>
                     ))}
                   </select>
+
 
                   {/* Selector de Mes */}
                   <select
@@ -184,14 +181,15 @@ const Planilla = () => {
                   >
                     <option value="">Seleccione el mes</option>
                     {(nuevaPlanilla.anio == currentYear
-                      ? Array.from({ length: 12 - currentMonth + 1 }, (_, i) => i + currentMonth)
-                      : Array.from({ length: 12 }, (_, i) => i + 1)
+                      ? Array.from({ length: currentMonth }, (_, i) => i + 1) // Meses hasta el mes actual
+                      : Array.from({ length: 12 }, (_, i) => i + 1) // Todos los meses para años anteriores
                     ).map((month) => (
                       <option key={month} value={month}>
                         {new Date(0, month - 1).toLocaleString("es", { month: "long" })}
                       </option>
                     ))}
                   </select>
+
                 </div>
               </div>
 

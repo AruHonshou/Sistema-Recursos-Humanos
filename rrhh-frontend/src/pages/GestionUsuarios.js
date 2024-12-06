@@ -202,12 +202,6 @@ const GestionUsuarios = () => {
             return;
         }
 
-        // Validar nombre de usuario
-        // if (!nuevaPersona.Nombre_Usuario || /\d|[^\w\s]/.test(nuevaPersona.Nombre_Usuario) || !validarCampoSinEspacios(nuevaPersona.Nombre_Usuario)) {
-        //     setError('El nombre de usuario no puede contener números, símbolos, ni espacios al inicio o al final.');
-        //     return;
-        // }
-
         // Validar contraseña
         if (!nuevaPersona.Contrasena) {
             setError('Debe crear una contraseña.');
@@ -466,11 +460,6 @@ const GestionUsuarios = () => {
             return;
         }
 
-        // Validar nombre de usuario
-        if (!nuevaPersona.Nombre_Usuario || /\d|[^\w\s]/.test(nuevaPersona.Nombre_Usuario) || !validarCampoSinEspacios(nuevaPersona.Nombre_Usuario)) {
-            setError('El nombre de usuario no puede contener números, símbolos, ni espacios al inicio o al final.');
-            return;
-        }
 
         // Validar rol
         if (!nuevaPersona.roles_idroles) {

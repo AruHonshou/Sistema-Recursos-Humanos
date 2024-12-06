@@ -71,11 +71,17 @@ const Dashboard = () => {
   const obtenerEvaluaciones = async (idUsuario) => {
     try {
       const response = await axios.get(`http://localhost:3000/api/dashboard/nombre-evaluaciones/${idUsuario}`);
-      setEvaluaciones(response.data.evaluaciones);
+      // Eliminar duplicados basados en descripcion_evaluacion
+      const evaluacionesUnicas = response.data.evaluaciones.filter(
+        (evaluacion, index, self) =>
+          index === self.findIndex(e => e.descripcion_evaluacion === evaluacion.descripcion_evaluacion)
+      );
+      setEvaluaciones(evaluacionesUnicas);
     } catch (error) {
       console.error('Error al obtener las evaluaciones:', error);
     }
   };
+
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -109,8 +115,8 @@ const Dashboard = () => {
             {marcaInicio === 'No se ha registrado la marca de inicio para el día.'
               ? 'No, ve a registrar tu entrada'
               : marcaInicio === 'Marca de inicio registrada.'
-              ? 'Registrado!!'
-              : marcaInicio}
+                ? 'Registrado!!'
+                : marcaInicio}
           </p>
         </div>
 
@@ -121,8 +127,8 @@ const Dashboard = () => {
             {marcaSalida === 'No se ha registrado la marca de salida para el día.'
               ? 'No, ve a registrar tu salida'
               : marcaSalida === 'Marca de salida registrada.'
-              ? 'Registrado!!'
-              : marcaSalida}
+                ? 'Registrado!!'
+                : marcaSalida}
           </p>
         </div>
 

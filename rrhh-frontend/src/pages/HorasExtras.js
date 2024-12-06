@@ -40,62 +40,74 @@ const HoraExtra = () => {
   const crearHoraExtra = async () => {
     const { fecha_hora_extra, empleados_idEmpleado, hora_inicio, hora_final } = nuevaHoraExtra;
 
-    // Validation checks
+    // Validaciones básicas
     if (!fecha_hora_extra) {
-      setAlertModal({ visible: true, message: 'Debe seleccionar la Fecha', type: 'error' });
-      return;
+        setAlertModal({ visible: true, message: 'Por favor, selecciona una fecha.', type: 'error' });
+        return;
     }
     if (!empleados_idEmpleado) {
-      setAlertModal({ visible: true, message: 'Debe seleccionar un Empleado', type: 'error' });
-      return;
+        setAlertModal({ visible: true, message: 'Por favor, selecciona un empleado.', type: 'error' });
+        return;
     }
     if (!hora_inicio) {
-      setAlertModal({ visible: true, message: 'Debe ingresar la Hora de Inicio', type: 'error' });
-      return;
+        setAlertModal({ visible: true, message: 'Por favor, ingresa la hora de inicio.', type: 'error' });
+        return;
     }
     if (!hora_final) {
-      setAlertModal({ visible: true, message: 'Debe ingresar la Hora Final', type: 'error' });
-      return;
+        setAlertModal({ visible: true, message: 'Por favor, ingresa la hora final.', type: 'error' });
+        return;
     }
 
     try {
-      await axios.post('http://localhost:3000/api/horas-extras/', nuevaHoraExtra);
+        // Llamar al backend para crear la solicitud
+        await axios.post('http://localhost:3000/api/horas-extras/', nuevaHoraExtra);
 
-      // Show success alert
-      setAlertModal({ visible: true, message: 'Hora Extra Solicitada', type: 'success' });
+        // Mostrar alerta de éxito
+        setAlertModal({ visible: true, message: 'Hora extra solicitada exitosamente.', type: 'success' });
 
-      setModalCrear(false);
-      obtenerHorasExtras();
+        setModalCrear(false); // Cerrar el modal de creación
+        obtenerHorasExtras(); // Refrescar la lista de horas extras
     } catch (error) {
-      const errorMessage = error.response && error.response.status === 400
-        ? error.response.data.error
-        : 'Error al crear la solicitud de horas extras';
-      setAlertModal({ visible: true, message: errorMessage, type: 'error' });
-      console.error('Error al crear la solicitud de horas extras:', error);
+        if (error.response && error.response.status === 400) {
+            const errorMessage = error.response.data.error;
+
+            // Mostrar el mensaje personalizado devuelto por el backend
+            setAlertModal({
+                visible: true,
+                message: errorMessage,
+                type: 'error',
+            });
+        } else {
+            console.error('Error inesperado:', error);
+            setAlertModal({
+                visible: true,
+                message: 'Ocurrió un error inesperado. Por favor, inténtalo de nuevo más tarde.',
+                type: 'error',
+            });
+        }
     }
-  };
+};
 
 
 
-  // Formatear la fecha a YYYY-MM-DD
   const formatDate = (dateString) => {
     return new Date(dateString).toISOString().split('T')[0];
   };
 
-  // Approve Extra Hour Request
+
   const aceptarHoraExtra = async (fecha, idEmpleado) => {
     try {
       const response = await axios.put('http://localhost:3000/api/horas-extras', {
         fecha_hora_extra: formatDate(fecha),
         empleados_idEmpleado: idEmpleado,
-        estado_solicitud_idestado_solicitud: 1, // Estado "Aprobado"
+        estado_solicitud_idestado_solicitud: 1,
       });
 
       const message = response.data.mensaje;
       const isAlreadyProcessed = message === 'No se encontró ninguna solicitud en estado En Espera para actualizar.';
       setAlertModal({ visible: true, message, type: isAlreadyProcessed ? 'error' : 'success' });
 
-      obtenerHorasExtras(); // Refresh data after approval
+      obtenerHorasExtras();
     } catch (error) {
       const errorMessage = error.response && error.response.status === 400
         ? error.response.data.error
@@ -105,20 +117,19 @@ const HoraExtra = () => {
     }
   };
 
-  // Reject Extra Hour Request
   const rechazarHoraExtra = async (fecha, idEmpleado) => {
     try {
       const response = await axios.put('http://localhost:3000/api/horas-extras', {
         fecha_hora_extra: formatDate(fecha),
         empleados_idEmpleado: idEmpleado,
-        estado_solicitud_idestado_solicitud: 2, // Estado "Rechazado"
+        estado_solicitud_idestado_solicitud: 2,
       });
 
       const message = response.data.mensaje;
       const isAlreadyProcessed = message === 'No se encontró ninguna solicitud en estado En Espera para actualizar.';
       setAlertModal({ visible: true, message, type: isAlreadyProcessed ? 'error' : 'success' });
 
-      obtenerHorasExtras(); // Refresh data after rejection
+      obtenerHorasExtras();
     } catch (error) {
       const errorMessage = error.response && error.response.status === 400
         ? error.response.data.error
@@ -362,6 +373,7 @@ const HoraExtra = () => {
           </div>
         </div>
       )}
+
 
 
 
